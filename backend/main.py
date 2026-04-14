@@ -1,45 +1,54 @@
 """
-PolPilot Orchestrator API — Gateway Principal.
+PolPilot API — Gateway Principal (v2: Super-Agente).
 
-Endpoints:
-  POST /query                          → Pipeline completo del orquestador
-  POST /agents/finanzas/query          → Agente de Finanzas directo
-  POST /agents/economia/query          → Agente de Economía directo
-  POST /broker/support-request         → Colaboración inter-agente via Message Broker
-  POST /broker/artifact                → Entrega directa de artefacto a un agente
-  GET  /broker/log/{thread_id}         → Log de colaboración de un thread
+Cambios respecto a v1 (multiagente):
+  - /query usa exclusivamente services/super_agent.py
+  - Eliminado: wiring de message_broker y AGENT_REGISTRY
+  - Eliminado: endpoints /broker/* (deprecados junto con message_broker.py)
+  - Eliminado: endpoints /agents/finanzas/query, /agents/economia/query,
+               /agents/investigador/query (los agentes individuales son legacy)
+  - Mantenidos sin cambios: /context/*, /db/*, /ingest, /market/dolares, /health
+
+Endpoints activos:
+  POST /query                          → Pipeline super-agente (único punto de orquestación)
   GET  /context/{company_id}           → Estado del Context Store de una empresa
   GET  /context/{company_id}/artifacts → Artefactos almacenados de una empresa
+  POST /context/{company_id}           → Escribe entrada en Context Store
+  GET  /db/status/{empresa_id}         → Estado de las DBs
+  POST /db/init/{empresa_id}           → Inicializa y seedea las DBs
+  POST /db/sync/{empresa_id}           → Sincroniza datos externos (BCRA + DolarAPI)
+  POST /ingest                         → Ingesta de documentos al vector store
+  GET  /market/dolares                 → Tipos de cambio en tiempo real
   GET  /health                         → Health check
 """
 
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
-
-from fastapi import FastAPI, HTTPException, File, Form, UploadFile
 from typing import Optional
+
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings
 from schemas import (
-    AgentQueryRequest,
-    AgentQueryResponse,
     Artifact,
-    CollaborationLog,
     ContextEntry,
     QueryRequest,
     QueryResponse,
-    SupportRequest,
-    SupportResponse,
 )
-from services.agent_economia import query_economia
-from services.agent_finanzas import query_finanzas
-from services.agent_investigador import query_investigador
 from services.context_store import context_store
-from services.message_broker import message_broker
-from services.orchestrator import process_query
-from services.data_bridge import ensure_initialized, run_seed, run_external_sync, get_live_dollar_rates, ingest_document
+from services.data_bridge import (
+    ensure_initialized,
+    get_live_dollar_rates,
+    ingest_document,
+    run_external_sync,
+    run_seed,
+    get_dashboard_data,
+    get_finanzas_data,
+    get_creditos_data,
+)
+from services.super_agent import process_query
 
 
 # ── Lifespan ───────────────────────────────────────────
@@ -48,7 +57,7 @@ from services.data_bridge import ensure_initialized, run_seed, run_external_sync
 async def lifespan(app: FastAPI):
     status = ensure_initialized(settings.DEFAULT_EMPRESA_ID)
     if status["has_data"]:
-        print(f"[PolPilot] DB lista para '{settings.DEFAULT_EMPRESA_ID}' ✓")
+        print(f"[PolPilot] DB lista para '{settings.DEFAULT_EMPRESA_ID}' ✓ (super-agente activo)")
     elif status["polpilot_available"]:
         print(f"[PolPilot] DB vacía. Ejecutar: POST /db/init/{settings.DEFAULT_EMPRESA_ID}")
     else:
@@ -60,7 +69,11 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    version=settings.VERSION,
+    version="2.0.0",
+    description=(
+        "PolPilot API v2 — Arquitectura de super-agente con skills. "
+        "Un único punto de orquestación LLM reemplaza el sistema multiagente."
+    ),
     docs_url="/docs",
     openapi_url="/openapi.json",
     lifespan=lifespan,
@@ -74,189 +87,81 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Registry de agentes (para el orquestador) ─────────
 
-AGENT_REGISTRY = {
-    "finanzas": query_finanzas,
-    "economia": query_economia,
-    "investigacion": query_investigador,
-}
+# ── Endpoints: Datos estructurados para el frontend ───
 
-# Registrar agentes en el Message Broker para colaboración inter-agente
-message_broker.register_agent("finanzas", query_finanzas)
-message_broker.register_agent("economia", query_economia)
-message_broker.register_agent("investigacion", query_investigador)
+@app.get("/dashboard/{empresa_id}")
+async def dashboard(empresa_id: str):
+    """
+    Datos consolidados del dashboard para el frontend.
+    Devuelve: profile, financials, indicators, cashPosition, morosos, benchmark, alerts.
+    Si la DB no está inicializada retorna 404 (el frontend cae en mock automáticamente).
+    """
+    data = get_dashboard_data(empresa_id)
+    if not data:
+        raise HTTPException(status_code=404, detail="No hay datos para esta empresa. Ejecutá POST /db/init primero.")
+    return data
 
 
-# ── Endpoints ──────────────────────────────────────────
+@app.get("/finanzas/{empresa_id}")
+async def finanzas(empresa_id: str):
+    """
+    Datos financieros internos para la vista Finanzas del frontend.
+    Devuelve: financials, indicators, clients, morosos, products, suppliers, employees.
+    """
+    data = get_finanzas_data(empresa_id)
+    if not data:
+        raise HTTPException(status_code=404, detail="No hay datos de finanzas para esta empresa.")
+    return data
+
+
+@app.get("/creditos/{empresa_id}")
+async def creditos(empresa_id: str):
+    """
+    Datos de créditos, macro y regulaciones para la vista Créditos del frontend.
+    Devuelve: credits, creditProfile, macro, regulations, sectorSignals.
+    """
+    data = get_creditos_data(empresa_id)
+    if not data:
+        raise HTTPException(status_code=404, detail="No hay datos de créditos para esta empresa.")
+    return data
+
+
+# ── Endpoints: Core ────────────────────────────────────
 
 @app.get("/health")
 async def health():
     """Health check."""
-    return {"status": "ok", "version": settings.VERSION}
+    return {"status": "ok", "version": "2.0.0", "architecture": "super-agent"}
 
 
 @app.post("/query", response_model=QueryResponse)
-async def orchestrator_query(request: QueryRequest):
+async def super_agent_query(request: QueryRequest):
     """
-    Pipeline completo del orquestador RAC.
+    Pipeline completo del super-agente.
 
-    Recibe una pregunta del usuario, la expande en sub-preguntas por tópico,
-    despacha a los agentes en paralelo, sintetiza las respuestas, evalúa
-    repreguntas y devuelve la respuesta final.
+    Flujo interno (automático, un solo call de usuario):
+      ingest → client_db → novelty → classify (LLM) →
+      execute skills → synthesize (LLM) → memory_write → response
 
     Request:
     ```json
     {
       "company_id": "taller_frenos_001",
       "user_message": "¿A qué crédito puedo aplicar?",
-      "conversation_id": "uuid (opcional)",
+      "conversation_id": "uuid (opcional — se genera automáticamente)",
       "conversation_context": "resumen previo (opcional)"
     }
     ```
+
+    Nota: `metadata.agents_activated` ahora lista las skills invocadas,
+    no agentes. `metadata.inter_agent_calls` siempre es 0 en v2.
     """
     if not request.user_message.strip():
         raise HTTPException(status_code=400, detail="user_message is required")
 
-    result = await process_query(request, AGENT_REGISTRY)
+    result = await process_query(request)
     return result
-
-
-@app.post("/agents/finanzas/query", response_model=AgentQueryResponse)
-async def finanzas_query(request: AgentQueryRequest):
-    """
-    Endpoint directo al Agente de Finanzas.
-
-    Permite que el orquestador (o cualquier servicio) envíe preguntas
-    específicas sobre la situación financiera interna de una empresa.
-
-    Request:
-    ```json
-    {
-      "thread_id": "uuid",
-      "original_query": "pregunta original del usuario",
-      "questions": [
-        "¿Cuál es el flujo de caja neto?",
-        "¿Hay deudas vigentes?"
-      ],
-      "company_id": "taller_frenos_001",
-      "conversation_context": "opcional"
-    }
-    ```
-    """
-    return await query_finanzas(request)
-
-
-@app.post("/agents/economia/query", response_model=AgentQueryResponse)
-async def economia_query(request: AgentQueryRequest):
-    """
-    Endpoint directo al Agente de Economía.
-
-    Permite que el orquestador (o cualquier servicio) envíe preguntas
-    específicas sobre contexto macroeconómico, créditos, tasas y regulaciones.
-
-    Request:
-    ```json
-    {
-      "thread_id": "uuid",
-      "original_query": "pregunta original del usuario",
-      "questions": [
-        "¿Qué líneas de crédito PyME hay disponibles?",
-        "¿Cuáles son las tasas BCRA actuales?"
-      ],
-      "company_id": "taller_frenos_001",
-      "conversation_context": "opcional"
-    }
-    ```
-    """
-    return await query_economia(request)
-
-
-@app.post("/agents/investigador/query", response_model=AgentQueryResponse)
-async def investigador_query(request: AgentQueryRequest):
-    """
-    Endpoint directo al Agente Investigador.
-
-    Consulta APIs públicas argentinas en tiempo real:
-    - DolarAPI.com: tipos de cambio (oficial, blue, MEP, CCL, cripto, tarjeta, mayorista)
-    - BCRA Monetarias: tasas, inflación, reservas, UVA, CER
-    - BCRA Transparencia: préstamos PyME vigentes
-
-    No requiere DB inicializada — datos directos de APIs externas.
-    """
-    return await query_investigador(request)
-
-
-# ── Endpoints: Colaboración Inter-Agente ───────────────
-
-@app.post("/broker/support-request", response_model=SupportResponse)
-async def broker_support_request(request: SupportRequest):
-    """
-    Protocolo de colaboración inter-agente via Message Broker.
-
-    Un agente puede solicitar soporte a otro agente. El Gateway/Auditor:
-    1. Valida presupuesto de inter-calls
-    2. Detecta ciclos circulares (A→B→A)
-    3. Obtiene contexto de verdad del Context Store
-    4. Envía solicitud estructurada al agente destino
-    5. Valida consistencia del artefacto de respuesta
-    6. Devuelve evidencia al agente origen
-
-    Request:
-    ```json
-    {
-      "source_agent": "economia",
-      "target_agent": "finanzas",
-      "question": "¿Cuánta liquidez disponible tiene la empresa?",
-      "company_id": "taller_frenos_001",
-      "thread_id": "uuid del hilo actual",
-      "original_query": "¿A qué crédito puedo aplicar?",
-      "context_payload": {"credito_requiere": "$2M de liquidez"}
-    }
-    ```
-    """
-    if request.source_agent == request.target_agent:
-        raise HTTPException(status_code=400, detail="source_agent y target_agent no pueden ser iguales")
-
-    return await message_broker.handle_support_request(request)
-
-
-@app.post("/broker/artifact")
-async def broker_deliver_artifact(
-    company_id: str,
-    target_agent: str,
-    artifact: Artifact,
-):
-    """
-    Entrega directa de un artefacto estructurado a un agente.
-
-    Tipos de artefacto: FACT, CLAIM, RECOMMENDATION, VALIDATION.
-    El artefacto se almacena en el Context Store y se notifica al agente destino.
-    """
-    success = await message_broker.deliver_artifact(company_id, artifact, target_agent)
-    if not success:
-        raise HTTPException(status_code=500, detail="Error al entregar artefacto")
-    return {"status": "delivered", "artifact_id": artifact.artifact_id}
-
-
-@app.get("/broker/log/{thread_id}")
-async def broker_collaboration_log(thread_id: str):
-    """
-    Obtiene el log completo de colaboración inter-agente de un thread.
-
-    Incluye: support_requests enviados, support_responses recibidos,
-    artefactos intercambiados, y total de inter-calls.
-    """
-    log = message_broker.get_collaboration_log(thread_id)
-    if not log:
-        raise HTTPException(status_code=404, detail=f"No hay log para thread '{thread_id}'")
-    return log
-
-
-@app.get("/broker/agents")
-async def broker_registered_agents():
-    """Lista los agentes registrados en el Message Broker."""
-    return {"agents": message_broker.get_registered_agents()}
 
 
 # ── Endpoints: Context Store ───────────────────────────
@@ -270,8 +175,6 @@ async def get_company_context(company_id: str):
     - M_int (máxima): Fuentes estructuradas (ERP, integraciones)
     - M_onb (media): Datos de onboarding / perfil PyME
     - M_conv (baja): Datos conversacionales
-
-    Incluye la versión actual del contexto.
     """
     entries = context_store.get_all(company_id)
     return {
@@ -284,11 +187,7 @@ async def get_company_context(company_id: str):
 
 @app.get("/context/{company_id}/artifacts")
 async def get_company_artifacts(company_id: str, source_agent: str = None):
-    """
-    Artefactos almacenados para una empresa.
-
-    Opcionalmente filtrables por agente de origen.
-    """
+    """Artefactos almacenados para una empresa, filtrables por origen."""
     artifacts = context_store.get_artifacts(company_id, source_agent=source_agent)
     return {
         "company_id": company_id,
@@ -302,8 +201,7 @@ async def put_context_entry(company_id: str, entry: ContextEntry):
     """
     Escribe o actualiza una entrada en el Context Store.
 
-    Aplica jerarquía de verdad automáticamente: si ya existe una entrada
-    con mayor prioridad, la nueva es rechazada.
+    Aplica jerarquía de verdad automáticamente.
     """
     accepted = context_store.put(company_id, entry)
     if not accepted:
@@ -318,10 +216,7 @@ async def put_context_entry(company_id: str, entry: ContextEntry):
 
 @app.get("/db/status/{empresa_id}")
 async def db_status(empresa_id: str):
-    """
-    Verifica el estado de las bases de datos de una empresa.
-    Retorna si la DB tiene datos y si polpilot.backend está disponible.
-    """
+    """Verifica el estado de las bases de datos de una empresa."""
     return ensure_initialized(empresa_id)
 
 
@@ -330,12 +225,7 @@ async def db_init(empresa_id: str):
     """
     Inicializa y seedea las 3 bases de datos de una empresa.
 
-    Crea:
-      - internal.sqlite (perfil, financials, indicadores, clientes, proveedores, productos)
-      - external.sqlite (créditos, macro, regulaciones, perfil BCRA, señales sector)
-      - memory.sqlite   (conversaciones — vacío listo para usar)
-      - vectors/        (ChromaDB con embeddings iniciales)
-
+    Crea internal.sqlite, external.sqlite, memory.sqlite y vectors/ (ChromaDB).
     Idempotente: si los datos ya existen se vuelven a cargar.
     """
     result = run_seed(empresa_id)
@@ -347,21 +237,21 @@ async def db_init(empresa_id: str):
 @app.post("/db/sync/{empresa_id}")
 async def db_sync(empresa_id: str, mode: str = "all"):
     """
-    Sincroniza datos externos en tiempo real desde las APIs del BCRA y DolarAPI.
+    Sincroniza datos externos desde APIs del BCRA y DolarAPI.
 
     Query param `mode`:
-      - 'all'     → macro + perfil crediticio BCRA + catálogo de créditos bancarios
+      - 'all'     → macro + perfil crediticio + catálogo de créditos
       - 'macro'   → solo tasas, inflación, tipos de cambio
       - 'credits' → solo catálogo de préstamos BCRA Transparencia
       - 'profile' → solo perfil crediticio BCRA Central de Deudores
-
-    Requiere que la DB esté inicializada (POST /db/init primero).
     """
     result = run_external_sync(empresa_id, mode=mode)
     if not result.get("success"):
         raise HTTPException(status_code=500, detail=result.get("error", "Sync falló"))
     return result
 
+
+# ── Endpoints: Ingest ──────────────────────────────────
 
 @app.post("/ingest")
 async def ingest(
@@ -375,11 +265,6 @@ async def ingest(
     Ingresa texto o archivo al vector store de la empresa (ChromaDB).
 
     Formatos soportados (MVP): texto plano, .txt, .md.
-    Uso:
-      - Texto directo:  form-data con `text` y `title`.
-      - Archivo:        form-data con `file` (multipart).
-
-    La empresa debe tener la DB inicializada (POST /db/init primero).
     """
     content: str = ""
 
@@ -389,7 +274,7 @@ async def ingest(
         if ext not in ("txt", "md", ""):
             raise HTTPException(
                 status_code=415,
-                detail=f"Formato .{ext} no soportado aún. Usá .txt o .md, o enviá texto directo.",
+                detail=f"Formato .{ext} no soportado. Usá .txt o .md, o enviá texto directo.",
             )
         raw = await file.read()
         try:
@@ -420,13 +305,13 @@ async def ingest(
     return result
 
 
+# ── Endpoints: Market data ─────────────────────────────
+
 @app.get("/market/dolares")
 async def market_dolares():
     """
     Retorna los tipos de cambio en tiempo real desde DolarAPI.com.
     No requiere empresa_id ni DB inicializada.
-
-    Incluye: oficial, blue, mep (bolsa), ccl, cripto, tarjeta, mayorista.
     """
     rates = get_live_dollar_rates()
     if not rates:

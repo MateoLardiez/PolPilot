@@ -1,4 +1,18 @@
-"""Pydantic schemas para el Orchestrator API."""
+"""
+Pydantic schemas para PolPilot API.
+
+Secciones:
+  1. API pública — QueryRequest / QueryResponse (sin cambios, compatibilidad garantizada)
+  2. Schemas internos del orquestador (legacy, mantenidos para compatibilidad)
+  3. [NUEVO] Schemas del Super-Agente y su pipeline de skills
+  4. Memoria compartida, Context Store, Stop-Loss (sin cambios)
+
+Migración desde multiagente:
+  - QueryRequest / QueryResponse: sin cambios (contrato de API estable)
+  - OrchestratorMetadata: campo agents_activated ahora lista skills (no agentes)
+  - AgentQueryRequest / AgentQueryResponse: deprecated, solo usados por endpoints legacy
+  - Nuevos tipos: SkillName, SuperAgentPipelineStep
+"""
 
 from __future__ import annotations
 
@@ -313,3 +327,49 @@ class StopLossEvaluation(BaseModel):
     decision: StopLossDecision
     reason: str
     suggested_new_topics: list[str] = []      # sub-tópicos sugeridos si CONTINUE
+
+
+# ── Super-Agente: tipos del pipeline de skills ────────
+# Nuevos en v2 (migración multiagente → super-agente)
+
+class SkillName(str, Enum):
+    """Skills disponibles en el super-agente."""
+    ingest = "ingest"
+    client_db = "client_db"
+    novelty = "novelty"
+    classify = "classify"
+    finanzas_data = "finanzas_data"
+    economia_data = "economia_data"
+    investigacion_data = "investigacion_data"
+    synthesize = "synthesize"
+    memory_write = "memory_write"
+
+
+class SuperAgentPipelineStep(BaseModel):
+    """
+    Registro de un paso del pipeline del super-agente.
+    Permite trazar la ejecución para debugging y auditoría.
+    """
+    skill: SkillName
+    status: str = "ok"          # "ok" | "skipped" | "error"
+    duration_ms: Optional[int] = None
+    notes: Optional[str] = None
+
+
+class SuperAgentMetadata(BaseModel):
+    """
+    Metadata detallada del super-agente (v2).
+
+    Para compatibilidad de API, OrchestratorMetadata sigue siendo
+    el schema del response. SuperAgentMetadata es para logging interno.
+    """
+    conversation_id: str
+    pipeline_steps: list[SuperAgentPipelineStep] = []
+    primary_topic: str = "mixed"
+    intent: str = "consulta general"
+    complexity: str = "simple"
+    active_topics: list[str] = []
+    sub_questions_count: int = 0
+    has_live_data: bool = False
+    has_real_db_data: bool = False
+    processing_time_ms: int = 0

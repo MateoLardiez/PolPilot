@@ -353,6 +353,11 @@ def run_seed(empresa_id: str) -> dict:
         return {"success": False, "error": f"polpilot module not available: {_IMPORT_ERROR}"}
 
     try:
+        import sys, io
+        # Forzar UTF-8 en stdout para que los prints con ✓ no fallen en Windows
+        if hasattr(sys.stdout, "reconfigure"):
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
         from seed.seed_database import main as run_seed_main
         run_seed_main(empresa_id)
         return {"success": True, "empresa_id": empresa_id, "message": "Seed completado"}
@@ -476,5 +481,105 @@ def get_live_dollar_rates() -> dict:
         return {}
     try:
         return fetch_dollar_snapshot()
+    except Exception:
+        return {}
+
+
+# ── Endpoints de datos estructurados para el frontend ────────────────────────
+
+def get_dashboard_data(empresa_id: str) -> dict:
+    """
+    Retorna los datos del dashboard para el frontend.
+    Estructura idéntica al MOCK de api.js para compatibilidad directa.
+    """
+    if not _db_has_data(empresa_id):
+        return {}
+
+    try:
+        profile    = get_company_profile(empresa_id) or {}
+        financials = get_financials(empresa_id, last_n_months=6)
+        indicators = get_latest_indicators(empresa_id) or {}
+        all_inds   = get_all_indicators(empresa_id)
+        cash       = get_cash_position(empresa_id)
+        clients    = get_clients(empresa_id)
+        delinquent = get_delinquent_clients(empresa_id, min_days=30)
+        benchmark  = get_sector_benchmark(empresa_id)
+
+        # Armar alerts del lado del servidor
+        alerts = []
+        fin = financials[-1] if financials else {}
+        if fin.get("net_cash_flow", 0) < 0:
+            alerts.append({
+                "type": "cash_flow", "severity": "critical",
+                "title": "Flujo de caja negativo",
+                "description": f"Flujo neto: ${fin['net_cash_flow']:,.0f}",
+                "action_suggested": "Revisar créditos disponibles para capital de trabajo",
+            })
+        ind = indicators
+        if ind.get("current_ratio", 1) < 1.0:
+            alerts.append({
+                "type": "liquidity", "severity": "warning",
+                "title": "Liquidez corriente bajo 1.0",
+                "description": f"Ratio actual: {ind.get('current_ratio')}",
+                "action_suggested": "Evaluar refinanciación de pasivos corrientes",
+            })
+        if delinquent:
+            total_moroso = sum(c.get("outstanding_balance", 0) for c in delinquent)
+            alerts.append({
+                "type": "delinquency", "severity": "warning",
+                "title": f"{len(delinquent)} clientes morosos",
+                "description": f"Deuda acumulada: ${total_moroso:,.0f}",
+                "action_suggested": "Activar gestión de cobranza intensiva",
+            })
+
+        return {
+            "profile": profile,
+            "financials": financials,
+            "indicators": ind,
+            "cashPosition": cash,
+            "morosos": delinquent,
+            "benchmark": benchmark,
+            "alerts": alerts,
+        }
+    except Exception:
+        return {}
+
+
+def get_finanzas_data(empresa_id: str) -> dict:
+    """Datos estructurados de finanzas para el frontend."""
+    if not _db_has_data(empresa_id):
+        return {}
+    try:
+        return {
+            "financials":  get_financials(empresa_id, last_n_months=6),
+            "indicators":  get_all_indicators(empresa_id),
+            "clients":     get_clients(empresa_id),
+            "morosos":     get_delinquent_clients(empresa_id, min_days=30),
+            "products":    get_products(empresa_id),
+            "suppliers":   get_suppliers(empresa_id),
+            "employees":   get_employees(empresa_id),
+        }
+    except Exception:
+        return {}
+
+
+def get_creditos_data(empresa_id: str) -> dict:
+    """Datos estructurados de créditos y macro para el frontend."""
+    if not _db_has_data(empresa_id):
+        return {}
+    try:
+        credits    = get_credits_for_company(empresa_id)
+        macro      = get_macro_snapshot(empresa_id)
+        regs       = get_regulations(empresa_id)
+        signals    = get_sector_signals(empresa_id)
+        cr_profile = get_credit_profile(empresa_id)
+
+        return {
+            "credits":       credits,
+            "creditProfile": cr_profile or {},
+            "macro":         macro,
+            "regulations":   regs,
+            "sectorSignals": signals,
+        }
     except Exception:
         return {}

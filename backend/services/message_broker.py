@@ -1,4 +1,21 @@
 """
+[DEPRECADO — v1 multiagente]
+
+El Message Broker implementaba la colaboración inter-agente (A→B→A).
+En v2 (super-agente), toda la orquestación ocurre en services/super_agent.py
+y no hay inter-agent calls: el super-agente tiene acceso directo a todas las skills.
+
+Motivo de eliminación:
+  - La colaboración inter-agente era fuente de complejidad sin beneficio proporcional
+  - El super-agente accede a todos los datos directamente vía skills
+  - Elimina el riesgo de ciclos circulares y presupuesto de inter-calls
+
+Este módulo se mantiene solo para referencia histórica.
+NO se importa desde main.py en v2.
+
+Ver: services/super_agent.py para el reemplazo.
+
+---
 Message Broker — Intermediario de mensajes entre agentes.
 
 Implementa el protocolo de colaboración estructurada inter-agente:

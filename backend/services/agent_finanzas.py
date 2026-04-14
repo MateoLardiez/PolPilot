@@ -1,3 +1,13 @@
+"""
+[DEPRECADO — v1 multiagente]
+
+El Agente de Finanzas original llamaba al LLM por su cuenta con un system prompt
+especializado. En v2, su responsabilidad se divide en:
+  - services/skills/finance_skill.py → extrae y formatea datos internos (sin LLM)
+  - services/super_agent.py/_synthesize → call LLM unificado con todos los datos
+
+Ver: services/skills/finance_skill.py para la nueva implementación.
+"""
 
 """Agente de Finanzas — analiza datos internos de la empresa."""
 

@@ -1,3 +1,14 @@
+"""
+[DEPRECADO — v1 multiagente]
+
+El Agente de Economía original llamaba al LLM con contexto macro/crediticio.
+En v2 su responsabilidad se divide en:
+  - services/skills/economy_skill.py → formatea contexto externo (sin LLM)
+  - services/super_agent.py/_synthesize → call LLM unificado con todos los datos
+
+Ver: services/skills/economy_skill.py para la nueva implementación.
+"""
+
 """Agente de Economía — contexto macro, créditos y regulaciones."""
 
 from __future__ import annotations

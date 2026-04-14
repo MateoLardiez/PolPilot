@@ -1,4 +1,13 @@
 """
+[DEPRECADO — v1 multiagente]
+
+El Agente Investigador original era el único sin LLM. En v2 fue migrado
+directamente a services/skills/research_skill.py con la misma lógica de fetch.
+
+Ver: services/skills/research_skill.py para la nueva implementación.
+"""
+
+"""
 Agente Investigador — datos en tiempo real desde APIs públicas argentinas.
 
 Fuentes:

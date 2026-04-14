@@ -1,7 +1,6 @@
 // PolPilot — API Layer
-// Flag para switch entre mock data y backend real
 // USE_MOCK = false → llama al backend real (cd backend && uvicorn main:app --reload)
-const USE_MOCK = true;
+const USE_MOCK = false;
 const API_BASE = 'http://localhost:8000';
 const EMPRESA_ID = 'emp_001';
 
@@ -174,8 +173,22 @@ async function fetchDashboard(empresaId = EMPRESA_ID) {
       alerts: computeAlerts()
     };
   }
-  const res = await fetch(`${API_BASE}/dashboard/${empresaId}`);
-  return res.json();
+  try {
+    const res = await fetch(`${API_BASE}/dashboard/${empresaId}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  } catch (e) {
+    console.warn('Backend dashboard no disponible, usando mock:', e.message);
+    return {
+      profile: MOCK.profile,
+      financials: MOCK.financials,
+      indicators: MOCK.indicators[0],
+      cashPosition: computeCashPosition(),
+      morosos: MOCK.clients.filter(c => c.risk_level === 'high'),
+      benchmark: MOCK.benchmark,
+      alerts: computeAlerts()
+    };
+  }
 }
 
 async function fetchFinanzas(empresaId = EMPRESA_ID) {
@@ -191,8 +204,22 @@ async function fetchFinanzas(empresaId = EMPRESA_ID) {
       employees: MOCK.employees
     };
   }
-  const res = await fetch(`${API_BASE}/finanzas/${empresaId}`);
-  return res.json();
+  try {
+    const res = await fetch(`${API_BASE}/finanzas/${empresaId}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  } catch (e) {
+    console.warn('Backend finanzas no disponible, usando mock:', e.message);
+    return {
+      financials: MOCK.financials,
+      indicators: MOCK.indicators,
+      clients: MOCK.clients,
+      morosos: MOCK.clients.filter(c => c.risk_level === 'high'),
+      products: MOCK.products,
+      suppliers: MOCK.suppliers,
+      employees: MOCK.employees
+    };
+  }
 }
 
 async function fetchCreditos(empresaId = EMPRESA_ID) {
@@ -206,8 +233,20 @@ async function fetchCreditos(empresaId = EMPRESA_ID) {
       sectorSignals: MOCK.sectorSignals
     };
   }
-  const res = await fetch(`${API_BASE}/creditos/${empresaId}`);
-  return res.json();
+  try {
+    const res = await fetch(`${API_BASE}/creditos/${empresaId}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  } catch (e) {
+    console.warn('Backend créditos no disponible, usando mock:', e.message);
+    return {
+      credits: MOCK.credits,
+      creditProfile: MOCK.creditProfile,
+      macro: MOCK.macro,
+      regulations: MOCK.regulations,
+      sectorSignals: MOCK.sectorSignals
+    };
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -385,7 +424,6 @@ async function ingestFile(file) {
       ? `Procesé "${file.name}" y lo integré a tu base de conocimiento (${data.chars} caracteres).`
       : `Error procesando "${file.name}": ${data.error}`,
   };
-}
 }
 
 // ═══════════════════════════════════════════════════════════════

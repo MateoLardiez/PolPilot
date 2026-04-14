@@ -1,4 +1,20 @@
-"""Servicio del Orquestador — lógica core del RAC."""
+"""
+[DEPRECADO — v1 multiagente]
+
+Este módulo implementa el orquestador RAC del sistema multiagente original.
+En v2 fue reemplazado por services/super_agent.py.
+
+NO se importa desde main.py en v2. Se mantiene por referencia histórica
+y por si se necesita rollback.
+
+Motivo de deprecación:
+  - Despacho paralelo a múltiples agentes LLM → reemplazado por un único
+    super-agente con pipeline secuencial de skills
+  - Colaboración inter-agente via message_broker → eliminada
+  - Stop-Loss cognitivo con múltiples iteraciones → reemplazado por single-pass
+
+Ver: services/super_agent.py para la nueva implementación.
+"""
 
 from __future__ import annotations
 
