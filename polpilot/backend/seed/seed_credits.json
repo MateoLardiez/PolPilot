@@ -1,0 +1,72 @@
+[
+  {
+    "bank_name": "Banco Nación",
+    "credit_name": "Crédito PyME Inversión Productiva",
+    "credit_type": "inversion",
+    "annual_rate": 0.29,
+    "max_amount": 80000000,
+    "min_amount": 5000000,
+    "max_term_months": 48,
+    "requirements": "[\"Certificado PyME AFIP vigente\", \"Antigüedad mínima 2 años\", \"Sin deuda BCRA\", \"Presentar flujo de fondos proyectado\"]",
+    "requires_mipyme_cert": true,
+    "url": "https://www.bna.com.ar/Empresas/Pymes",
+    "source": "curated",
+    "last_verified": "2026-04-10"
+  },
+  {
+    "bank_name": "Banco Provincia",
+    "credit_name": "Línea Importaciones PyME",
+    "credit_type": "inversion",
+    "annual_rate": 0.26,
+    "max_amount": 60000000,
+    "min_amount": 3000000,
+    "max_term_months": 36,
+    "requirements": "[\"Certificado PyME\", \"Operación de comercio exterior documentada\", \"Sin deuda impositiva\"]",
+    "requires_mipyme_cert": true,
+    "url": "https://www.bancoprovincia.com.ar/web/pymes",
+    "source": "curated",
+    "last_verified": "2026-04-10"
+  },
+  {
+    "bank_name": "Banco Galicia",
+    "credit_name": "Crédito Capital de Trabajo",
+    "credit_type": "capital_trabajo",
+    "annual_rate": 0.38,
+    "max_amount": 30000000,
+    "min_amount": 1000000,
+    "max_term_months": 12,
+    "requirements": "[\"Cuenta corriente con 6 meses de antigüedad\", \"Facturación demostrable\"]",
+    "requires_mipyme_cert": false,
+    "url": "https://www.galicia.ar/empresas",
+    "source": "curated",
+    "last_verified": "2026-04-10"
+  },
+  {
+    "bank_name": "Ministerio de Producción",
+    "credit_name": "Programa FONDEP",
+    "credit_type": "inversion",
+    "annual_rate": 0.15,
+    "max_amount": 50000000,
+    "min_amount": 5000000,
+    "max_term_months": 60,
+    "requirements": "[\"Proyecto productivo aprobado\", \"Certificado PyME\", \"Matching funds 20%\"]",
+    "requires_mipyme_cert": true,
+    "url": "https://www.argentina.gob.ar/produccion/fondep",
+    "source": "curated",
+    "last_verified": "2026-04-10"
+  },
+  {
+    "bank_name": "Banco ICBC",
+    "credit_name": "Préstamo Comex",
+    "credit_type": "inversion",
+    "annual_rate": 0.08,
+    "max_amount": 120000000,
+    "min_amount": 10000000,
+    "max_term_months": 6,
+    "requirements": "[\"Historial importador\", \"Carta de crédito o orden de compra\", \"Garantía bancaria\"]",
+    "requires_mipyme_cert": false,
+    "url": "https://www.icbc.com.ar/empresas",
+    "source": "curated",
+    "last_verified": "2026-04-10"
+  }
+]

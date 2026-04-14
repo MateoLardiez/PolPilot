@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Pastillas de freno Ferodo",
+    "category": "Frenos",
+    "monthly_revenue": 10880000,
+    "margin_pct": 42.2,
+    "current_stock": 340,
+    "min_stock": 100,
+    "supplier_id": 1,
+    "notes": "Producto estrella. Alta rotación (12 días). Costo $18.500, venta $32.000."
+  },
+  {
+    "name": "Disco de freno ventilado VW Gol",
+    "category": "Frenos",
+    "monthly_revenue": 8160000,
+    "margin_pct": 38.2,
+    "current_stock": 120,
+    "min_stock": 40,
+    "supplier_id": 3,
+    "notes": "Rotación 18 días. Costo $42.000, venta $68.000. Importado Brasil."
+  },
+  {
+    "name": "Kit embrague Sachs Fiat",
+    "category": "Embragues",
+    "monthly_revenue": 19175000,
+    "margin_pct": 37.3,
+    "current_stock": 65,
+    "min_stock": 20,
+    "supplier_id": 2,
+    "notes": "Producto premium, alto ticket. Rotación 25 días. Costo $185.000, venta $295.000."
+  },
+  {
+    "name": "Cilindro maestro freno Toyota",
+    "category": "Frenos",
+    "monthly_revenue": 6975000,
+    "margin_pct": 38.7,
+    "current_stock": 45,
+    "min_stock": 15,
+    "supplier_id": 4,
+    "notes": "Importado Turquía. Rotación 30 días. Costo $95.000, venta $155.000."
+  },
+  {
+    "name": "Manguera freno universal",
+    "category": "Frenos",
+    "monthly_revenue": 4200000,
+    "margin_pct": 43.3,
+    "current_stock": 280,
+    "min_stock": 80,
+    "supplier_id": 5,
+    "notes": "Alta rotación (8 días), bajo ticket. Costo $8.500, venta $15.000."
+  },
+  {
+    "name": "Kit reparación cilindro embrague",
+    "category": "Embragues",
+    "monthly_revenue": 3200000,
+    "margin_pct": 45.0,
+    "current_stock": 90,
+    "min_stock": 30,
+    "supplier_id": 2,
+    "notes": "Producto accesorio del kit embrague. Buena rentabilidad."
+  }
+]

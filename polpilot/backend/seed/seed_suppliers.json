@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Frasle Argentina SA",
+    "avg_price_level": "$$",
+    "payment_terms_days": 30,
+    "delivery_time_hours": 48,
+    "reliability_pct": 95.0,
+    "is_primary": true,
+    "notes": "Pastillas y cintas de freno. Nacional. Proveedor principal. Monto mensual ~$8.5M."
+  },
+  {
+    "name": "Sachs Automotive",
+    "avg_price_level": "$$$",
+    "payment_terms_days": 60,
+    "delivery_time_hours": 72,
+    "reliability_pct": 92.0,
+    "is_primary": true,
+    "notes": "Embragues y kits. Nacional. Plazo largo de pago. Monto mensual ~$6.2M."
+  },
+  {
+    "name": "Fremax Brasil",
+    "avg_price_level": "$$",
+    "payment_terms_days": 30,
+    "delivery_time_hours": 168,
+    "reliability_pct": 88.0,
+    "is_primary": false,
+    "notes": "Discos de freno importados de Brasil. Anticipo 50% + 30 días. Monto mensual ~$4.8M."
+  },
+  {
+    "name": "Turk Fren Sanayi",
+    "avg_price_level": "$",
+    "payment_terms_days": 0,
+    "delivery_time_hours": 720,
+    "reliability_pct": 82.0,
+    "is_primary": false,
+    "notes": "Cilindros y bombas de freno de Turquía. Anticipo 100%. Entrega ~30 días. Monto mensual ~$3.4M."
+  },
+  {
+    "name": "Distri Repuestos Rosario",
+    "avg_price_level": "$$",
+    "payment_terms_days": 15,
+    "delivery_time_hours": 24,
+    "reliability_pct": 90.0,
+    "is_primary": false,
+    "notes": "Distribuidor complementario de varios repuestos. Nacional, entrega rápida. Monto mensual ~$2.8M."
+  }
+]
