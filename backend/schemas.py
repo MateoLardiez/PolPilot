@@ -1,0 +1,375 @@
+"""
+Pydantic schemas para PolPilot API.
+
+Secciones:
+  1. API pública — QueryRequest / QueryResponse (sin cambios, compatibilidad garantizada)
+  2. Schemas internos del orquestador (legacy, mantenidos para compatibilidad)
+  3. [NUEVO] Schemas del Super-Agente y su pipeline de skills
+  4. Memoria compartida, Context Store, Stop-Loss (sin cambios)
+
+Migración desde multiagente:
+  - QueryRequest / QueryResponse: sin cambios (contrato de API estable)
+  - OrchestratorMetadata: campo agents_activated ahora lista skills (no agentes)
+  - AgentQueryRequest / AgentQueryResponse: deprecated, solo usados por endpoints legacy
+  - Nuevos tipos: SkillName, SuperAgentPipelineStep
+"""
+
+from __future__ import annotations
+
+import uuid
+from enum import Enum
+from typing import Optional
+
+from pydantic import BaseModel, Field
+
+
+# ── Enums ──────────────────────────────────────────────
+
+class QueryType(str, Enum):
+    new_query = "new_query"
+    continuity = "continuity"
+    simple = "simple"
+
+
+class Complexity(str, Enum):
+    simple = "simple"
+    medium = "medium"
+    complex = "complex"
+
+
+class Urgency(str, Enum):
+    alta = "alta"
+    media = "media"
+    baja = "baja"
+
+
+class TopicName(str, Enum):
+    finanzas = "finanzas"
+    economia = "economia"
+    investigacion = "investigacion"
+
+
+# ── Request / Response del Gateway ─────────────────────
+
+class QueryRequest(BaseModel):
+    """Request que llega desde el frontend / WhatsApp."""
+    company_id: str
+    user_message: str
+    conversation_id: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
+    conversation_context: Optional[str] = None
+
+
+class DataPoint(BaseModel):
+    label: str
+    value: str
+    source: str
+
+
+class Recommendation(BaseModel):
+    action: str
+    impact: str
+    urgency: Urgency
+
+
+class ResponsePayload(BaseModel):
+    message: str
+    confidence: float = Field(ge=0, le=1)
+    sources_used: list[str]
+    key_data_points: list[DataPoint] = []
+    recommendations: list[Recommendation] = []
+    follow_up_suggestions: list[str] = []
+
+
+class OrchestratorMetadata(BaseModel):
+    conversation_id: str
+    iterations: int
+    agents_activated: list[str]
+    total_sub_questions: int
+    inter_agent_calls: int = 0
+    stop_loss_score: Optional[float] = None
+    stop_loss_decision: Optional[str] = None
+
+
+class QueryResponse(BaseModel):
+    """Response final que devuelve el Gateway al frontend."""
+    response: ResponsePayload
+    metadata: OrchestratorMetadata
+
+
+# ── Schemas internos del Orquestador ──────────────────
+
+class TopicExpansion(BaseModel):
+    relevance: float = Field(ge=0, le=1)
+    questions: list[str]
+
+
+class QuestionExpansion(BaseModel):
+    original_query: str
+    intent: str
+    complexity: Complexity
+    topics: dict[str, TopicExpansion]
+
+
+# ── Request / Response de los Agentes ─────────────────
+
+class AgentQueryRequest(BaseModel):
+    """Lo que el orquestador envía a cada agente."""
+    thread_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    original_query: str
+    questions: list[str]
+    company_id: str
+    conversation_context: Optional[str] = None
+
+
+class AgentAnswer(BaseModel):
+    question: str
+    answer: str
+    confidence: float = Field(ge=0, le=1)
+    data_points: list[DataPoint] = []
+
+
+class AgentQueryResponse(BaseModel):
+    """Lo que cada agente devuelve al orquestador."""
+    thread_id: str
+    topic: str
+    answers: list[AgentAnswer]
+    summary: str
+    needs_external_support: bool = False
+    external_support_question: Optional[str] = None
+
+
+# ── Stop-Loss / Repreguntas ───────────────────────────
+
+class StopLossCheck(BaseModel):
+    maintains_original_objective: bool
+    adding_value: bool
+    max_iterations_reached: bool
+
+
+class FollowUpEvaluation(BaseModel):
+    needs_follow_up: bool
+    reason: Optional[str] = None
+    follow_up_questions: dict[str, list[str]] = {}
+    iteration_count: int
+    stop_loss_check: StopLossCheck
+
+
+# ── Colaboración Inter-Agente ─────────────────────────
+
+class ArtifactType(str, Enum):
+    FACT = "FACT"
+    CLAIM = "CLAIM"
+    RECOMMENDATION = "RECOMMENDATION"
+    VALIDATION = "VALIDATION"
+
+
+class ArtifactStatus(str, Enum):
+    pending = "pending"
+    resolved = "resolved"
+    rejected = "rejected"
+
+
+class Artifact(BaseModel):
+    """Artefacto estructurado que los agentes producen e intercambian."""
+    artifact_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    artifact_type: ArtifactType
+    source_agent: str
+    data: dict
+    confidence: float = Field(ge=0, le=1)
+    context_ref: Optional[str] = None
+    created_at: Optional[str] = Field(default_factory=lambda: __import__("datetime").datetime.now().isoformat())
+
+
+class SupportRequest(BaseModel):
+    """Solicitud de un agente a otro vía el Gateway/Auditor."""
+    request_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    source_agent: str
+    target_agent: str
+    question: str
+    context_payload: Optional[dict] = None
+    company_id: str
+    thread_id: Optional[str] = None
+    original_query: Optional[str] = None
+
+
+class SupportResponse(BaseModel):
+    """Respuesta a un support_request."""
+    request_id: str
+    source_agent: str
+    target_agent: str
+    artifacts: list[Artifact] = []
+    summary: str
+    resolved: bool = True
+
+
+class BrokerMessage(BaseModel):
+    """Mensaje interno del Message Broker."""
+    message_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    from_agent: str
+    to_agent: str
+    message_type: str  # "support_request" | "support_response" | "artifact_delivery" | "notification"
+    payload: dict
+    status: str = "pending"  # "pending" | "delivered" | "processed"
+    created_at: Optional[str] = Field(default_factory=lambda: __import__("datetime").datetime.now().isoformat())
+
+
+class ContextEntry(BaseModel):
+    """Entrada en el Context Store (estado compartido)."""
+    key: str
+    value: dict
+    source_agent: str
+    version: int = 1
+    memory_priority: str = "M_conv"  # "M_int" (máxima) | "M_onb" (media) | "M_conv" (baja)
+    updated_at: Optional[str] = Field(default_factory=lambda: __import__("datetime").datetime.now().isoformat())
+
+
+class CollaborationLog(BaseModel):
+    """Log de una interacción inter-agente completa."""
+    thread_id: str
+    support_requests: list[SupportRequest] = []
+    support_responses: list[SupportResponse] = []
+    artifacts_exchanged: list[Artifact] = []
+    total_inter_calls: int = 0
+
+
+# ── Memoria Compartida ────────────────────────────────
+
+class MemoryMessageRole(str, Enum):
+    user = "user"
+    assistant = "assistant"
+    system = "system"
+
+
+class MemoryMessage(BaseModel):
+    """Mensaje individual en la memoria conversacional."""
+    message_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    role: MemoryMessageRole
+    content: str
+    company_id: str
+    conversation_id: str
+    timestamp: str = Field(default_factory=lambda: __import__("datetime").datetime.now().isoformat())
+    metadata: Optional[dict] = None  # agents_used, topics, etc.
+
+
+class MergeSummary(BaseModel):
+    """Resumen incremental (merge summary) de una conversación."""
+    summary_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    company_id: str
+    conversation_id: str
+    summary_text: str
+    messages_covered: int  # cuántos mensajes cubre este resumen
+    iteration: int  # número de merge (1, 2, 3...)
+    key_facts: list[str] = []  # hechos clave extraídos
+    created_at: str = Field(default_factory=lambda: __import__("datetime").datetime.now().isoformat())
+
+
+class QueryLogEntry(BaseModel):
+    """Registro del query log del orquestador."""
+    log_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    company_id: str
+    conversation_id: str
+    original_query: str
+    expanded_topics: dict[str, list[str]]  # topic → [sub-preguntas]
+    agents_activated: list[str]
+    iterations: int
+    stop_loss_decision: str  # "CONTINUE" | "STOP_MARGINAL" | "STOP_BUDGET" | "STOP_MAX_ITER"
+    stop_loss_score: Optional[float] = None
+    inter_agent_calls: int = 0
+    total_tokens_estimated: int = 0
+    processing_time_ms: int = 0
+    created_at: str = Field(default_factory=lambda: __import__("datetime").datetime.now().isoformat())
+
+
+class ConversationState(BaseModel):
+    """Estado completo de una conversación activa."""
+    conversation_id: str
+    company_id: str
+    messages: list[MemoryMessage] = []
+    summaries: list[MergeSummary] = []
+    query_log: list[QueryLogEntry] = []
+    active_context: Optional[str] = None  # último merge summary
+    total_messages: int = 0
+    created_at: str = Field(default_factory=lambda: __import__("datetime").datetime.now().isoformat())
+
+
+# ── Stop-Loss Cognitivo ───────────────────────────────
+
+class StopLossDecision(str, Enum):
+    CONTINUE = "CONTINUE"
+    STOP_MARGINAL = "STOP_MARGINAL"       # utilidad marginal baja
+    STOP_BUDGET = "STOP_BUDGET"           # presupuesto agotado
+    STOP_MAX_ITER = "STOP_MAX_ITER"       # máximo de iteraciones
+
+
+class StopLossMetrics(BaseModel):
+    """Métricas de ganancia (positivas) del Stop-Loss."""
+    relevance: float = Field(ge=0, le=1, default=0.0)           # R: similitud con query raíz
+    novelty: float = Field(ge=0, le=1, default=0.0)             # N: info nueva vs previa
+    coverage_gain: float = Field(ge=0, le=1, default=0.0)       # G: KPIs resueltos
+    contradiction_resolution: float = Field(ge=0, le=1, default=0.0)  # CR: contradicciones resueltas
+
+
+class StopLossRisks(BaseModel):
+    """Métricas de riesgo/gasto (negativas) del Stop-Loss."""
+    drift_risk: float = Field(ge=0, le=1, default=0.0)          # deriva semántica
+    redundancy: float = Field(ge=0, le=1, default=0.0)          # repetición
+    cost: float = Field(ge=0, le=1, default=0.0)                # tokens + inter-calls
+
+
+class StopLossEvaluation(BaseModel):
+    """Resultado completo de una evaluación de Stop-Loss."""
+    iteration: int
+    metrics: StopLossMetrics
+    risks: StopLossRisks
+    score: float                              # (Utilidad) - (Sobrecosto)
+    threshold: float = 0.18                   # umbral mínimo
+    budget_remaining: float = Field(ge=0, le=1)  # 0.0 = agotado
+    decision: StopLossDecision
+    reason: str
+    suggested_new_topics: list[str] = []      # sub-tópicos sugeridos si CONTINUE
+
+
+# ── Super-Agente: tipos del pipeline de skills ────────
+# Nuevos en v2 (migración multiagente → super-agente)
+
+class SkillName(str, Enum):
+    """Skills disponibles en el super-agente."""
+    ingest = "ingest"
+    client_db = "client_db"
+    novelty = "novelty"
+    classify = "classify"
+    finanzas_data = "finanzas_data"
+    economia_data = "economia_data"
+    investigacion_data = "investigacion_data"
+    synthesize = "synthesize"
+    memory_write = "memory_write"
+
+
+class SuperAgentPipelineStep(BaseModel):
+    """
+    Registro de un paso del pipeline del super-agente.
+    Permite trazar la ejecución para debugging y auditoría.
+    """
+    skill: SkillName
+    status: str = "ok"          # "ok" | "skipped" | "error"
+    duration_ms: Optional[int] = None
+    notes: Optional[str] = None
+
+
+class SuperAgentMetadata(BaseModel):
+    """
+    Metadata detallada del super-agente (v2).
+
+    Para compatibilidad de API, OrchestratorMetadata sigue siendo
+    el schema del response. SuperAgentMetadata es para logging interno.
+    """
+    conversation_id: str
+    pipeline_steps: list[SuperAgentPipelineStep] = []
+    primary_topic: str = "mixed"
+    intent: str = "consulta general"
+    complexity: str = "simple"
+    active_topics: list[str] = []
+    sub_questions_count: int = 0
+    has_live_data: bool = False
+    has_real_db_data: bool = False
+    processing_time_ms: int = 0
