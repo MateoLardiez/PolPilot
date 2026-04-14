@@ -37,7 +37,7 @@ from services.agent_finanzas import query_finanzas
 from services.context_store import context_store
 from services.message_broker import message_broker
 from services.orchestrator import process_query
-from services.data_bridge import ensure_initialized, run_seed
+from services.data_bridge import ensure_initialized, run_seed, run_external_sync, get_live_dollar_rates
 
 
 # ── Lifespan ───────────────────────────────────────────
@@ -323,6 +323,39 @@ async def db_init(empresa_id: str):
     if not result.get("success"):
         raise HTTPException(status_code=500, detail=result.get("error", "Seed falló"))
     return result
+
+
+@app.post("/db/sync/{empresa_id}")
+async def db_sync(empresa_id: str, mode: str = "all"):
+    """
+    Sincroniza datos externos en tiempo real desde las APIs del BCRA y DolarAPI.
+
+    Query param `mode`:
+      - 'all'     → macro + perfil crediticio BCRA + catálogo de créditos bancarios
+      - 'macro'   → solo tasas, inflación, tipos de cambio
+      - 'credits' → solo catálogo de préstamos BCRA Transparencia
+      - 'profile' → solo perfil crediticio BCRA Central de Deudores
+
+    Requiere que la DB esté inicializada (POST /db/init primero).
+    """
+    result = run_external_sync(empresa_id, mode=mode)
+    if not result.get("success"):
+        raise HTTPException(status_code=500, detail=result.get("error", "Sync falló"))
+    return result
+
+
+@app.get("/market/dolares")
+async def market_dolares():
+    """
+    Retorna los tipos de cambio en tiempo real desde DolarAPI.com.
+    No requiere empresa_id ni DB inicializada.
+
+    Incluye: oficial, blue, mep (bolsa), ccl, cripto, tarjeta, mayorista.
+    """
+    rates = get_live_dollar_rates()
+    if not rates:
+        raise HTTPException(status_code=503, detail="No se pudo obtener cotizaciones")
+    return {"source": "dolarapi.com", "rates": rates}
 
 
 # ── Run ────────────────────────────────────────────────

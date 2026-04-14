@@ -46,6 +46,14 @@ try:
         start_conversation,
     )
     from data.db import init_databases
+    from data.external_fetcher import (
+        sync_all_external_data,
+        sync_macro_indicators,
+        sync_credit_profile,
+        sync_available_credits,
+        fetch_dollar_snapshot,
+        fetch_key_macro_variables,
+    )
     _POLPILOT_AVAILABLE = True
 except ImportError as e:
     _POLPILOT_AVAILABLE = False
@@ -378,3 +386,55 @@ def log_orchestrator_query(
         )
     except Exception:
         pass  # logging no debe romper el flujo principal
+
+
+# ── External data sync (APIs BCRA + DolarAPI) ─────────────────────────────────
+
+def run_external_sync(empresa_id: str, mode: str = "all") -> dict:
+    """
+    Sincroniza datos externos en tiempo real desde las APIs del BCRA y DolarAPI.
+
+    mode:
+      'all'     → macro + credit_profile + créditos bancarios
+      'macro'   → solo macro_indicators (tasas, inflación, tipos de cambio)
+      'credits' → solo catálogo de préstamos BCRA Transparencia
+      'profile' → solo perfil crediticio BCRA Central de Deudores
+
+    Retorna dict con resultados por categoría.
+    """
+    if not _POLPILOT_AVAILABLE:
+        return {"success": False, "error": "data module not available"}
+
+    try:
+        if mode == "all":
+            results = sync_all_external_data(empresa_id)
+        elif mode == "macro":
+            count = sync_macro_indicators(empresa_id)
+            results = {"macro_indicators": count}
+        elif mode == "credits":
+            count = sync_available_credits(empresa_id)
+            results = {"available_credits": count}
+        elif mode == "profile":
+            profile = sync_credit_profile(empresa_id)
+            results = {"credit_profile": "ok" if profile else "no_data"}
+        else:
+            return {"success": False, "error": f"mode '{mode}' no válido"}
+
+        return {"success": True, "empresa_id": empresa_id, **results}
+    except Exception as exc:
+        return {"success": False, "error": str(exc)}
+
+
+def get_live_dollar_rates() -> dict:
+    """
+    Obtiene los tipos de cambio en tiempo real desde DolarAPI.com.
+    No requiere DB inicializada — consulta directamente la API.
+
+    Retorna dict con oficial, blue, mep, ccl, cripto, tarjeta, mayorista.
+    """
+    if not _POLPILOT_AVAILABLE:
+        return {}
+    try:
+        return fetch_dollar_snapshot()
+    except Exception:
+        return {}
