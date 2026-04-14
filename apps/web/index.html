@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PolPilot — Sistema Operativo de Inteligencia Empresarial</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
 /* ═══════════════════════════════════════════════
    CSS RESET & VARIABLES
@@ -1365,6 +1367,9 @@ tr:last-child td { border-bottom: none; }
       <div class="sidebar-item" data-view="mercado">
         <span class="icon">📊</span> Contexto Económico
       </div>
+      <div class="sidebar-item" data-view="creditos">
+        <span class="icon">🏦</span> Créditos y Financiamiento
+      </div>
       <div class="sidebar-item" data-view="legal">
         <span class="icon">⚖️</span> Legal y Regulatorio
       </div>
@@ -1410,7 +1415,7 @@ tr:last-child td { border-bottom: none; }
     <div class="topbar">
       <div class="topbar-left">
         <h2 id="topbar-title">Inicio</h2>
-        <div class="topbar-date">Lunes 23 de marzo, 2026</div>
+        <div class="topbar-date">Lunes 14 de abril, 2026</div>
       </div>
       <div class="topbar-right">
         <div class="topbar-badge plan">✈️ Comandante</div>
@@ -1441,18 +1446,18 @@ tr:last-child td { border-bottom: none; }
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px;">
             <div style="padding:20px;background:rgba(0,196,140,0.08);border-radius:13px;border:1px solid rgba(0,196,140,0.22);position:relative;overflow:hidden;">
               <div style="position:absolute;top:-12px;right:-12px;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle,rgba(0,196,140,0.18) 0%,transparent 70%);pointer-events:none;"></div>
-              <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.9px;color:var(--green);margin-bottom:10px;">💰 Valor generado</div>
-              <div style="font-size:2rem;font-weight:800;color:white;line-height:1;">$781.000</div>
-              <div style="font-size:0.7rem;color:rgba(255,255,255,0.42);margin-top:6px;">este mes · Taller Calatayud</div>
-              <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.07);font-size:0.68rem;color:var(--green);font-weight:600;">↑ Tendencia positiva</div>
+              <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.9px;color:var(--green);margin-bottom:10px;">💰 Facturación mensual</div>
+              <div style="font-size:2rem;font-weight:800;color:white;line-height:1;">$56.5M</div>
+              <div style="font-size:0.7rem;color:rgba(255,255,255,0.42);margin-top:6px;">marzo 2026 · Calatayud Frenos y Embragues</div>
+              <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.07);font-size:0.68rem;color:var(--green);font-weight:600;">↑ 13.5% vs. febrero</div>
             </div>
 
             <div style="padding:20px;background:rgba(0,87,255,0.08);border-radius:13px;border:1px solid rgba(0,87,255,0.22);position:relative;overflow:hidden;">
               <div style="position:absolute;top:-12px;right:-12px;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle,rgba(0,87,255,0.18) 0%,transparent 70%);pointer-events:none;"></div>
-              <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.9px;color:var(--blue);margin-bottom:10px;">🏦 Caja neta</div>
-              <div style="font-size:2rem;font-weight:800;color:white;line-height:1;">$890.000</div>
-              <div style="font-size:0.7rem;color:rgba(255,255,255,0.42);margin-top:6px;">3 facturas cobradas esta semana</div>
-              <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.07);font-size:0.68rem;color:var(--blue);font-weight:600;">✓ Flujo positivo</div>
+              <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.9px;color:var(--coral);margin-bottom:10px;">🏦 Caja neta</div>
+              <div style="font-size:2rem;font-weight:800;color:white;line-height:1;">$1.1M</div>
+              <div style="font-size:0.7rem;color:rgba(255,255,255,0.42);margin-top:6px;">saldo disponible — marzo 2026</div>
+              <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.07);font-size:0.68rem;color:var(--coral);font-weight:600;">⚠ Flujo negativo este mes</div>
             </div>
 
             <div style="padding:20px;background:linear-gradient(135deg,rgba(0,196,140,0.1),rgba(0,87,255,0.06));border-radius:13px;border:1px solid rgba(255,255,255,0.1);position:relative;overflow:hidden;">
@@ -1489,7 +1494,7 @@ tr:last-child td { border-bottom: none; }
                 </g>
               </svg>
               <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-52%);text-align:center;">
-                <div style="font-size:1.7rem;font-weight:800;color:var(--text);line-height:1;">78</div>
+                <div id="health-score-number" style="font-size:1.7rem;font-weight:800;color:var(--text);line-height:1;">58</div>
                 <div style="font-size:0.62rem;font-weight:600;color:var(--text-secondary);margin-top:1px;">/100</div>
               </div>
             </div>
@@ -1498,17 +1503,17 @@ tr:last-child td { border-bottom: none; }
             <div style="flex:1;min-width:200px;">
               <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
                 <div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-secondary);">Score de Salud del Negocio</div>
-                <span style="font-size:0.6rem;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--green-light);color:var(--green);border:1px solid rgba(0,196,140,0.25);">Buena forma</span>
+                <span style="font-size:0.6rem;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--yellow-light);color:#B8860B;border:1px solid rgba(255,184,0,0.3);">Atención necesaria</span>
               </div>
-              <div style="font-size:0.88rem;color:var(--text);margin-bottom:14px;line-height:1.4;">Tu taller está funcionando bien. <strong>2 alertas activas</strong> que conviene resolver esta semana.</div>
+              <div style="font-size:0.88rem;color:var(--text);margin-bottom:14px;line-height:1.4;">Flujo de caja negativo y liquidez ajustada. <strong>4 alertas activas</strong> que requieren acción inmediata.</div>
 
               <!-- Sub-scores row -->
               <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
-                <div style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:var(--green-light);border:1px solid rgba(0,196,140,0.2);">
+                <div style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:var(--coral-light);border:1px solid rgba(255,96,68,0.3);">
                   <span style="font-size:0.75rem;">💰</span>
                   <div>
                     <div style="font-size:0.58rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.3px;">Caja</div>
-                    <div style="font-size:0.82rem;font-weight:800;color:var(--green);">85</div>
+                    <div style="font-size:0.82rem;font-weight:800;color:var(--coral);">32 ⚠</div>
                   </div>
                 </div>
                 <div style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:var(--green-light);border:1px solid rgba(0,196,140,0.2);">
@@ -1522,21 +1527,21 @@ tr:last-child td { border-bottom: none; }
                   <span style="font-size:0.75rem;">👥</span>
                   <div>
                     <div style="font-size:0.58rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.3px;">Cobros</div>
-                    <div style="font-size:0.82rem;font-weight:800;color:#B8860B;">60 ⚠</div>
+                    <div style="font-size:0.82rem;font-weight:800;color:#B8860B;">55 ⚠</div>
                   </div>
                 </div>
                 <div style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:var(--green-light);border:1px solid rgba(0,196,140,0.2);">
                   <span style="font-size:0.75rem;">⚖️</span>
                   <div>
                     <div style="font-size:0.58rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.3px;">Legal</div>
-                    <div style="font-size:0.82rem;font-weight:800;color:var(--green);">95</div>
+                    <div style="font-size:0.82rem;font-weight:800;color:var(--green);">90</div>
                   </div>
                 </div>
                 <div style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:var(--yellow-light);border:1px solid rgba(255,184,0,0.3);">
-                  <span style="font-size:0.75rem;">🏭</span>
+                  <span style="font-size:0.75rem;">🏦</span>
                   <div>
-                    <div style="font-size:0.58rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.3px;">Equipo</div>
-                    <div style="font-size:0.82rem;font-weight:800;color:#B8860B;">78 ⚠</div>
+                    <div style="font-size:0.58rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.3px;">Crédito</div>
+                    <div style="font-size:0.82rem;font-weight:800;color:var(--green);">85</div>
                   </div>
                 </div>
               </div>
@@ -1582,29 +1587,29 @@ tr:last-child td { border-bottom: none; }
             </div>
           </div>
           <div class="angela-text">
-            Buenos días, Gonzalo. <strong>Tu score de salud hoy es 78/100 — subió 3 puntos esta semana.</strong> Las ventas subieron 12% y cobraste 3 facturas pendientes. Hay una oportunidad de stockearse en pastillas antes de la VTV de abril. El único punto a resolver: Gutiérrez lleva 47 días sin pagarte. Arranquemos. 💪
+            Gonzalo, <strong>tu score de salud bajó a 58/100 — necesita atención.</strong> Marzo cerró con flujo negativo de -$2.07M por pago a proveedores de importación. Caja en $1.1M, capital de trabajo negativo (-$8.1M). Pero tu perfil BCRA está limpio (Situación 1) y hay <strong>3 créditos a los que calificás hoy</strong>. Mi recomendación: actuar esta semana. <a href="#" onclick="switchView('creditos'); return false;" style="color:var(--blue);font-weight:700;">Ver créditos disponibles →</a>
           </div>
         </div>
 
         <div class="section-title">🎯 Prioridades de esta semana</div>
         <div class="grid-3">
-          <div class="priority-card opportunity">
-            <div class="pc-icon">🔵</div>
-            <div class="pc-title">Oportunidad: Pre-VTV abril</div>
-            <div class="pc-text">La demanda de pastillas y discos sube 40% en abril. Ferrante tiene stock a precio de febrero. Comprando esta semana ahorrás <strong>$187.000</strong>.</div>
-            <div class="pc-action"><button class="btn btn-primary btn-sm" onclick="showToast('📦 Orden de compra generada y enviada a Ferrante')">Ver orden de compra</button></div>
+          <div class="priority-card" style="border-left:3px solid var(--coral);background:linear-gradient(135deg,rgba(255,96,68,0.06),rgba(255,96,68,0.02));">
+            <div class="pc-icon">🚨</div>
+            <div class="pc-title" style="color:var(--coral);">Urgente: Flujo de caja negativo</div>
+            <div class="pc-text">Marzo cerró con <strong>-$2.07M de flujo neto</strong> por pago a proveedores de importación. Caja en $1.1M — menos de 1 día de operación. Necesitás inyección de liquidez.</div>
+            <div class="pc-action"><button class="btn btn-primary btn-sm" onclick="switchView('creditos')">🏦 Ver créditos disponibles</button></div>
           </div>
           <div class="priority-card warning">
             <div class="pc-icon">🟡</div>
-            <div class="pc-title">Atención: Transporte Gutiérrez</div>
-            <div class="pc-text">Lleva <strong>47 días sin pagarte</strong> — $340.000. Es tu 2do mejor cliente pero el patrón de atraso se repite. ¿Mandamos recordatorio?</div>
-            <div class="pc-action"><button class="btn btn-outline btn-sm" onclick="showToast('💬 Recordatorio enviado a Gutiérrez por WhatsApp')">Enviar recordatorio</button></div>
+            <div class="pc-title">3 clientes morosos — $1M en riesgo</div>
+            <div class="pc-text"><strong>Lubricentro San Martín</strong> (95 días, $450K), <strong>Taller Rossi</strong> (120 días, $320K) y <strong>Frenos del Sur</strong> (105 días, $230K). Promedio 107 días de atraso.</div>
+            <div class="pc-action"><button class="btn btn-outline btn-sm" onclick="switchView('finanzas')">Ver detalle de morosos</button></div>
           </div>
           <div class="priority-card opportunity" style="border-left:3px solid var(--green);background:linear-gradient(135deg,rgba(0,196,140,0.06),rgba(0,87,255,0.04));">
             <div class="pc-icon">🎉</div>
-            <div class="pc-title" style="color:var(--green);font-size:0.95rem;">Pre-calificaste para Línea BCRA 29% TNA</div>
-            <div class="pc-text">La tasa del 29% está <strong>por debajo de la inflación proyectada</strong>. Si usamos este crédito de $4M para comprar el Elevador Hidráulico ahora, aumentamos la capacidad operativa un 15% y aseguramos llegar al objetivo anual de $20M de facturación.<br><br><span style="font-size:0.72rem;color:var(--text-secondary);">PolPilot generó tu Carpeta Crediticia automáticamente con tu Vista Bancaria.</span></div>
-            <div class="pc-action"><button class="btn btn-primary btn-sm" onclick="showToast('📥 Carpeta Crediticia descargada — lista para presentar en Banco Nación')">🏦 Descargar Carpeta para Banco</button></div>
+            <div class="pc-title" style="color:var(--green);font-size:0.95rem;">Calificás a 3 créditos PyME — desde 15% TNA</div>
+            <div class="pc-text">Tu perfil BCRA es <strong>Situación 1 sin deuda</strong>. Banco Provincia a 26% TNA para importación, Banco Nación a 29% TNA, y FONDEP a 15% TNA subsidiada. Ideales para resolver la caja y stockear importados.<br><br><span style="font-size:0.72rem;color:var(--text-secondary);">PolPilot analizó tu perfil vs. requisitos de cada línea.</span></div>
+            <div class="pc-action"><button class="btn btn-primary btn-sm" onclick="switchView('creditos')">🏦 Ver análisis de créditos</button></div>
           </div>
         </div>
 
@@ -1612,18 +1617,23 @@ tr:last-child td { border-bottom: none; }
         <div class="card">
           <div class="todo-item">
             <div class="todo-check" onclick="this.classList.toggle('checked'); this.nextElementSibling.classList.toggle('done')"></div>
-            <span class="todo-text">Confirmar orden de compra de pastillas a Ferrante (ahorro $187K)</span>
-            <span class="todo-module tag blue">Compras</span>
+            <span class="todo-text">Evaluar crédito Banco Provincia — Línea Importaciones PyME (26% TNA, hasta $60M)</span>
+            <span class="todo-module tag blue">Créditos</span>
           </div>
           <div class="todo-item">
             <div class="todo-check" onclick="this.classList.toggle('checked'); this.nextElementSibling.classList.toggle('done')"></div>
-            <span class="todo-text">Revisar y enviar recordatorio de cobro a Transporte Gutiérrez</span>
-            <span class="todo-module tag coral">CFO</span>
+            <span class="todo-text">Activar gestión de cobranza a 3 morosos — $1M en deuda acumulada</span>
+            <span class="todo-module tag coral">Cobranzas</span>
           </div>
           <div class="todo-item">
             <div class="todo-check" onclick="this.classList.toggle('checked'); this.nextElementSibling.classList.toggle('done')"></div>
-            <span class="todo-text">Presentar perfil financiero al Banco Nación para línea PyME</span>
-            <span class="todo-module tag yellow">Legal</span>
+            <span class="todo-text">Confirmar pedido de importación de discos Fremax (stock al mínimo)</span>
+            <span class="todo-module tag yellow">Compras</span>
+          </div>
+          <div class="todo-item">
+            <div class="todo-check" onclick="this.classList.toggle('checked'); this.nextElementSibling.classList.toggle('done')"></div>
+            <span class="todo-text">Revisar regulación AFIP 5432/2025 — régimen simplificado de importación PyME</span>
+            <span class="todo-module tag blue">Legal</span>
           </div>
         </div>
 
@@ -1633,38 +1643,38 @@ tr:last-child td { border-bottom: none; }
             <div class="card-title">🏭 Tu negocio</div>
             <div class="pulse-item">
               <div class="pulse-dot" style="background:var(--green)"></div>
-              <div class="pulse-text">Ventas semana: <strong style="color:var(--text)">$1.240.000</strong> — 12% arriba vs. semana pasada</div>
-            </div>
-            <div class="pulse-item">
-              <div class="pulse-dot" style="background:var(--green)"></div>
-              <div class="pulse-text">3 facturas cobradas por <strong style="color:var(--text)">$520.000</strong>. Caja neta: $890.000</div>
-            </div>
-            <div class="pulse-item">
-              <div class="pulse-dot" style="background:var(--yellow)"></div>
-              <div class="pulse-text">Stock de discos ventilados al 23%. Reabastecer antes del 2 de abril.</div>
+              <div class="pulse-text">Facturación marzo: <strong style="color:var(--text)">$56.5M</strong> — 13.5% arriba vs. febrero</div>
             </div>
             <div class="pulse-item">
               <div class="pulse-dot" style="background:var(--coral)"></div>
-              <div class="pulse-text">1 moroso crítico: Gutiérrez ($340K, 47 días)</div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">🌐 Tu sector <span class="tag blue" style="font-size:0.65rem; margin-left:8px;">847 talleres</span></div>
-            <div class="pulse-item">
-              <div class="pulse-dot" style="background:var(--blue)"></div>
-              <div class="pulse-text">Pastillas de freno: <strong style="color:var(--text)">precio subiendo 6%</strong> esta semana en el sector</div>
+              <div class="pulse-text">Flujo neto negativo: <strong style="color:var(--coral)">-$2.07M</strong>. Pago fuerte a proveedores de importación.</div>
             </div>
             <div class="pulse-item">
-              <div class="pulse-dot" style="background:var(--green)"></div>
-              <div class="pulse-text">Demanda pre-VTV estable vs 2025. Se espera pico la 2da semana de abril.</div>
+              <div class="pulse-dot" style="background:var(--coral)"></div>
+              <div class="pulse-text">Caja en <strong style="color:var(--coral)">$1.1M</strong> — capital de trabajo negativo (-$8.1M)</div>
             </div>
             <div class="pulse-item">
               <div class="pulse-dot" style="background:var(--yellow)"></div>
-              <div class="pulse-text">62% de talleres reportan retrasos de proveedores de +3 días esta semana</div>
+              <div class="pulse-text">3 morosos: $1M acumulados. Promedio 107 días de atraso.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">🌐 Tu sector <span class="tag blue" style="font-size:0.65rem; margin-left:8px;">Repuestos automotores</span></div>
+            <div class="pulse-item">
+              <div class="pulse-dot" style="background:var(--green)"></div>
+              <div class="pulse-text">Aumento de demanda por <strong style="color:var(--text)">desregulación de importaciones</strong> — impacto alto</div>
+            </div>
+            <div class="pulse-item">
+              <div class="pulse-dot" style="background:var(--green)"></div>
+              <div class="pulse-text">Baja de precios en importados: <strong style="color:var(--green)">-15% promedio</strong> en discos y pastillas</div>
             </div>
             <div class="pulse-item">
               <div class="pulse-dot" style="background:var(--blue)"></div>
-              <div class="pulse-text">Línea de crédito BCRA para PyMEs al 29% TNA — <strong style="color:var(--text)">tu negocio califica</strong></div>
+              <div class="pulse-text">Tu margen bruto (31.7%) está <strong style="color:var(--text)">por encima del sector (30%)</strong></div>
+            </div>
+            <div class="pulse-item">
+              <div class="pulse-dot" style="background:var(--blue)"></div>
+              <div class="pulse-text">Decreto 124/2026: bonificación 5 pts en tasa créditos PyME — <strong style="color:var(--text)">tu negocio califica</strong></div>
             </div>
           </div>
         </div>
@@ -2140,50 +2150,33 @@ tr:last-child td { border-bottom: none; }
         </div>
         <div class="grid-4" style="margin-bottom:24px;">
           <div class="metric-card">
-            <div class="metric-label">Ventas del mes</div>
-            <div class="metric-value gradient-text-positive">$4.8M</div>
-            <div class="metric-change positive">↑ 14% vs. febrero</div>
+            <div class="metric-label">Facturación marzo</div>
+            <div class="metric-value gradient-text-positive">$56.5M</div>
+            <div class="metric-change positive">↑ 13.5% vs. febrero</div>
           </div>
           <div class="metric-card">
             <div class="metric-label">Caja disponible</div>
-            <div class="metric-value gradient-text-positive">$890K</div>
-            <div class="metric-change positive">↑ Cobraste $520K esta semana</div>
+            <div class="metric-value gradient-text-negative">$1.1M</div>
+            <div class="metric-change negative">↓ Flujo negativo -$2.07M</div>
           </div>
           <div class="metric-card">
             <div class="metric-label">Por cobrar</div>
-            <div class="metric-value gradient-text-negative">$780K</div>
-            <div class="metric-change negative">$340K con más de 30 días</div>
+            <div class="metric-value gradient-text-negative">$14.2M</div>
+            <div class="metric-change negative">$1M con más de 90 días</div>
           </div>
           <div class="metric-card">
             <div class="metric-label">Salud del negocio</div>
-            <div class="metric-value" style="color:var(--green)">75/100</div>
-            <div class="metric-change positive">↑ 3 puntos vs. febrero</div>
+            <div class="metric-value" style="color:var(--yellow)">58/100</div>
+            <div class="metric-change negative">↓ 14 puntos vs. Q4 2025</div>
           </div>
         </div>
 
         <div class="grid-2">
           <div class="card">
-            <div class="card-title">📈 Cash Flow proyectado — 90 días</div>
-            <div class="bar-chart">
-              <div class="bar-group"><div class="bar-pair"><div class="bar income" style="height:120px"></div><div class="bar expense" style="height:90px"></div></div><div class="bar-label">Sem 1</div></div>
-              <div class="bar-group"><div class="bar-pair"><div class="bar income" style="height:100px"></div><div class="bar expense" style="height:95px"></div></div><div class="bar-label">Sem 2</div></div>
-              <div class="bar-group"><div class="bar-pair"><div class="bar income" style="height:160px"></div><div class="bar expense" style="height:100px"></div></div><div class="bar-label">Sem 3</div></div>
-              <div class="bar-group"><div class="bar-pair"><div class="bar income" style="height:180px"></div><div class="bar expense" style="height:105px"></div></div><div class="bar-label">Abr S1</div></div>
-              <div class="bar-group"><div class="bar-pair"><div class="bar income" style="height:190px"></div><div class="bar expense" style="height:110px"></div></div><div class="bar-label">Abr S2</div></div>
-              <div class="bar-group"><div class="bar-pair"><div class="bar income" style="height:170px"></div><div class="bar expense" style="height:108px"></div></div><div class="bar-label">Abr S3</div></div>
-              <div class="bar-group"><div class="bar-pair"><div class="bar income" style="height:150px"></div><div class="bar expense" style="height:100px"></div></div><div class="bar-label">Abr S4</div></div>
-              <div class="bar-group"><div class="bar-pair"><div class="bar income" style="height:130px"></div><div class="bar expense" style="height:98px"></div></div><div class="bar-label">May S1</div></div>
-              <div class="bar-group"><div class="bar-pair"><div class="bar income" style="height:125px"></div><div class="bar expense" style="height:95px"></div></div><div class="bar-label">May S2</div></div>
-              <div class="bar-group"><div class="bar-pair"><div class="bar income" style="height:118px"></div><div class="bar expense" style="height:92px"></div></div><div class="bar-label">May S3</div></div>
-              <div class="bar-group"><div class="bar-pair"><div class="bar income" style="height:115px"></div><div class="bar expense" style="height:90px"></div></div><div class="bar-label">May S4</div></div>
-              <div class="bar-group"><div class="bar-pair"><div class="bar income" style="height:110px"></div><div class="bar expense" style="height:88px"></div></div><div class="bar-label">Jun S1</div></div>
-            </div>
-            <div class="chart-legend">
-              <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--blue)"></div> Ingresos proyectados</div>
-              <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--coral); opacity:0.7"></div> Egresos proyectados</div>
-            </div>
-            <div style="margin-top:14px; padding:12px 16px; background:var(--green-light); border-radius:8px; font-size:0.82rem; color:var(--text);">
-              💡 <strong>Ángela dice:</strong> Abril es tu mejor mes proyectado. La VTV dispara demanda de frenos un 40%. Aprovechá para cobrar y stockearte antes de que suban los precios.
+            <div class="card-title">📈 Ingresos vs. Egresos — Últimos 6 meses</div>
+            <div id="cashflow-chart" style="min-height:280px;"></div>
+            <div style="margin-top:14px; padding:12px 16px; background:var(--yellow-light); border-radius:8px; font-size:0.82rem; color:var(--text);">
+              ⚠️ <strong>Ángela dice:</strong> Marzo cerró con flujo negativo por pago a proveedores de importación. La tendencia venía positiva desde octubre. Necesitás inyección de liquidez — <a href="#" onclick="switchView('creditos'); return false;" style="color:var(--blue);font-weight:700;">mirá los créditos disponibles</a>.
             </div>
           </div>
 
@@ -2202,32 +2195,32 @@ tr:last-child td { border-bottom: none; }
                 </thead>
                 <tbody>
                   <tr>
-                    <td style="font-weight:600">Transporte Gutiérrez</td>
-                    <td>$340.000</td>
-                    <td>47 días</td>
+                    <td style="font-weight:600">Taller Mecánico Rossi</td>
+                    <td>$320.000</td>
+                    <td>120 días</td>
                     <td><span class="tag coral">Alto</span></td>
-                    <td><button class="btn btn-primary btn-sm" onclick="showToast('💬 Recordatorio enviado a Gutiérrez')">Cobrar</button></td>
+                    <td><button class="btn btn-primary btn-sm" onclick="showToast('💬 Recordatorio enviado a Rossi')">Cobrar</button></td>
                   </tr>
                   <tr>
-                    <td style="font-weight:600">Garage López</td>
-                    <td>$185.000</td>
-                    <td>22 días</td>
+                    <td style="font-weight:600">Frenos del Sur</td>
+                    <td>$230.000</td>
+                    <td>105 días</td>
+                    <td><span class="tag coral">Alto</span></td>
+                    <td><button class="btn btn-primary btn-sm" onclick="showToast('💬 Recordatorio enviado a Frenos del Sur')">Cobrar</button></td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:600">Lubricentro San Martín</td>
+                    <td>$450.000</td>
+                    <td>95 días</td>
+                    <td><span class="tag coral">Alto</span></td>
+                    <td><button class="btn btn-primary btn-sm" onclick="showToast('💬 Recordatorio enviado a Lubricentro San Martín')">Cobrar</button></td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:600">Concesionarias usados región</td>
+                    <td>$5.300.000</td>
+                    <td>45 días</td>
                     <td><span class="tag yellow">Medio</span></td>
-                    <td><button class="btn btn-outline btn-sm" onclick="showToast('💬 Recordatorio enviado a López')">Cobrar</button></td>
-                  </tr>
-                  <tr>
-                    <td style="font-weight:600">Mecánica Martínez</td>
-                    <td>$95.000</td>
-                    <td>12 días</td>
-                    <td><span class="tag green">Bajo</span></td>
-                    <td><button class="btn btn-outline btn-sm" onclick="showToast('💬 Recordatorio enviado a Martínez')">Cobrar</button></td>
-                  </tr>
-                  <tr>
-                    <td style="font-weight:600">Municipalidad VT</td>
-                    <td>$160.000</td>
-                    <td>35 días</td>
-                    <td><span class="tag yellow">Medio</span></td>
-                    <td><button class="btn btn-outline btn-sm" onclick="showToast('💬 Recordatorio enviado a Municipalidad')">Cobrar</button></td>
+                    <td><button class="btn btn-outline btn-sm" onclick="showToast('💬 Recordatorio enviado')">Cobrar</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -2247,46 +2240,46 @@ tr:last-child td { border-bottom: none; }
               </thead>
               <tbody>
                 <tr>
-                  <td style="font-weight:600;">Pastillas Ferodo FDB</td>
-                  <td>$2.840.000</td>
-                  <td>42%</td>
-                  <td style="font-weight:600;">$1.193.000</td>
-                  <td><span class="tag green">⭐ Estrella</span></td>
+                  <td style="font-weight:600;">Kit embrague Sachs Fiat</td>
+                  <td>$19.2M</td>
+                  <td>37.3%</td>
+                  <td style="font-weight:600;">$7.2M</td>
+                  <td><span class="tag green">⭐ Top ventas</span></td>
                 </tr>
                 <tr>
-                  <td style="font-weight:600;">Servicio embrague completo</td>
-                  <td>$1.920.000</td>
-                  <td style="color:var(--green); font-weight:700;">51%</td>
-                  <td style="font-weight:600;">$979.000</td>
-                  <td><span class="tag green">⭐ Estrella</span></td>
+                  <td style="font-weight:600;">Pastillas de freno Ferodo</td>
+                  <td>$10.9M</td>
+                  <td style="color:var(--green); font-weight:700;">42.2%</td>
+                  <td style="font-weight:600;">$4.6M</td>
+                  <td><span class="tag green">⭐ Alto margen</span></td>
                 </tr>
                 <tr>
-                  <td style="font-weight:600;">Discos Monroe ventilados</td>
-                  <td>$1.240.000</td>
-                  <td>34%</td>
-                  <td>$422.000</td>
-                  <td><span class="tag yellow">Revisar precio</span></td>
-                </tr>
-                <tr>
-                  <td style="font-weight:600;">Líquido de frenos DOT4</td>
-                  <td>$380.000</td>
-                  <td style="color:var(--coral);">28%</td>
-                  <td>$106.000</td>
-                  <td><span class="tag coral">Bajo margen</span></td>
-                </tr>
-                <tr>
-                  <td style="font-weight:600;">Cables embrague LuK</td>
-                  <td>$290.000</td>
-                  <td>38%</td>
-                  <td>$110.000</td>
+                  <td style="font-weight:600;">Disco de freno ventilado VW Gol</td>
+                  <td>$8.2M</td>
+                  <td>38.2%</td>
+                  <td>$3.1M</td>
                   <td><span class="tag green">OK</span></td>
                 </tr>
                 <tr>
-                  <td style="font-weight:600;">Reparación cilindro maestro</td>
-                  <td>$180.000</td>
-                  <td style="color:var(--green); font-weight:700;">61%</td>
-                  <td>$110.000</td>
-                  <td><span class="tag green">Alta rentabilidad</span></td>
+                  <td style="font-weight:600;">Cilindro maestro freno Toyota</td>
+                  <td>$7.0M</td>
+                  <td>38.7%</td>
+                  <td>$2.7M</td>
+                  <td><span class="tag green">OK</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Manguera freno universal</td>
+                  <td>$4.2M</td>
+                  <td style="color:var(--green); font-weight:700;">43.3%</td>
+                  <td>$1.8M</td>
+                  <td><span class="tag green">Alto margen</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Kit reparación cilindro embrague</td>
+                  <td>$3.2M</td>
+                  <td style="color:var(--green); font-weight:700;">45.0%</td>
+                  <td>$1.4M</td>
+                  <td><span class="tag green">⭐ Mejor margen</span></td>
                 </tr>
               </tbody>
             </table>
@@ -2583,13 +2576,13 @@ tr:last-child td { border-bottom: none; }
                 <div class="macro-icon" style="margin-bottom:4px;">💵</div>
                 <div class="macro-title" style="font-weight:700; font-size:0.88rem; color:var(--text);">Tipos de cambio — Hoy</div>
               </div>
-              <div style="font-size:0.72rem; color:var(--text-secondary);">Lunes 23 de marzo, 2026</div>
+              <div style="font-size:0.72rem; color:var(--text-secondary);">Lunes 14 de abril, 2026</div>
             </div>
             <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:14px;">
               <div style="padding:12px; background:var(--bg); border-radius:10px; text-align:center;">
                 <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-secondary); margin-bottom:4px;">Oficial</div>
-                <div style="font-size:1.2rem; font-weight:800; color:var(--text);">$1.068</div>
-                <div style="font-size:0.68rem; color:var(--text-secondary); margin-top:2px;">Sin variación</div>
+                <div style="font-size:1.2rem; font-weight:800; color:var(--text);">$1.200</div>
+                <div style="font-size:0.68rem; color:var(--text-secondary); margin-top:2px;">Abril 2026</div>
                 <button onclick="toggleSimple('exp-oficial')" style="font-size:0.6rem; color:var(--blue); background:none; border:none; cursor:pointer; margin-top:4px; font-family:'Outfit',sans-serif; font-weight:600;">¿Cuándo usarlo? ▾</button>
                 <div id="exp-oficial" style="display:none; margin-top:6px; text-align:left; font-size:0.72rem; line-height:1.5; color:var(--text-secondary); background:white; padding:8px; border-radius:6px; border:1px solid var(--border);">Para importaciones formales habilitadas y pagos a proveedores del exterior con acceso al MULC. Es el tipo de cambio más barato pero con restricciones.</div>
               </div>
@@ -2609,31 +2602,31 @@ tr:last-child td { border-bottom: none; }
               </div>
               <div style="padding:12px; background:var(--yellow-light); border-radius:10px; text-align:center; border:1.5px solid var(--yellow);">
                 <div style="font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#B8860B; margin-bottom:4px;">Blue</div>
-                <div style="font-size:1.2rem; font-weight:800; color:#B8860B;">$1.247</div>
-                <div style="font-size:0.68rem; color:var(--coral); font-weight:600; margin-top:2px;">↑ 2.8%</div>
+                <div style="font-size:1.2rem; font-weight:800; color:#B8860B;">$1.350</div>
+                <div style="font-size:0.68rem; color:var(--coral); font-weight:600; margin-top:2px;">↑ Brecha 12.5%</div>
                 <button onclick="toggleSimple('exp-blue')" style="font-size:0.6rem; color:var(--blue); background:none; border:none; cursor:pointer; margin-top:4px; font-family:'Outfit',sans-serif; font-weight:600;">¿Cuándo usarlo? ▾</button>
                 <div id="exp-blue" style="display:none; margin-top:6px; text-align:left; font-size:0.72rem; line-height:1.5; color:var(--text-secondary); background:white; padding:8px; border-radius:6px; border:1px solid var(--border);">Referencia de mercado informal. PolPilot lo usa como indicador de presión cambiaria. Cuanto más se separa del oficial, más probable que suban los insumos importados.</div>
               </div>
             </div>
             <div style="padding:10px 14px; background:var(--coral-light); border-radius:8px; border-left:3px solid var(--coral); font-size:0.8rem; line-height:1.5;">
-              ⚠️ <strong>Impacto en tu negocio esta semana:</strong> El CCL subió 2.1% — tus insumos importados (discos ventilados, kit de embrague) van a costar ~6% más en 15 días. Comprá a Ferrante antes del jueves si podés.
+              ⚠️ <strong>Impacto en tu negocio esta semana:</strong> El CCL subió 2.1% — tus insumos importados (discos ventilados, kit de embrague) van a costar ~6% más en 15 días. Coordiná con Frasle y Sachs antes del jueves si podés.
             </div>
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
             <div class="macro-card">
               <div class="macro-icon">📈</div>
               <div class="macro-title">Inflación mensual</div>
-              <div class="macro-value">3.2%</div>
-              <div class="metric-change negative">↑ 0.4% vs. febrero</div>
+              <div class="macro-value">2.8%</div>
+              <div class="metric-change negative">Interanual: 42%</div>
               <div class="macro-impact">
                 <strong>Impacto en tu negocio:</strong> Tus costos fijos suben $128.000 por mes. Tu ajuste de precios de febrero (+8%) todavía cubre — pero revisá en mayo.
               </div>
             </div>
             <div class="macro-card">
               <div class="macro-icon">🏦</div>
-              <div class="macro-title">Tasa BCRA</div>
-              <div class="macro-value">29% TNA</div>
-              <div class="metric-change positive">↓ Bajó 3 puntos</div>
+              <div class="macro-title">Tasa BADLAR</div>
+              <div class="macro-value">32% TNA</div>
+              <div class="metric-change positive">Plazo fijo 30d: 30% TNA</div>
               <div class="macro-impact">
                 <strong>Oportunidad:</strong> Hay una línea de crédito PyME al 29% TNA. Con tu perfil financiero, calificás. PolPilot ya te generó el PDF para presentar.
               </div>
@@ -2745,6 +2738,346 @@ tr:last-child td { border-bottom: none; }
           <div style="display:flex; gap:10px; flex-wrap:wrap;">
             <button class="btn btn-primary btn-sm" onclick="switchView('angela')">Ver requisitos con Ángela</button>
             <button class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);" onclick="switchView('legal')">Ver en Legal y Regulatorio</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           VIEW: CREDITOS Y FINANCIAMIENTO
+           ══════════════════════════════════════ -->
+      <div class="view" id="view-creditos">
+        <div class="view-header">
+          <div class="view-eyebrow">Inteligencia del Entorno</div>
+          <h2 class="view-header-title">Créditos y Financiamiento</h2>
+          <p class="view-header-desc">Opciones de crédito disponibles para tu perfil, análisis BCRA y regulaciones vigentes.</p>
+        </div>
+
+        <div class="angela-banner" style="margin-bottom:24px;">
+          <div class="angela-header">
+            <div class="angela-avatar">🤖</div>
+            <div>
+              <div class="angela-name">Ángela</div>
+              <div class="angela-role">Análisis crediticio</div>
+            </div>
+          </div>
+          <div class="angela-text">
+            Gonzalo, tu perfil BCRA es <strong>Situación 1 — sin deuda reportada en 24 meses</strong>. Con facturación anual de $678M y 42 años de antigüedad, calificás a <strong>3 de 5 créditos analizados</strong>. La mejor opción para importación inmediata es Banco Provincia (26% TNA). Para el largo plazo, FONDEP tiene la tasa más baja (15% TNA subsidiada).
+          </div>
+        </div>
+
+        <!-- MACRO STRIP -->
+        <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:120px;padding:12px 16px;background:var(--card);border-radius:var(--radius-sm);border:1px solid var(--border);text-align:center;">
+            <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-secondary);margin-bottom:4px;">USD Oficial</div>
+            <div style="font-size:1.1rem;font-weight:800;color:var(--text);">$1.200</div>
+          </div>
+          <div style="flex:1;min-width:120px;padding:12px 16px;background:var(--card);border-radius:var(--radius-sm);border:1px solid var(--border);text-align:center;">
+            <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-secondary);margin-bottom:4px;">USD Blue</div>
+            <div style="font-size:1.1rem;font-weight:800;color:#B8860B;">$1.350</div>
+          </div>
+          <div style="flex:1;min-width:120px;padding:12px 16px;background:var(--card);border-radius:var(--radius-sm);border:1px solid var(--border);text-align:center;">
+            <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-secondary);margin-bottom:4px;">Inflación mensual</div>
+            <div style="font-size:1.1rem;font-weight:800;color:var(--coral);">2.8%</div>
+          </div>
+          <div style="flex:1;min-width:120px;padding:12px 16px;background:var(--card);border-radius:var(--radius-sm);border:1px solid var(--border);text-align:center;">
+            <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-secondary);margin-bottom:4px;">BADLAR</div>
+            <div style="font-size:1.1rem;font-weight:800;color:var(--blue);">32%</div>
+          </div>
+          <div style="flex:1;min-width:120px;padding:12px 16px;background:var(--card);border-radius:var(--radius-sm);border:1px solid var(--border);text-align:center;">
+            <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-secondary);margin-bottom:4px;">Riesgo País</div>
+            <div style="font-size:1.1rem;font-weight:800;color:var(--yellow);">780</div>
+          </div>
+        </div>
+
+        <!-- CREDIT CARDS -->
+        <div class="section-title">🏦 Créditos disponibles para tu perfil</div>
+        <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px;">
+
+          <!-- Credit 1: Banco Nación -->
+          <div class="card" style="border-left:4px solid var(--green);position:relative;">
+            <div style="position:absolute;top:16px;right:16px;"><span class="tag green">✅ Aplica</span></div>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              <div style="font-size:1.5rem;">🏦</div>
+              <div>
+                <div style="font-weight:700;font-size:0.95rem;">Banco Nación — Crédito PyME Inversión Productiva</div>
+                <div style="font-size:0.75rem;color:var(--text-secondary);">Inversión · Hasta 48 meses</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;">
+              <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);">Tasa TNA</div>
+                <div style="font-size:1.1rem;font-weight:800;color:var(--text);">29%</div>
+              </div>
+              <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);">Monto máximo</div>
+                <div style="font-size:1.1rem;font-weight:800;color:var(--text);">$80M</div>
+              </div>
+              <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);">Plazo</div>
+                <div style="font-size:1.1rem;font-weight:800;color:var(--text);">48 meses</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+              <span class="tag green" style="font-size:0.68rem;">✓ Tiene certificado PyME</span>
+              <span class="tag green" style="font-size:0.68rem;">✓ Monto dentro del rango</span>
+              <span class="tag green" style="font-size:0.68rem;">✓ Liquidez corriente 0.91</span>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <a href="https://www.bna.com.ar/Empresas/Pymes" target="_blank" class="btn btn-primary btn-sm">Ver en web del banco →</a>
+              <button class="btn btn-outline btn-sm" onclick="switchView('angela')">Consultar con Ángela</button>
+            </div>
+          </div>
+
+          <!-- Credit 2: Banco Provincia -->
+          <div class="card" style="border-left:4px solid var(--green);position:relative;">
+            <div style="position:absolute;top:16px;right:16px;"><span class="tag green">✅ Aplica</span></div>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              <div style="font-size:1.5rem;">🏛️</div>
+              <div>
+                <div style="font-weight:700;font-size:0.95rem;">Banco Provincia — Línea Importaciones PyME</div>
+                <div style="font-size:0.75rem;color:var(--text-secondary);">Inversión · Hasta 36 meses</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;">
+              <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);">Tasa TNA</div>
+                <div style="font-size:1.1rem;font-weight:800;color:var(--green);">26%</div>
+              </div>
+              <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);">Monto máximo</div>
+                <div style="font-size:1.1rem;font-weight:800;color:var(--text);">$60M</div>
+              </div>
+              <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);">Plazo</div>
+                <div style="font-size:1.1rem;font-weight:800;color:var(--text);">36 meses</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+              <span class="tag green" style="font-size:0.68rem;">✓ Tiene certificado PyME</span>
+              <span class="tag green" style="font-size:0.68rem;">✓ Monto dentro del rango</span>
+              <span class="tag blue" style="font-size:0.68rem;">★ Mejor tasa para importación</span>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <a href="https://www.bancoprovincia.com.ar/web/pymes" target="_blank" class="btn btn-primary btn-sm">Ver en web del banco →</a>
+              <button class="btn btn-outline btn-sm" onclick="switchView('angela')">Consultar con Ángela</button>
+            </div>
+          </div>
+
+          <!-- Credit 3: Galicia -->
+          <div class="card" style="border-left:4px solid var(--green);position:relative;">
+            <div style="position:absolute;top:16px;right:16px;"><span class="tag green">✅ Aplica</span></div>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              <div style="font-size:1.5rem;">🏧</div>
+              <div>
+                <div style="font-weight:700;font-size:0.95rem;">Banco Galicia — Crédito Capital de Trabajo</div>
+                <div style="font-size:0.75rem;color:var(--text-secondary);">Capital de trabajo · Hasta 12 meses</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;">
+              <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);">Tasa TNA</div>
+                <div style="font-size:1.1rem;font-weight:800;color:var(--text);">38%</div>
+              </div>
+              <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);">Monto máximo</div>
+                <div style="font-size:1.1rem;font-weight:800;color:var(--text);">$30M</div>
+              </div>
+              <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);">Plazo</div>
+                <div style="font-size:1.1rem;font-weight:800;color:var(--text);">12 meses</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+              <span class="tag green" style="font-size:0.68rem;">✓ No requiere cert PyME</span>
+              <span class="tag green" style="font-size:0.68rem;">✓ Monto dentro del rango</span>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <a href="https://www.galicia.ar/empresas" target="_blank" class="btn btn-outline btn-sm">Ver en web del banco →</a>
+            </div>
+          </div>
+
+          <!-- Credit 4: FONDEP -->
+          <div class="card" style="border-left:4px solid var(--yellow);position:relative;">
+            <div style="position:absolute;top:16px;right:16px;"><span class="tag yellow">⚠ Parcial</span></div>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              <div style="font-size:1.5rem;">🏛️</div>
+              <div>
+                <div style="font-weight:700;font-size:0.95rem;">Ministerio de Producción — Programa FONDEP</div>
+                <div style="font-size:0.75rem;color:var(--text-secondary);">Inversión · Hasta 60 meses · Tasa subsidiada</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;">
+              <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);">Tasa TNA</div>
+                <div style="font-size:1.1rem;font-weight:800;color:var(--green);">15%</div>
+              </div>
+              <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);">Monto máximo</div>
+                <div style="font-size:1.1rem;font-weight:800;color:var(--text);">$50M</div>
+              </div>
+              <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);">Plazo</div>
+                <div style="font-size:1.1rem;font-weight:800;color:var(--text);">60 meses</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+              <span class="tag green" style="font-size:0.68rem;">✓ Tiene certificado PyME</span>
+              <span class="tag coral" style="font-size:0.68rem;">✗ Requiere proyecto aprobado + matching 20%</span>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <a href="https://www.argentina.gob.ar/produccion/fondep" target="_blank" class="btn btn-outline btn-sm">Ver requisitos →</a>
+            </div>
+          </div>
+
+          <!-- Credit 5: ICBC -->
+          <div class="card" style="border-left:4px solid var(--coral);position:relative;">
+            <div style="position:absolute;top:16px;right:16px;"><span class="tag coral">✗ No aplica</span></div>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              <div style="font-size:1.5rem;">🏧</div>
+              <div>
+                <div style="font-weight:700;font-size:0.95rem;">Banco ICBC — Préstamo Comex</div>
+                <div style="font-size:0.75rem;color:var(--text-secondary);">Inversión · Hasta 6 meses</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;">
+              <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);">Tasa TNA</div>
+                <div style="font-size:1.1rem;font-weight:800;color:var(--green);">8%</div>
+              </div>
+              <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);">Monto máximo</div>
+                <div style="font-size:1.1rem;font-weight:800;color:var(--text);">$120M</div>
+              </div>
+              <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+                <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);">Plazo</div>
+                <div style="font-size:1.1rem;font-weight:800;color:var(--text);">6 meses</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+              <span class="tag green" style="font-size:0.68rem;">✓ Tasa más baja del mercado (8%)</span>
+              <span class="tag coral" style="font-size:0.68rem;">✗ Monto alto vs facturación</span>
+              <span class="tag coral" style="font-size:0.68rem;">✗ Requiere garantía bancaria</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PERFIL BCRA -->
+        <div class="section-title">📋 Tu perfil crediticio BCRA</div>
+        <div class="card" style="margin-bottom:24px;">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;">
+            <div style="text-align:center;padding:14px;background:var(--green-light);border-radius:10px;border:1px solid var(--green);">
+              <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--green);margin-bottom:6px;">Situación BCRA</div>
+              <div style="font-size:1.5rem;font-weight:800;color:var(--green);">1</div>
+              <div style="font-size:0.68rem;color:var(--text-secondary);">Normal ✅</div>
+            </div>
+            <div style="text-align:center;padding:14px;background:var(--bg);border-radius:10px;border:1px solid var(--border);">
+              <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--text-secondary);margin-bottom:6px;">CUIT</div>
+              <div style="font-size:1rem;font-weight:800;">30-71584923-4</div>
+            </div>
+            <div style="text-align:center;padding:14px;background:var(--green-light);border-radius:10px;border:1px solid var(--green);">
+              <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--green);margin-bottom:6px;">Deuda total</div>
+              <div style="font-size:1.5rem;font-weight:800;color:var(--green);">$0</div>
+              <div style="font-size:0.68rem;color:var(--text-secondary);">Sin deuda</div>
+            </div>
+            <div style="text-align:center;padding:14px;background:var(--green-light);border-radius:10px;border:1px solid var(--green);">
+              <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:var(--green);margin-bottom:6px;">Cheques rechazados</div>
+              <div style="font-size:1.5rem;font-weight:800;color:var(--green);">0</div>
+              <div style="font-size:0.68rem;color:var(--text-secondary);">Sin rechazos</div>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-secondary);margin-bottom:8px;">Historial últimos 24 meses</div>
+          <div style="display:flex;gap:3px;margin-bottom:8px;">
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+            <div style="flex:1;height:22px;background:var(--green);border-radius:3px;" title="Sit. 1"></div>
+          </div>
+          <div style="font-size:0.7rem;color:var(--text-secondary);text-align:center;">24 meses consecutivos en Situación 1 (Normal) — historial impecable</div>
+        </div>
+
+        <!-- REGULACIONES RELEVANTES -->
+        <div class="section-title">📢 Regulaciones que te impactan</div>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+          <div class="card" style="border-left:4px solid var(--blue);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+              <div style="font-weight:700;font-size:0.88rem;">Resolución AFIP 5432/2025: Régimen simplificado de importación PyME</div>
+              <span class="tag blue" style="font-size:0.65rem;">Relevancia: 95%</span>
+            </div>
+            <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.5;margin-bottom:8px;">Nuevo régimen simplificado de importación para PyMEs categoría Tramo 1 y 2.</div>
+            <div style="font-size:0.7rem;color:var(--text-light);">Fuente: Boletín Oficial · Confirmado · 15 nov 2025</div>
+          </div>
+          <div class="card" style="border-left:4px solid var(--green);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+              <div style="font-weight:700;font-size:0.88rem;">Decreto 124/2026: Bonificación tasa créditos PyME importación</div>
+              <span class="tag green" style="font-size:0.65rem;">Relevancia: 98%</span>
+            </div>
+            <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.5;margin-bottom:8px;">Bonificación de 5 puntos en tasa de interés para créditos productivos PyME.</div>
+            <div style="font-size:0.7rem;color:var(--text-light);">Fuente: Boletín Oficial · Confirmado · 1 feb 2026</div>
+          </div>
+          <div class="card" style="border-left:4px solid var(--yellow);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+              <div style="font-weight:700;font-size:0.88rem;">Comunicación BCRA A-7890: Líneas preferenciales sin reciprocidad</div>
+              <span class="tag yellow" style="font-size:0.65rem;">Relevancia: 85%</span>
+            </div>
+            <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.5;margin-bottom:8px;">Las PyMEs pueden acceder a líneas de crédito preferenciales sin requisito de reciprocidad bancaria.</div>
+            <div style="font-size:0.7rem;color:var(--text-light);">Fuente: BCRA · Confirmado · 10 mar 2026</div>
+          </div>
+        </div>
+
+        <!-- SECTOR SIGNALS -->
+        <div class="section-title">📡 Señales del sector</div>
+        <div class="grid-2" style="margin-bottom:24px;">
+          <div class="card" style="border-left:4px solid var(--coral);">
+            <div style="font-size:1.2rem;margin-bottom:6px;">📈</div>
+            <div style="font-weight:700;font-size:0.88rem;margin-bottom:6px;">Aumento de demanda por desregulación</div>
+            <div style="font-size:0.8rem;color:var(--text-secondary);line-height:1.5;">Aumento de demanda de repuestos importados por desregulación de importaciones.</div>
+            <div style="margin-top:8px;display:flex;gap:6px;">
+              <span class="tag coral">Impacto alto</span>
+              <span class="tag blue">Repuestos automotores</span>
+            </div>
+          </div>
+          <div class="card" style="border-left:4px solid var(--yellow);">
+            <div style="font-size:1.2rem;margin-bottom:6px;">💰</div>
+            <div style="font-weight:700;font-size:0.88rem;margin-bottom:6px;">Baja de precios en importados</div>
+            <div style="font-size:0.8rem;color:var(--text-secondary);line-height:1.5;">Baja de precios en discos y pastillas importados (-15% promedio).</div>
+            <div style="margin-top:8px;display:flex;gap:6px;">
+              <span class="tag yellow">Impacto medio</span>
+              <span class="tag blue">Repuestos automotores</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding:22px 26px;background:linear-gradient(135deg,var(--sidebar-bg),#131B33);border-radius:var(--radius);color:white;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--coral));display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;">🤖</div>
+            <div style="font-weight:700;font-size:0.92rem;color:white;">Lo que Ángela recomienda hacer ahora</div>
+          </div>
+          <div style="font-size:0.84rem;color:rgba(255,255,255,0.75);line-height:1.65;margin-bottom:16px;">
+            Arrancá con Banco Provincia para la importación inmediata de discos Fremax. Con $60M podés cubrir 12 meses de stock importado y resolver el cuello de botella de caja. Tu perfil BCRA impecable te da ventaja competitiva en la aprobación.
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-primary btn-sm" onclick="switchView('angela')">Hablar con Ángela sobre créditos</button>
+            <button class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);" onclick="showToast('📄 Carpeta crediticia generada como PDF')">Generar carpeta crediticia</button>
           </div>
         </div>
       </div>
@@ -2995,7 +3328,7 @@ tr:last-child td { border-bottom: none; }
             <div style="font-size:0.85rem; line-height:1.7; color:var(--text-secondary);">
               40+ años de experiencia y reputación local<br>
               Especialización en frenos, embragues y transmisión<br>
-              Relación sólida con Ferrante (proveedor principal)<br>
+              Proveedores diversificados (Frasle, Sachs, Fremax)<br>
               Margen bruto creciente (38%)
             </div>
           </div>
@@ -3003,8 +3336,8 @@ tr:last-child td { border-bottom: none; }
             <div class="card-title" style="color:var(--coral);">⚠️ Debilidades</div>
             <div style="font-size:0.85rem; line-height:1.7; color:var(--text-secondary);">
               Concentración en 2 clientes (55% de facturación)<br>
-              Morosidad creciente (Gutiérrez, 47 días)<br>
-              Stock dependiente de un solo proveedor principal<br>
+              Morosidad alta (Rossi $1.2M 67d, Frenos del Sur $890K 45d)<br>
+              Cash flow negativo -$1.1M último trimestre<br>
               Sin presencia digital (web, redes)
             </div>
           </div>
@@ -3012,7 +3345,7 @@ tr:last-child td { border-bottom: none; }
             <div class="card-title" style="color:var(--blue);">🚀 Oportunidades</div>
             <div style="font-size:0.85rem; line-height:1.7; color:var(--text-secondary);">
               VTV abril — pico de demanda previsible<br>
-              Crédito BCRA PyME al 29% TNA<br>
+              5 líneas de crédito pre-calificadas<br>
               Talleres competidores sin especialización<br>
               Municipalidad ampliando flota (licitación abierta)
             </div>
@@ -3127,13 +3460,13 @@ tr:last-child td { border-bottom: none; }
         <div class="section-title">💡 Insights para tu negocio</div>
         <div class="card">
           <div class="ai-note" style="margin-bottom:12px;">
-            📊 <strong>Tu proveedor principal (Ferrante) subió precios 4%</strong> esta semana — el promedio del sector es 6.2%. Estás consiguiendo mejor precio que el 73% de los talleres. Seguí con Ferrante.
+            📊 <strong>Tu proveedor principal (Frasle Argentina) mantiene precios estables</strong> esta semana — el promedio del sector subió 6.2%. Tu mix de proveedores te da mejor precio que el 73% de los talleres.
           </div>
           <div style="padding:14px 16px; background:var(--green-light); border-radius:10px; margin-bottom:12px; font-size:0.85rem; line-height:1.6;">
             🏆 <strong>Tu margen bruto (38%) está en el top 20%</strong> de talleres de tu tamaño. El promedio del sector es 31%. Tu especialización en frenos y embragues te da una ventaja clara.
           </div>
           <div style="padding:14px 16px; background:var(--yellow-light); border-radius:10px; font-size:0.85rem; line-height:1.6;">
-            ⚠️ <strong>62% de talleres reportan retrasos de proveedores.</strong> Si Ferrante empieza a demorar, tenés a AutoRepuestos Norte como backup — sus precios están 8% arriba pero entregan en 24hs.
+            ⚠️ <strong>62% de talleres reportan retrasos de proveedores.</strong> Frasle y Sachs entregan en 48-72hs. Si demoran, Distri Repuestos Rosario es backup local con entrega en 24hs.
           </div>
         </div>
 
@@ -3219,28 +3552,44 @@ tr:last-child td { border-bottom: none; }
               </thead>
               <tbody>
                 <tr style="background:var(--blue-light);">
-                  <td style="font-weight:700;">Distribuidora Ferrante</td>
-                  <td>$$$</td>
+                  <td style="font-weight:700;">Frasle Argentina SA</td>
+                  <td>$$</td>
                   <td>30 días</td>
                   <td>48hs</td>
-                  <td><span class="tag green">98%</span></td>
-                  <td><span class="tag blue">⭐ Recomendado</span></td>
-                </tr>
-                <tr>
-                  <td style="font-weight:600;">AutoRepuestos Norte</td>
-                  <td>$$$$</td>
-                  <td>15 días</td>
-                  <td>24hs</td>
                   <td><span class="tag green">95%</span></td>
-                  <td><span class="tag yellow">Backup rápido</span></td>
+                  <td><span class="tag blue">⭐ Principal</span></td>
+                </tr>
+                <tr style="background:var(--blue-light);">
+                  <td style="font-weight:700;">Sachs Automotive</td>
+                  <td>$$$</td>
+                  <td>60 días</td>
+                  <td>72hs</td>
+                  <td><span class="tag green">92%</span></td>
+                  <td><span class="tag blue">⭐ Principal</span></td>
                 </tr>
                 <tr>
-                  <td style="font-weight:600;">RepTech Sur</td>
+                  <td style="font-weight:600;">Fremax Brasil</td>
                   <td>$$</td>
+                  <td>30 días</td>
+                  <td>7 días</td>
+                  <td><span class="tag yellow">88%</span></td>
+                  <td><span class="tag yellow">Importado</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Turk Fren Sanayi</td>
+                  <td>$</td>
                   <td>Contado</td>
-                  <td>72hs</td>
+                  <td>30 días</td>
                   <td><span class="tag yellow">82%</span></td>
                   <td><span class="tag" style="background:var(--bg); color:var(--text-secondary);">Precio bajo</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Distri Repuestos Rosario</td>
+                  <td>$$</td>
+                  <td>15 días</td>
+                  <td>24hs</td>
+                  <td><span class="tag green">90%</span></td>
+                  <td><span class="tag yellow">Backup rápido</span></td>
                 </tr>
               </tbody>
             </table>
@@ -3253,37 +3602,37 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">📦 Stock crítico</div>
+        <div class="section-title">📦 Stock actual</div>
         <div class="card" style="margin-bottom:24px;">
           <div class="stock-item">
-            <div class="stock-name">Pastillas cerámicas</div>
+            <div class="stock-name">Pastillas de freno Ferodo (340 u.)</div>
+            <div class="stock-bar-container"><div class="stock-bar-fill" style="width:100%; background:var(--green);"></div></div>
+            <div class="stock-level" style="color:var(--green);">OK ✓</div>
+          </div>
+          <div class="stock-item">
+            <div class="stock-name">Manguera freno universal (280 u.)</div>
+            <div class="stock-bar-container"><div class="stock-bar-fill" style="width:100%; background:var(--green);"></div></div>
+            <div class="stock-level" style="color:var(--green);">OK ✓</div>
+          </div>
+          <div class="stock-item">
+            <div class="stock-name">Disco freno ventilado VW Gol (120 u.)</div>
+            <div class="stock-bar-container"><div class="stock-bar-fill" style="width:75%; background:var(--green);"></div></div>
+            <div class="stock-level" style="color:var(--green);">75%</div>
+          </div>
+          <div class="stock-item">
+            <div class="stock-name">Kit reparación cilindro embrague (90 u.)</div>
+            <div class="stock-bar-container"><div class="stock-bar-fill" style="width:75%; background:var(--green);"></div></div>
+            <div class="stock-level" style="color:var(--green);">75%</div>
+          </div>
+          <div class="stock-item">
+            <div class="stock-name">Kit embrague Sachs Fiat (65 u.)</div>
             <div class="stock-bar-container"><div class="stock-bar-fill" style="width:65%; background:var(--green);"></div></div>
             <div class="stock-level" style="color:var(--green);">65%</div>
           </div>
           <div class="stock-item">
-            <div class="stock-name">Discos ventilados</div>
-            <div class="stock-bar-container"><div class="stock-bar-fill" style="width:23%; background:var(--coral);"></div></div>
-            <div class="stock-level" style="color:var(--coral);">23% ⚠️</div>
-          </div>
-          <div class="stock-item">
-            <div class="stock-name">Kit embrague completo</div>
-            <div class="stock-bar-container"><div class="stock-bar-fill" style="width:45%; background:var(--yellow);"></div></div>
-            <div class="stock-level" style="color:#B8860B;">45%</div>
-          </div>
-          <div class="stock-item">
-            <div class="stock-name">Líquido de frenos DOT4</div>
-            <div class="stock-bar-container"><div class="stock-bar-fill" style="width:78%; background:var(--green);"></div></div>
-            <div class="stock-level" style="color:var(--green);">78%</div>
-          </div>
-          <div class="stock-item">
-            <div class="stock-name">Cilindros de rueda</div>
-            <div class="stock-bar-container"><div class="stock-bar-fill" style="width:55%; background:var(--green);"></div></div>
-            <div class="stock-level" style="color:var(--green);">55%</div>
-          </div>
-          <div class="stock-item">
-            <div class="stock-name">Cables de embrague</div>
-            <div class="stock-bar-container"><div class="stock-bar-fill" style="width:30%; background:var(--coral);"></div></div>
-            <div class="stock-level" style="color:var(--coral);">30% ⚠️</div>
+            <div class="stock-name">Cilindro maestro freno Toyota (45 u.)</div>
+            <div class="stock-bar-container"><div class="stock-bar-fill" style="width:75%; background:var(--green);"></div></div>
+            <div class="stock-level" style="color:var(--green);">75%</div>
           </div>
         </div>
 
@@ -3923,31 +4272,38 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
+        <div id="upload-zone" style="margin-bottom:24px;padding:32px;border:2px dashed var(--border);border-radius:var(--radius);text-align:center;background:var(--bg);transition:all 0.2s;cursor:pointer;" onclick="document.getElementById('doc-file-input').click()" ondragover="event.preventDefault();this.style.borderColor='var(--blue)';this.style.background='var(--blue-light)';" ondragleave="this.style.borderColor='var(--border)';this.style.background='var(--bg)';" ondrop="event.preventDefault();this.style.borderColor='var(--border)';this.style.background='var(--bg)';handleFileUpload(event.dataTransfer.files);">
+          <div style="font-size:2rem;margin-bottom:8px;">📁</div>
+          <div style="font-weight:700;font-size:0.92rem;margin-bottom:4px;">Arrastrá archivos o hacé clic para subir</div>
+          <div style="font-size:0.78rem;color:var(--text-secondary);">PDF, Excel, CSV, imágenes, audio — Ángela procesa todo y lo integra a tu base de conocimiento</div>
+          <input type="file" id="doc-file-input" style="display:none;" onchange="handleFileUpload(this.files)" multiple>
+        </div>
+
         <div class="doc-grid">
           <div class="doc-card">
             <div class="doc-icon">📊</div>
             <div class="doc-name">Cash Flow Proyectado</div>
             <div class="doc-desc">Flujo de caja a 30/60/90 días. Listo para presentar al banco o evaluar tu capacidad de pago.</div>
             <div class="doc-footer">
-              <span class="doc-date">Generado: 23 mar 2026</span>
+              <span class="doc-date">Generado: 14 abr 2026</span>
               <button class="btn btn-primary btn-sm" onclick="showToast('📥 Cash Flow PDF descargado')">Descargar PDF</button>
             </div>
           </div>
           <div class="doc-card">
             <div class="doc-icon">📨</div>
             <div class="doc-name">Carta de Cobranza</div>
-            <div class="doc-desc">Personalizada para Transporte Gutiérrez. Tono profesional, monto, historial de atrasos y plazos.</div>
+            <div class="doc-desc">Personalizada para Rossi Automotores ($1.2M, 67 días). Tono profesional, monto, historial de atrasos y plazos.</div>
             <div class="doc-footer">
-              <span class="doc-date">Generado: 23 mar 2026</span>
+              <span class="doc-date">Generado: 14 abr 2026</span>
               <button class="btn btn-primary btn-sm" onclick="showToast('📥 Carta de cobranza descargada')">Descargar PDF</button>
             </div>
           </div>
           <div class="doc-card">
             <div class="doc-icon">📦</div>
             <div class="doc-name">Orden de Compra Óptima</div>
-            <div class="doc-desc">Pedido a Ferrante con cantidades optimizadas y ahorro calculado: $187.000 vs. comprar en abril.</div>
+            <div class="doc-desc">Pedido a Frasle/Sachs con cantidades optimizadas según stock actual y demanda pre-VTV.</div>
             <div class="doc-footer">
-              <span class="doc-date">Generado: 23 mar 2026</span>
+              <span class="doc-date">Generado: 14 abr 2026</span>
               <button class="btn btn-primary btn-sm" onclick="showToast('📥 Orden de compra descargada')">Descargar PDF</button>
             </div>
           </div>
@@ -3957,7 +4313,7 @@ tr:last-child td { border-bottom: none; }
             <div class="doc-name" style="color:var(--green);">Carpeta Crediticia — Banco Nación</div>
             <div class="doc-desc">Generada automáticamente usando tu <strong>Vista Bancaria</strong>. Incluye Flujo de Caja proyectado a 90 días, Certificado MiPyME, Ratios de Solvencia, historial de facturación AFIP y capacidad de repago. <strong>Lista para presentar.</strong></div>
             <div class="doc-footer">
-              <span class="doc-date">Generado: 23 mar 2026 · Línea BCRA 29% TNA</span>
+              <span class="doc-date">Generado: 14 abr 2026 · Línea PyME subsidiada</span>
               <button class="btn btn-primary btn-sm" onclick="showToast('📥 Carpeta Crediticia completa descargada — 12 páginas')">🏦 Descargar Carpeta</button>
             </div>
           </div>
@@ -3966,16 +4322,16 @@ tr:last-child td { border-bottom: none; }
             <div class="doc-name">Rentabilidad por Producto</div>
             <div class="doc-desc">Qué vendés más vs. qué te deja más margen. Pastillas: mayor volumen. Kit embrague: mejor margen.</div>
             <div class="doc-footer">
-              <span class="doc-date">Generado: 21 mar 2026</span>
+              <span class="doc-date">Generado: 14 abr 2026</span>
               <button class="btn btn-primary btn-sm" onclick="showToast('📥 Reporte de rentabilidad descargado')">Descargar PDF</button>
             </div>
           </div>
           <div class="doc-card">
             <div class="doc-icon">⚠️</div>
             <div class="doc-name">Reporte de Morosidad</div>
-            <div class="doc-desc">Todos tus deudores con estrategia de cobro personalizada por tipo de cliente y nivel de riesgo.</div>
+            <div class="doc-desc">3 clientes morosos identificados: Rossi ($1.2M), Frenos del Sur ($890K), San Martín ($450K). Estrategias personalizadas.</div>
             <div class="doc-footer">
-              <span class="doc-date">Generado: 23 mar 2026</span>
+              <span class="doc-date">Generado: 14 abr 2026</span>
               <button class="btn btn-primary btn-sm" onclick="showToast('📥 Reporte de morosidad descargado')">Descargar PDF</button>
             </div>
           </div>
@@ -3984,7 +4340,7 @@ tr:last-child td { border-bottom: none; }
             <div class="doc-name">Salud del Negocio (Score)</div>
             <div class="doc-desc">Tu negocio hoy: 75/100. Caja sana, márgenes creciendo, 1 alerta de morosidad. Tendencia positiva.</div>
             <div class="doc-footer">
-              <span class="doc-date">Generado: 23 mar 2026</span>
+              <span class="doc-date">Generado: 14 abr 2026</span>
               <button class="btn btn-primary btn-sm" onclick="showToast('📥 Reporte de salud descargado')">Descargar PDF</button>
             </div>
           </div>
@@ -3993,7 +4349,7 @@ tr:last-child td { border-bottom: none; }
             <div class="doc-name">Resumen Ejecutivo Semanal</div>
             <div class="doc-desc">El que llega cada lunes a las 8am por WhatsApp. Ventas, cobros, caja, alertas. Sin pedirlo.</div>
             <div class="doc-footer">
-              <span class="doc-date">Generado: 23 mar 2026</span>
+              <span class="doc-date">Generado: 14 abr 2026</span>
               <button class="btn btn-primary btn-sm" onclick="showToast('📥 Resumen semanal descargado')">Descargar PDF</button>
             </div>
           </div>
@@ -4020,7 +4376,7 @@ tr:last-child td { border-bottom: none; }
             <div class="doc-name">Alerta de Crisis de Liquidez</div>
             <div class="doc-desc">Anticipá problemas antes de que pasen. "En 18 días no vas a tener plata para sueldos si seguís igual." Con tiempo para actuar.</div>
             <div class="doc-footer">
-              <span class="doc-date">Generado: 23 mar 2026</span>
+              <span class="doc-date">Generado: 14 abr 2026</span>
               <button class="btn btn-primary btn-sm" onclick="showToast('📥 Alerta de liquidez descargada')">Descargar PDF</button>
             </div>
           </div>
@@ -4029,7 +4385,7 @@ tr:last-child td { border-bottom: none; }
             <div class="doc-name">Simulador de Decisiones</div>
             <div class="doc-desc">"¿Conviene comprar 500 unidades ahora o esperar?" PolPilot calcula ambos escenarios y dice cuál es mejor y por qué.</div>
             <div class="doc-footer">
-              <span class="doc-date">Generado: 22 mar 2026</span>
+              <span class="doc-date">Generado: 14 abr 2026</span>
               <button class="btn btn-primary btn-sm" onclick="showToast('📥 Simulación descargada')">Descargar PDF</button>
             </div>
           </div>
@@ -4038,7 +4394,7 @@ tr:last-child td { border-bottom: none; }
             <div class="doc-name">Oportunidades de Crédito</div>
             <div class="doc-desc">Detección automática: cuando el BCRA lanza una línea o hay un subsidio, PolPilot te dice si calificás, el link y los requisitos.</div>
             <div class="doc-footer">
-              <span class="doc-date">Generado: 21 mar 2026</span>
+              <span class="doc-date">Generado: 14 abr 2026</span>
               <button class="btn btn-primary btn-sm" onclick="showToast('📥 Oportunidades de crédito descargadas')">Descargar PDF</button>
             </div>
           </div>
@@ -4047,7 +4403,7 @@ tr:last-child td { border-bottom: none; }
             <div class="doc-name">Calculadora de Precio Correcto</div>
             <div class="doc-desc">"¿A cuánto vendo para no perder con la inflación de este mes?" Con tus costos reales y el IPC actualizado.</div>
             <div class="doc-footer">
-              <span class="doc-date">Generado: 23 mar 2026</span>
+              <span class="doc-date">Generado: 14 abr 2026</span>
               <button class="btn btn-primary btn-sm" onclick="showToast('📥 Cálculo de precios descargado')">Descargar PDF</button>
             </div>
           </div>
@@ -4056,7 +4412,7 @@ tr:last-child td { border-bottom: none; }
             <div class="doc-name">Alerta de Proveedor Más Barato</div>
             <div class="doc-desc">Cuando sube el dólar o hay volatilidad, PolPilot compara proveedores: "Ferrante subió 4%, el sector 6.2%. Seguí con Ferrante."</div>
             <div class="doc-footer">
-              <span class="doc-date">Generado: 23 mar 2026</span>
+              <span class="doc-date">Generado: 14 abr 2026</span>
               <button class="btn btn-primary btn-sm" onclick="showToast('📥 Comparativo de proveedores descargado')">Descargar PDF</button>
             </div>
           </div>
@@ -4065,7 +4421,7 @@ tr:last-child td { border-bottom: none; }
             <div class="doc-name">Factura de Cobro Automática</div>
             <div class="doc-desc">Generada al cerrar cada trabajo. Con datos del cliente, detalle de servicio y envío automático por WhatsApp.</div>
             <div class="doc-footer">
-              <span class="doc-date">Generado: 22 mar 2026</span>
+              <span class="doc-date">Generado: 14 abr 2026</span>
               <button class="btn btn-primary btn-sm" onclick="showToast('📥 Factura de cobro descargada')">Descargar PDF</button>
             </div>
           </div>
@@ -4120,15 +4476,20 @@ tr:last-child td { border-bottom: none; }
             </div>
           </div>
           <div class="chat-suggestions" id="chat-suggestions">
+            <button class="chat-chip" onclick="askAngela('Necesito importar discos de freno de Brasil. ¿Qué crédito me conviene para financiar la importación?')">🏦 Crédito para importación</button>
             <button class="chat-chip" onclick="askAngela('¿Cómo viene mi caja esta semana?')">💰 ¿Cómo viene mi caja?</button>
-            <button class="chat-chip" onclick="askAngela('¿Me conviene comprar pastillas esta semana?')">📦 ¿Conviene comprar pastillas?</button>
-            <button class="chat-chip" onclick="askAngela('¿Qué pasa si no le cobro a Gutiérrez?')">⚠️ ¿Qué pasa con Gutiérrez?</button>
-            <button class="chat-chip" onclick="askAngela('¿Cómo me preparo para la VTV de abril?')">🚗 Preparar VTV abril</button>
             <button class="chat-chip" onclick="askAngela('¿Mi negocio crea o destruye valor?')">📐 ¿Creo valor real?</button>
+            <button class="chat-chip" onclick="askAngela('¿Cómo me preparo para la VTV de abril?')">🚗 Preparar VTV abril</button>
           </div>
-          <div class="chat-input-area">
-            <input class="chat-input" id="chat-input" placeholder="Preguntale a Ángela..." onkeypress="if(event.key==='Enter'){sendChat()}">
-            <button class="chat-send-btn" onclick="sendChat()">➤</button>
+          <div class="chat-input-area" style="flex-direction:column;gap:8px;">
+            <div style="display:flex;gap:8px;width:100%;">
+              <label style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;background:var(--bg);border:1px solid var(--border);cursor:pointer;font-size:1rem;flex-shrink:0;" title="Subir archivo">
+                📎
+                <input type="file" style="display:none;" onchange="handleFileUpload(this.files)">
+              </label>
+              <input class="chat-input" id="chat-input" placeholder="Preguntale a Ángela..." onkeypress="if(event.key==='Enter'){sendChat()}" style="flex:1;">
+              <button class="chat-send-btn" onclick="sendChat()">➤</button>
+            </div>
           </div>
         </div>
       </div>
@@ -4362,6 +4723,34 @@ tr:last-child td { border-bottom: none; }
   </div>
 </div>
 
+<!-- ANGELA FLOATING WIDGET -->
+<div id="angela-widget" style="position:fixed;bottom:24px;right:24px;z-index:9998;">
+  <div id="angela-widget-panel" style="display:none;width:380px;max-height:520px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow-lg);border:1px solid var(--border);overflow:hidden;margin-bottom:12px;animation:fadeIn 0.25s ease;">
+    <div style="padding:14px 18px;background:linear-gradient(135deg,var(--sidebar-bg),#131B33);color:white;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:1.2rem;">🤖</span>
+        <div>
+          <div style="font-weight:700;font-size:0.88rem;">Ángela</div>
+          <div id="angela-widget-context" style="font-size:0.68rem;color:rgba(255,255,255,0.5);">Viendo: Inicio</div>
+        </div>
+      </div>
+      <button onclick="toggleAngelaWidget()" style="background:none;border:none;color:rgba(255,255,255,0.6);font-size:1.2rem;cursor:pointer;font-family:'Outfit',sans-serif;">✕</button>
+    </div>
+    <div id="angela-widget-messages" style="height:340px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.5;padding:10px;background:var(--bg);border-radius:10px;">
+        👋 Hola Gonzalo, preguntame lo que necesites sobre lo que estás viendo.
+      </div>
+    </div>
+    <div style="padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px;">
+      <input id="angela-widget-input" placeholder="Preguntale a Ángela..." style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-family:'Outfit',sans-serif;font-size:0.82rem;outline:none;" onkeypress="if(event.key==='Enter')sendWidgetChat()">
+      <button onclick="sendWidgetChat()" style="background:var(--blue);color:white;border:none;border-radius:8px;padding:8px 14px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;">➤</button>
+    </div>
+  </div>
+  <button id="angela-fab" onclick="toggleAngelaWidget()" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0040CC);color:white;border:none;cursor:pointer;font-size:1.5rem;box-shadow:0 4px 20px rgba(0,87,255,0.4);display:flex;align-items:center;justify-content:center;transition:transform 0.2s;margin-left:auto;">
+    🤖
+  </button>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -4384,7 +4773,8 @@ const viewTitles = {
   memoria: 'Historia y Procesos',
   whatsapp: 'WhatsApp',
   documentos: 'Documentos y Entregables',
-  angela: 'Ángela — Tu Socia de Negocio'
+  angela: 'Ángela — Tu Socia de Negocio',
+  creditos: 'Créditos y Financiamiento'
 };
 
 function switchView(viewId) {
@@ -4449,7 +4839,7 @@ function toggleHealthDetail(btn) {
 }
 
 function initHealthScore() {
-  const score = 78;
+  const score = 58;
   const gaugeEl = document.getElementById('health-gauge-fill');
   if (!gaugeEl) return;
   const arcTotal = 235.62;
@@ -4479,8 +4869,10 @@ function closeOrgModal() {
 }
 
 // ═══════════════════════════════════════════════
-// ANGELA CHAT
+// ANGELA CHAT — SSE MOCK
 // ═══════════════════════════════════════════════
+let cancelStream = null;
+
 const angelaResponses = {
   '¿Cómo viene mi caja esta semana?': `Tu caja esta semana está en <strong>$890.000</strong>. Cobraste 3 facturas por $520.000 y tus ventas subieron 12%.\n\nLo positivo: tenés liquidez suficiente para cubrir la compra a Ferrante ($1.865.000 a 30 días) porque la facturación de abril va a entrar antes del vencimiento.\n\nLo que hay que resolver: Gutiérrez te debe $340.000 hace 47 días. Si cobra, tu caja sube a $1.230.000 y quedás muy cómodo.\n\n<strong>¿Querés que mande el recordatorio de cobro?</strong>`,
 
@@ -4496,55 +4888,100 @@ const angelaResponses = {
 function askAngela(question) {
   addChatMsg('user', question);
   document.getElementById('chat-suggestions').style.display = 'none';
-
-  setTimeout(() => {
-    const response = angelaResponses[question] || 'Dejame analizar eso con tus datos actualizados. Un momento... 🔍\n\nBasado en lo que conozco de tu negocio, te recomiendo que lo revisemos juntos. ¿Querés que profundice en algún aspecto específico?';
-    addChatMsg('bot', response.replace(/\n/g, '<br>'));
-  }, 800);
+  runAngelaQuery(question);
 }
 
-function addChatMsg(type, html) {
-  const container = document.getElementById('chat-messages');
-  const msg = document.createElement('div');
-  msg.className = 'chat-msg ' + type;
-  const avatar = type === 'bot' ? '🤖' : 'GC';
-  const avatarStyle = type === 'bot' ? '' : '';
-  msg.innerHTML = `
-    <div class="chat-avatar">${avatar}</div>
-    <div class="chat-bubble">${html}</div>
-  `;
-  container.appendChild(msg);
+function runAngelaQuery(text) {
+  if (cancelStream) { cancelStream(); cancelStream = null; }
+  const lower = text.toLowerCase();
+  const isCreditsQuery = lower.includes('crédito') || lower.includes('credito') || lower.includes('financ') || lower.includes('importa') || lower.includes('banco') || lower.includes('tasa');
+
+  if (isCreditsQuery) {
+    cancelStream = sendQueryStreaming(text, { current_view: 'angela' },
+      function(stepData) { addThinkingStep(stepData); },
+      function(result) {
+        cancelStream = null;
+        removeThinkingSteps();
+        var rendered = (typeof marked !== 'undefined' && marked.parse) ? marked.parse(result.response) : result.response.replace(/\n/g, '<br>');
+        var msg = addChatMsg('bot', rendered);
+        if (result.navigate_to) {
+          var link = document.createElement('div');
+          link.style.cssText = 'margin-top:12px;padding-top:12px;border-top:1px solid var(--border);';
+          link.innerHTML = '<a href="#" onclick="switchView(\'creditos\'); return false;" style="color:var(--blue);font-weight:700;font-size:0.85rem;text-decoration:none;">Ver créditos recomendados →</a>';
+          msg.querySelector('.chat-bubble').appendChild(link);
+        }
+        if (result.cards && result.cards.length) {
+          var cardsDiv = document.createElement('div');
+          cardsDiv.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;';
+          result.cards.forEach(function(c) {
+            var matchColor = c.match ? 'var(--green)' : 'var(--yellow)';
+            cardsDiv.innerHTML += '<div style="padding:10px 14px;background:var(--bg);border-radius:10px;border:1px solid var(--border);border-left:3px solid ' + matchColor + ';flex:1;min-width:140px;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);">' + c.bank + '</div><div style="font-size:0.82rem;font-weight:700;margin:4px 0;">' + c.name + '</div><div style="font-size:0.72rem;color:var(--text-secondary);">Tasa: ' + c.rate + ' · Hasta ' + c.amount + '</div></div>';
+          });
+          msg.querySelector('.chat-bubble').appendChild(cardsDiv);
+        }
+        document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+      }
+    );
+  } else {
+    setTimeout(function() {
+      var response = angelaResponses[text];
+      if (!response) {
+        var lw = text.toLowerCase();
+        if (lw.includes('caja') || lw.includes('plata') || lw.includes('dinero')) response = angelaResponses['¿Cómo viene mi caja esta semana?'];
+        else if (lw.includes('pastilla') || lw.includes('comprar') || lw.includes('ferrante')) response = angelaResponses['¿Me conviene comprar pastillas esta semana?'];
+        else if (lw.includes('moroso') || lw.includes('cobr')) response = angelaResponses['¿Qué pasa si no le cobro a Gutiérrez?'];
+        else if (lw.includes('vtv') || lw.includes('abril') || lw.includes('prepar')) response = angelaResponses['¿Cómo me preparo para la VTV de abril?'];
+        else if (lw.includes('valor') || lw.includes('eva') || lw.includes('roic')) response = angelaResponses['¿Mi negocio crea o destruye valor?'];
+        else response = 'Buena pregunta, Gonzalo. Dejame cruzar eso con los datos de tu negocio...\n\nBasado en tu historial y el contexto actual del mercado, te recomiendo que revisemos esto con más detalle.\n\n¿Querés que lo prepare como entregable descargable?';
+      }
+      addChatMsg('bot', response.replace(/\n/g, '<br>'));
+    }, 800);
+  }
+}
+
+function addThinkingStep(stepData) {
+  var container = document.getElementById('chat-messages');
+  var stepsEl = container.querySelector('.angela-thinking-steps');
+  if (!stepsEl) {
+    var msg = document.createElement('div');
+    msg.className = 'chat-msg bot';
+    msg.innerHTML = '<div class="chat-avatar">🤖</div><div class="chat-bubble"><div class="angela-thinking-steps" style="display:flex;flex-direction:column;gap:6px;"></div></div>';
+    container.appendChild(msg);
+    stepsEl = msg.querySelector('.angela-thinking-steps');
+  }
+  var step = document.createElement('div');
+  step.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:0.78rem;color:var(--text-secondary);animation:fadeIn 0.3s ease;';
+  var icons = { classifying: '🔍', expanding: '🧠', agent_finance: '💰', agent_economy: '🌐', agent_research: '📡', meshing: '🔗', validating: '✅' };
+  step.innerHTML = '<span style="font-size:0.9rem;">' + (icons[stepData.step] || '⚙️') + '</span><span>' + stepData.message + '</span><span style="color:var(--green);font-size:0.7rem;margin-left:auto;">✓</span>';
+  stepsEl.appendChild(step);
   container.scrollTop = container.scrollHeight;
 }
 
-function sendChat() {
-  const input = document.getElementById('chat-input');
-  const text = input.value.trim();
-  if (!text) return;
+function removeThinkingSteps() {
+  var container = document.getElementById('chat-messages');
+  var el = container.querySelector('.angela-thinking-steps');
+  if (el) el.closest('.chat-msg').remove();
+}
 
+function addChatMsg(type, html) {
+  var container = document.getElementById('chat-messages');
+  var msg = document.createElement('div');
+  msg.className = 'chat-msg ' + type;
+  var avatar = type === 'bot' ? '🤖' : 'GC';
+  msg.innerHTML = '<div class="chat-avatar">' + avatar + '</div><div class="chat-bubble">' + html + '</div>';
+  container.appendChild(msg);
+  container.scrollTop = container.scrollHeight;
+  return msg;
+}
+
+function sendChat() {
+  var input = document.getElementById('chat-input');
+  var text = input.value.trim();
+  if (!text) return;
   addChatMsg('user', text);
   input.value = '';
   document.getElementById('chat-suggestions').style.display = 'none';
-
-  setTimeout(() => {
-    // Check for keyword matches
-    let response = '';
-    const lower = text.toLowerCase();
-    if (lower.includes('caja') || lower.includes('plata') || lower.includes('dinero')) {
-      response = angelaResponses['¿Cómo viene mi caja esta semana?'];
-    } else if (lower.includes('pastilla') || lower.includes('comprar') || lower.includes('ferrante')) {
-      response = angelaResponses['¿Me conviene comprar pastillas esta semana?'];
-    } else if (lower.includes('gutiérrez') || lower.includes('gutierrez') || lower.includes('moroso') || lower.includes('cobr')) {
-      response = angelaResponses['¿Qué pasa si no le cobro a Gutiérrez?'];
-    } else if (lower.includes('vtv') || lower.includes('abril') || lower.includes('prepar')) {
-      response = angelaResponses['¿Cómo me preparo para la VTV de abril?'];
-    } else if (lower.includes('valor') || lower.includes('eva') || lower.includes('roic') || lower.includes('crea') || lower.includes('destruy')) {
-      response = angelaResponses['¿Mi negocio crea o destruye valor?'];
-    } else {
-      response = `Buena pregunta, Gonzalo. Dejame cruzar eso con los datos de tu negocio...\n\nBasado en tu historial y el contexto actual del mercado, te recomiendo que revisemos esto con más detalle. Puedo generar un análisis específico si me das un minuto.\n\n<strong>¿Querés que lo prepare como entregable descargable?</strong>`;
-    }
-    addChatMsg('bot', response.replace(/\n/g, '<br>'));
-  }, 1000);
+  runAngelaQuery(text);
 }
 
 // ═══════════════════════════════════════════════
@@ -4624,6 +5061,35 @@ function setPerfilActivo(perfil, el) {
 // ═══════════════════════════════════════════════
 // FEATURE 2: TOGGLE DOS REALIDADES
 // ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// APEXCHARTS — CASH FLOW
+// ═══════════════════════════════════════════════
+function initCashFlowChart() {
+  const el = document.getElementById('cashflow-chart');
+  if (!el || typeof ApexCharts === 'undefined') return;
+  const fin = MOCK.financials;
+  const categories = fin.map(f => monthLabel(f.year, f.month));
+  const opts = {
+    chart: { type: 'area', height: 280, fontFamily: 'Outfit, sans-serif', toolbar: { show: false }, background: 'transparent' },
+    series: [
+      { name: 'Ingresos', data: fin.map(f => f.revenue) },
+      { name: 'Egresos', data: fin.map(f => f.expenses) }
+    ],
+    xaxis: { categories },
+    yaxis: { labels: { formatter: v => formatCurrency(v) } },
+    colors: ['#0057FF', '#FF6044'],
+    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.45, opacityTo: 0.05 } },
+    stroke: { curve: 'smooth', width: 2.5 },
+    dataLabels: { enabled: false },
+    tooltip: { y: { formatter: v => formatCurrency(v) } },
+    grid: { borderColor: '#E5E7EB', strokeDashArray: 4 },
+    legend: { position: 'top', horizontalAlign: 'right' },
+    theme: { mode: 'light' }
+  };
+  new ApexCharts(el, opts).render();
+}
+document.addEventListener('DOMContentLoaded', initCashFlowChart);
+
 let isRealView = true;
 const realValues = {};
 const fiscalMultiplier = 0.65; // Simula que el 65% está blanqueado
@@ -4680,6 +5146,73 @@ function toggleReality() {
   });
   
   showToast(isRealView ? '🔵 Vista Operativa (Real) — 100% de tu economía' : '🏦 Vista Bancaria activada — Solo datos AFIP');
+}
+
+// ═══════════════════════════════════════════════
+// ANGELA FLOATING WIDGET
+// ═══════════════════════════════════════════════
+var angelaWidgetOpen = false;
+
+function toggleAngelaWidget() {
+  angelaWidgetOpen = !angelaWidgetOpen;
+  var panel = document.getElementById('angela-widget-panel');
+  var fab = document.getElementById('angela-fab');
+  panel.style.display = angelaWidgetOpen ? 'block' : 'none';
+  fab.style.transform = angelaWidgetOpen ? 'rotate(180deg)' : '';
+  fab.innerHTML = angelaWidgetOpen ? '✕' : '🤖';
+  if (angelaWidgetOpen) updateWidgetContext();
+}
+
+function updateWidgetContext() {
+  var active = document.querySelector('.sidebar-item.active');
+  var viewName = active ? (viewTitles[active.dataset.view] || 'Inicio') : 'Inicio';
+  var ctx = document.getElementById('angela-widget-context');
+  if (ctx) ctx.textContent = 'Viendo: ' + viewName;
+}
+
+function sendWidgetChat() {
+  var input = document.getElementById('angela-widget-input');
+  var text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  var container = document.getElementById('angela-widget-messages');
+  container.innerHTML += '<div style="font-size:0.82rem;padding:8px 12px;background:var(--blue-light);border-radius:10px;align-self:flex-end;max-width:80%;margin-left:auto;">' + text + '</div>';
+  container.scrollTop = container.scrollHeight;
+
+  var lower = text.toLowerCase();
+  var isCredits = lower.includes('crédito') || lower.includes('credito') || lower.includes('banco') || lower.includes('importa');
+  if (isCredits) {
+    container.innerHTML += '<div style="font-size:0.78rem;color:var(--text-secondary);padding:6px 10px;">🔍 Analizando...</div>';
+    setTimeout(function() {
+      container.lastChild.remove();
+      container.innerHTML += '<div style="font-size:0.82rem;color:var(--text);line-height:1.5;padding:10px;background:var(--bg);border-radius:10px;">Tu perfil BCRA es Situación 1, sin deuda. <strong>Calificás a 3 créditos.</strong> El más conveniente para importación: Banco Provincia a 26% TNA. <a href="#" onclick="switchView(\'creditos\'); toggleAngelaWidget(); return false;" style="color:var(--blue);font-weight:700;">Ver todos →</a></div>';
+      container.scrollTop = container.scrollHeight;
+    }, 2000);
+  } else {
+    setTimeout(function() {
+      container.innerHTML += '<div style="font-size:0.82rem;color:var(--text);line-height:1.5;padding:10px;background:var(--bg);border-radius:10px;">Dejame analizar eso, Gonzalo. Para un análisis más completo, <a href="#" onclick="switchView(\'angela\'); toggleAngelaWidget(); return false;" style="color:var(--blue);font-weight:700;">abrí el chat completo →</a></div>';
+      container.scrollTop = container.scrollHeight;
+    }, 1000);
+  }
+}
+
+// Update widget context when switching views
+var origSwitchView = switchView;
+switchView = function(viewId) {
+  origSwitchView(viewId);
+  updateWidgetContext();
+};
+
+// ═══════════════════════════════════════════════
+// UPLOAD — Documentos + Angela
+// ═══════════════════════════════════════════════
+function handleFileUpload(files) {
+  if (!files || !files.length) return;
+  var file = files[0];
+  showToast('📤 Procesando "' + file.name + '"...');
+  ingestFile(file).then(function(result) {
+    showToast('✅ ' + result.angela_comment);
+  });
 }
 </script>
 </body>

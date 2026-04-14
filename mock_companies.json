@@ -1,0 +1,365 @@
+{
+  "empresas": [
+    {
+      "id": "emp_001",
+      "nombre": "Calatayud Frenos y Embragues SRL",
+      "rubro": "Venta y distribución de repuestos automotores",
+      "cuit": "30-71584923-4",
+      "fundacion": "1984",
+      "antiguedad_años": 42,
+      "localidad": "Venado Tuerto, Santa Fe",
+      "direccion": "Av. Santa Fe 1240, Venado Tuerto",
+      "telefono": "+54 3462 421890",
+      "regimen_fiscal": "Responsable Inscripto",
+      "categoria_afip": "PyME Tramo 1",
+      "monotributo": false,
+      "facturacion_electronica": true,
+
+      "equipo": {
+        "dueño": {
+          "nombre": "Gonzalo Calatayud",
+          "edad": 58,
+          "rol": "Dueño y gerente general",
+          "años_en_empresa": 35,
+          "formacion": "Secundario técnico mecánico"
+        },
+        "empleados": [
+          {"nombre": "Martín Ruiz", "rol": "Encargado de ventas mostrador", "antiguedad_meses": 180, "sueldo_bruto": 850000},
+          {"nombre": "Carlos Pereyra", "rol": "Vendedor mostrador", "antiguedad_meses": 96, "sueldo_bruto": 720000},
+          {"nombre": "Lucía Gómez", "rol": "Administración y facturación", "antiguedad_meses": 60, "sueldo_bruto": 680000},
+          {"nombre": "Diego Fernández", "rol": "Depósito y logística", "antiguedad_meses": 48, "sueldo_bruto": 620000},
+          {"nombre": "Pablo Acosta", "rol": "Vendedor mayorista", "antiguedad_meses": 36, "sueldo_bruto": 750000},
+          {"nombre": "Ana Torres", "rol": "Cobranzas", "antiguedad_meses": 24, "sueldo_bruto": 650000},
+          {"nombre": "Ramiro Díaz", "rol": "Chofer y entregas", "antiguedad_meses": 18, "sueldo_bruto": 580000},
+          {"nombre": "Sofía Méndez", "rol": "Atención al cliente / redes", "antiguedad_meses": 8, "sueldo_bruto": 550000}
+        ],
+        "total_empleados": 8,
+        "costo_laboral_mensual_total": 8420000,
+        "cargas_sociales_porcentaje": 0.33,
+        "costo_laboral_con_cargas": 11198600
+      },
+
+      "finanzas": {
+        "moneda": "ARS",
+        "periodo": "Marzo 2026",
+
+        "ingresos_mensuales": {
+          "ventas_mostrador": 18500000,
+          "ventas_mayoristas": 32000000,
+          "ventas_online_ml": 4200000,
+          "servicios_instalacion": 1800000,
+          "total_facturado": 56500000,
+          "total_real_con_negro": 68000000,
+          "porcentaje_en_negro": 0.17
+        },
+
+        "costos_mercaderia": {
+          "compras_proveedores_nacionales": 28500000,
+          "compras_importacion_directa": 8200000,
+          "flete_y_logistica": 1900000,
+          "total_costo_mercaderia": 38600000
+        },
+
+        "gastos_operativos_mensuales": {
+          "sueldos_con_cargas": 11198600,
+          "alquiler_local": 1800000,
+          "servicios_luz_gas_internet": 420000,
+          "impuestos_iibb_municipal": 1695000,
+          "sistema_gestion_stock": 85000,
+          "seguros": 340000,
+          "mantenimiento_local": 180000,
+          "combustible_entregas": 290000,
+          "publicidad_y_marketing": 150000,
+          "gastos_bancarios_y_financieros": 380000,
+          "contador_externo": 250000,
+          "varios_imprevistos": 200000,
+          "total_gastos_operativos": 16988600
+        },
+
+        "resultado_mensual": {
+          "ingresos_totales_facturados": 56500000,
+          "costo_mercaderia": -38600000,
+          "margen_bruto": 17900000,
+          "gastos_operativos": -16988600,
+          "resultado_operativo": 911400,
+          "margen_operativo_porcentaje": 0.016,
+          "resultado_real_con_negro": 12411400
+        },
+
+        "flujo_de_caja": {
+          "saldo_inicial_mes": 3200000,
+          "cobros_del_mes": {
+            "contado": 42000000,
+            "cobro_creditos_anteriores": 8500000,
+            "total_cobros": 50500000
+          },
+          "pagos_del_mes": {
+            "proveedores": 35800000,
+            "sueldos": 11198600,
+            "alquiler_y_servicios": 2220000,
+            "impuestos": 1695000,
+            "otros": 1655000,
+            "total_pagos": 52568600
+          },
+          "flujo_neto_mes": -2068600,
+          "saldo_final_mes": 1131400,
+          "dias_de_cobertura_gastos": 0.65
+        },
+
+        "cuentas_por_cobrar": {
+          "total": 14200000,
+          "a_30_dias": 8500000,
+          "a_60_dias": 3200000,
+          "a_90_dias": 1500000,
+          "morosos_mas_90_dias": 1000000,
+          "clientes_morosos": [
+            {"nombre": "Lubricentro San Martín", "monto": 450000, "dias_atraso": 95},
+            {"nombre": "Taller Mecánico Rossi", "monto": 320000, "dias_atraso": 120},
+            {"nombre": "Frenos del Sur", "monto": 230000, "dias_atraso": 105}
+          ]
+        },
+
+        "cuentas_por_pagar": {
+          "total": 22300000,
+          "a_proveedores_30_dias": 15800000,
+          "a_proveedores_60_dias": 4500000,
+          "impuestos_pendientes": 2000000
+        },
+
+        "stock": {
+          "valor_total_stock": 45000000,
+          "productos_total": 1840,
+          "rotacion_stock_dias": 35,
+          "productos_sin_movimiento_90_dias": 186,
+          "valor_stock_sin_movimiento": 5200000,
+          "top_productos": [
+            {"nombre": "Pastillas de freno Ferodo", "stock_unidades": 340, "costo_unitario": 18500, "precio_venta": 32000, "rotacion_dias": 12},
+            {"nombre": "Disco de freno ventilado VW Gol", "stock_unidades": 120, "costo_unitario": 42000, "precio_venta": 68000, "rotacion_dias": 18},
+            {"nombre": "Kit embrague Sachs Fiat", "stock_unidades": 65, "costo_unitario": 185000, "precio_venta": 295000, "rotacion_dias": 25},
+            {"nombre": "Cilindro maestro freno Toyota", "stock_unidades": 45, "costo_unitario": 95000, "precio_venta": 155000, "rotacion_dias": 30},
+            {"nombre": "Manguera freno universal", "stock_unidades": 280, "costo_unitario": 8500, "precio_venta": 15000, "rotacion_dias": 8}
+          ]
+        },
+
+        "indicadores_financieros": {
+          "margen_bruto": 0.317,
+          "margen_operativo_real": 0.183,
+          "liquidez_corriente": 0.91,
+          "endeudamiento": 0.38,
+          "rotacion_cuentas_cobrar_dias": 28,
+          "rotacion_cuentas_pagar_dias": 42,
+          "ciclo_de_caja_dias": 21,
+          "punto_equilibrio_mensual": 46200000,
+          "roi_anual_estimado": 0.14,
+          "wacc_estimado": 0.22
+        },
+
+        "activos": {
+          "caja_y_bancos": 1131400,
+          "cuentas_por_cobrar": 14200000,
+          "stock": 45000000,
+          "vehiculo_utilitario": 18000000,
+          "mobiliario_y_equipos": 5500000,
+          "total_activos": 83831400
+        },
+
+        "pasivos": {
+          "cuentas_por_pagar": 22300000,
+          "deuda_bancaria_corto_plazo": 0,
+          "cargas_fiscales_pendientes": 2000000,
+          "total_pasivos": 24300000
+        },
+
+        "patrimonio_neto": 59531400,
+
+        "historial_ventas_6_meses": [
+          {"mes": "Octubre 2025", "ventas_facturadas": 48000000},
+          {"mes": "Noviembre 2025", "ventas_facturadas": 51200000},
+          {"mes": "Diciembre 2025", "ventas_facturadas": 58500000},
+          {"mes": "Enero 2026", "ventas_facturadas": 42000000},
+          {"mes": "Febrero 2026", "ventas_facturadas": 49800000},
+          {"mes": "Marzo 2026", "ventas_facturadas": 56500000}
+        ]
+      },
+
+      "proveedores": [
+        {"nombre": "Frasle Argentina SA", "rubro": "Pastillas y cintas de freno", "condicion_pago": "30 días", "monto_mensual_promedio": 8500000, "origen": "Nacional"},
+        {"nombre": "Sachs Automotive", "rubro": "Embragues y kits", "condicion_pago": "60 días", "monto_mensual_promedio": 6200000, "origen": "Nacional"},
+        {"nombre": "Fremax Brasil", "rubro": "Discos de freno", "condicion_pago": "Anticipo 50% + 30 días", "monto_mensual_promedio": 4800000, "origen": "Importación Brasil"},
+        {"nombre": "Turk Fren Sanayi", "rubro": "Cilindros y bombas de freno", "condicion_pago": "Anticipo 100%", "monto_mensual_promedio": 3400000, "origen": "Importación Turquía"},
+        {"nombre": "Distri Repuestos Rosario", "rubro": "Varios / complementarios", "condicion_pago": "15 días", "monto_mensual_promedio": 2800000, "origen": "Nacional"}
+      ],
+
+      "clientes_principales": [
+        {"nombre": "Red de Talleres Venado Tuerto (12 talleres)", "tipo": "Mayorista", "facturacion_mensual": 12000000},
+        {"nombre": "Lubricentros zona sur Santa Fe (8 locales)", "tipo": "Mayorista", "facturacion_mensual": 8500000},
+        {"nombre": "Mostrador particular", "tipo": "Minorista", "facturacion_mensual": 18500000},
+        {"nombre": "MercadoLibre (tienda online)", "tipo": "E-commerce", "facturacion_mensual": 4200000},
+        {"nombre": "Concesionarias usados región", "tipo": "Mayorista", "facturacion_mensual": 5300000}
+      ],
+
+      "contexto_necesidad_credito": {
+        "motivo": "Gonzalo quiere importar un contenedor completo de discos y pastillas de freno desde Turquía. Con la desregulación de importaciones, el costo unitario baja 40% respecto a comprarlo a distribuidores nacionales. Pero necesita USD 35.000 (aprox ARS 42.000.000) para el anticipo del contenedor.",
+        "situacion_actual": "Tiene flujo de caja negativo este mes (-2M ARS), liquidez corriente de 0.91, pero buena historia comercial (42 años), sin deuda bancaria, y patrimonio neto de 59M. Es un candidato viable pero no lo sabe.",
+        "pregunta_del_usuario": "Angela, me ofrecieron traer un contenedor de Turquía con repuestos a mitad de precio. ¿Me conviene? ¿Puedo pedir un crédito para eso?"
+      }
+    },
+
+    {
+      "id": "emp_002",
+      "nombre": "Panadería y Confitería Don Julio",
+      "rubro": "Producción y venta de panificados",
+      "cuit": "20-28456789-1",
+      "fundacion": "2008",
+      "antiguedad_años": 18,
+      "localidad": "Rosario, Santa Fe",
+      "empleados_total": 5,
+      "facturacion_mensual": 12000000,
+      "margen_bruto": 0.45,
+      "resultado_operativo_mensual": 1800000,
+      "liquidez_corriente": 1.2,
+      "deuda_bancaria": 3500000,
+      "necesidad": "Quiere abrir un segundo local pero no sabe si sus números dan"
+    },
+
+    {
+      "id": "emp_003",
+      "nombre": "Transporte Giménez e Hijos",
+      "rubro": "Transporte de carga regional",
+      "cuit": "30-65432198-7",
+      "fundacion": "1995",
+      "antiguedad_años": 31,
+      "localidad": "Venado Tuerto, Santa Fe",
+      "empleados_total": 14,
+      "facturacion_mensual": 38000000,
+      "margen_bruto": 0.28,
+      "resultado_operativo_mensual": -500000,
+      "liquidez_corriente": 0.75,
+      "deuda_bancaria": 28000000,
+      "necesidad": "Está perdiendo plata y no sabe por qué. Necesita diagnóstico urgente."
+    }
+  ],
+
+  "contexto_macroeconomico_argentina_abril_2026": {
+    "inflacion_mensual_marzo": 0.028,
+    "inflacion_interanual": 0.42,
+    "tipo_cambio_oficial": 1200,
+    "tipo_cambio_blue": 1350,
+    "tasa_badlar": 0.32,
+    "tasa_plazo_fijo_30_dias": 0.30,
+    "riesgo_pais": 780,
+    "pbi_variacion_anual": 0.045,
+    "desempleo": 0.068,
+    "politica_importaciones": "Régimen de importaciones simplificado vigente desde enero 2025. Sin SIRA. Plazo de pago al exterior: libre.",
+    "creditos_pyme_vigentes": [
+      {
+        "nombre": "Crédito PyME Inversión Productiva — Banco Nación",
+        "tasa_anual": 0.29,
+        "plazo_maximo_meses": 48,
+        "monto_maximo_ars": 80000000,
+        "monto_maximo_usd": null,
+        "requisitos": ["Certificado PyME AFIP vigente", "Antigüedad mínima 2 años", "Sin deuda BCRA", "Presentar flujo de fondos proyectado"],
+        "garantia": "SGR o hipotecaria",
+        "destino": "Inversión en bienes de capital, capital de trabajo, importación de insumos",
+        "tiempo_aprobacion_dias": 15
+      },
+      {
+        "nombre": "Línea Importaciones PyME — Banco Provincia",
+        "tasa_anual": 0.26,
+        "plazo_maximo_meses": 36,
+        "monto_maximo_ars": null,
+        "monto_maximo_usd": 50000,
+        "requisitos": ["Certificado PyME", "Operación de comercio exterior documentada", "Sin deuda impositiva"],
+        "garantia": "Cesión de cobranzas o warrant",
+        "destino": "Financiamiento de importaciones de insumos y bienes intermedios",
+        "tiempo_aprobacion_dias": 10
+      },
+      {
+        "nombre": "Crédito Capital de Trabajo — Banco Galicia",
+        "tasa_anual": 0.38,
+        "plazo_maximo_meses": 12,
+        "monto_maximo_ars": 30000000,
+        "monto_maximo_usd": null,
+        "requisitos": ["Cuenta corriente con 6 meses de antigüedad", "Facturación demostrable"],
+        "garantia": "Sin garantía hasta 15M, con SGR hasta 30M",
+        "destino": "Capital de trabajo general",
+        "tiempo_aprobacion_dias": 5
+      },
+      {
+        "nombre": "Programa FONDEP — Ministerio de Producción",
+        "tasa_anual": 0.15,
+        "plazo_maximo_meses": 60,
+        "monto_maximo_ars": 50000000,
+        "monto_maximo_usd": null,
+        "requisitos": ["Proyecto productivo aprobado", "Certificado PyME", "Matching funds 20%"],
+        "garantia": "SGR obligatoria",
+        "destino": "Proyectos de inversión productiva con impacto en empleo",
+        "tiempo_aprobacion_dias": 45
+      },
+      {
+        "nombre": "Préstamo Comex — Banco ICBC",
+        "tasa_anual": 0.08,
+        "plazo_maximo_meses": 6,
+        "monto_maximo_ars": null,
+        "monto_maximo_usd": 100000,
+        "requisitos": ["Historial importador", "Carta de crédito o orden de compra", "Garantía bancaria"],
+        "garantia": "Mercadería importada como prenda",
+        "destino": "Prefinanciación de importaciones",
+        "tiempo_aprobacion_dias": 7
+      }
+    ],
+    "regulaciones_relevantes": [
+      "Resolución AFIP 5432/2025: Nuevo régimen simplificado de importación para PyMEs categoría Tramo 1 y 2",
+      "Decreto 124/2026: Bonificación de 5 puntos en tasa de interés para créditos productivos PyME con destino importación de insumos",
+      "Comunicación BCRA A-7890: Las PyMEs con certificado vigente pueden acceder a líneas de crédito preferenciales sin requisito de reciprocidad bancaria"
+    ]
+  },
+
+  "caso_demo_principal": {
+    "empresa": "Calatayud Frenos y Embragues SRL",
+    "pregunta_usuario": "Angela, me ofrecieron traer un contenedor de Turquía con repuestos a mitad de precio. ¿Me conviene? ¿Puedo pedir un crédito para eso?",
+
+    "respuesta_esperada_angela": {
+      "analisis_interno": {
+        "resumen": "Tu negocio factura $56.5M/mes con margen bruto del 31.7%. Tenés flujo de caja ajustado este mes (-$2M), pero sin deuda bancaria y con patrimonio neto de $59.5M. Tu liquidez corriente es 0.91 — estás justo, pero no en riesgo.",
+        "fortalezas": ["42 años de antigüedad comercial", "Sin deuda bancaria", "Patrimonio neto sólido ($59.5M)", "Facturación creciente últimos 3 meses"],
+        "debilidades": ["Flujo de caja negativo este mes", "Liquidez corriente bajo 1.0", "17% de operaciones en negro reduce tu perfil crediticio formal", "$1M en morosos de más de 90 días"]
+      },
+      "analisis_externo": {
+        "oportunidad": "Con la desregulación de importaciones (Resolución AFIP 5432/2025), importar directo de Turquía te baja el costo unitario ~40%. Un contenedor de USD 35.000 (ARS 42M) en discos y pastillas te rendiría un margen bruto estimado del 55% vs el 31% actual comprando a distribuidores nacionales.",
+        "beneficio_fiscal": "El Decreto 124/2026 te bonifica 5 puntos en la tasa de interés si usás el crédito para importar insumos productivos."
+      },
+      "creditos_recomendados": [
+        {
+          "ranking": 1,
+          "nombre": "Línea Importaciones PyME — Banco Provincia",
+          "por_que": "Específica para importación, tasa 26% (baja a 21% con bonificación), hasta USD 50.000, plazo 36 meses. Necesitás la orden de compra del proveedor turco y tu certificado PyME.",
+          "cuota_estimada_mensual": 1620000,
+          "aplicas": true,
+          "requisitos_que_cumplis": ["Certificado PyME vigente", "Sin deuda impositiva"],
+          "requisitos_que_faltan": ["Documentar la operación de comercio exterior"]
+        },
+        {
+          "ranking": 2,
+          "nombre": "Préstamo Comex — Banco ICBC",
+          "por_que": "Tasa más baja (8% anual en USD), pero plazo corto (6 meses). Ideal si podés recuperar la inversión rápido vendiendo el contenedor.",
+          "cuota_estimada_mensual": 6100000,
+          "aplicas": true,
+          "requisitos_que_cumplis": ["Orden de compra documentable"],
+          "requisitos_que_faltan": ["Historial importador (primera importación)", "Garantía bancaria"]
+        },
+        {
+          "ranking": 3,
+          "nombre": "Crédito PyME Inversión Productiva — Banco Nación",
+          "por_que": "Más genérico pero mayor monto (hasta $80M) y plazo largo (48 meses). Tasa 29% (baja a 24% con bonificación).",
+          "cuota_estimada_mensual": 1380000,
+          "aplicas": true,
+          "requisitos_que_cumplis": ["Certificado PyME", "Antigüedad +2 años", "Sin deuda BCRA"],
+          "requisitos_que_faltan": ["Flujo de fondos proyectado (PolPilot te lo genera)"]
+        }
+      ],
+      "estrategia_recomendada": "Mi recomendación: andá con la Línea Importaciones del Banco Provincia. La cuota de $1.6M/mes es absorbible con tu facturación actual, y el contenedor te genera un margen extra de ~$8M por rotación completa. Con 2 rotaciones del stock importado (estimado 3 meses cada una), recuperás la inversión en 6 meses y después es ganancia pura. Te armo el perfil financiero completo para presentar al banco.",
+      "documento_generado": "Perfil_Financiero_Calatayud_SRL_Abril_2026.pdf"
+    }
+  }
+}
