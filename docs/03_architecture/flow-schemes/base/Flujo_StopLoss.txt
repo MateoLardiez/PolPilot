@@ -1,0 +1,19 @@
+flowchart TD
+    A[Pregunta original] --> B[Analyzer Topics]
+    B --> C[Generar tópicos y subpreguntas iniciales]
+    C --> D[Asignar agentes]
+    D --> E[Resolver en paralelo]
+    E --> F[Sintetizador global]
+
+    F --> G{¿Se puede extraer más información útil?}
+    G -->|No| H[Entregar respuesta final]
+    G -->|Sí| I{¿Seguir preguntando mantiene el objetivo original?}
+
+    I -->|No| H
+    I -->|Sí| J[Generar nuevas preguntas]
+    J --> K{¿Se alcanzó el stop-loss?}
+
+    K -->|Sí| H
+    K -->|No| L[Reagrupar nuevas preguntas por tópico]
+    L --> M[Reasignar agentes]
+    M --> E

@@ -1,0 +1,31 @@
+@startuml
+title Protocolo de Colaboración Estructurada Inter-Agente
+
+participant "Agente A (Origen)" as AA
+participant "Gateway / Auditor" as GW
+participant "Agente B (Destino)" as AB
+participant "Context Store" as CS
+
+AA -> GW: **support_request**\n{target: "Finance", question: "X"}
+activate GW
+
+GW -> GW: Validar Presupuesto y Ciclo Circular
+GW -> CS: Obtener Contexto de Verdad (M_int)
+
+GW -> AB: **Solicitud Estructurada**\n{payload: "X", context_ref: "v1.2"}
+activate AB
+
+AB -> AB: Procesar Factores Financieros
+AB -> GW: **partial_answer / facts**\n{artifact_type: "FACT", data: "..."}
+deactivate AB
+
+GW -> GW: Validar consistencia del Artefacto
+GW -> AA: **Entrega de Evidencia**\n{source: "Finance", artifact_id: "uuid"}
+activate AA
+
+AA -> AA: Refinar análisis Legal
+AA -> GW: **artifact_final** (Legal)
+deactivate AA
+
+deactivate GW
+@enduml

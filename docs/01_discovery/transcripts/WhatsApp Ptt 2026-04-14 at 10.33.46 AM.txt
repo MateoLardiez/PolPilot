@@ -1,0 +1,101 @@
+(Transcrito por TurboScribe. Actualizar a Ilimitado para eliminar este mensaje.)
+
+Entonces, vamos a hacer un proceso. Primero, propuesta de valor, diferenciales, economías como Argentina, lo que sea, no importa esto. O sea, no nos vamos a ir a Estados Unidos ahora.
+
+Tenemos pymes, no tenemos solo ferretería. Tenemos todo tipo de empresa que maneja información pero que hoy en día la maneja mal y tiene que adaptarse a esta nueva era de la inteligencia artificial. Nosotros lo que tenemos que ofrecer es adaptación a esta nueva etapa que la gente está colgada, no está presente.
+
+Tenemos que facilitar, tenemos que hacer que eso sea más fácil para todos, de alguna manera. Estamos enfocándonos en las pymes, en pequeñas y medianas empresas. Pequeñas empresas van a usar desde anotaciones en una hoja hasta Excel, planillas de Excel que varias veces están desorganizadas y las medianas empresas van a tener ya sistemas, sistemas de contabilidad pero... Y algunas no, pero eso es lo que digo, lo bueno de este producto es vas a poder ayudarlos de alguna manera.
+
+Porque si no tienen un sistema contable o lo que sea, no importa, porque si ellos tienen información, sea el stock en palitos o lo que sea, se la pasas a esto y esto va a decidir exactamente qué hacer con eso. Si no tenés un sistema, no te lo carga el sistema, pero aunque sea te da insights y te dice, che, quizás necesitás un sistema y quizás puedes salir a buscarte nuevos sistemas, ¿no? Y preguntarte sobre tus costos, semente tus finanzas, ve tu flujo de fondos, por ejemplo. Sí, hay que pensar muy bien la carga de datos.
+
+Si hay algo que nos han recomendado mucho es que la carga de datos puede ser por cualquier estudiante de secundaria que la pueda hacer. Bien, una simple carga de datos. Pero eso ya la AI lo hace, eso es lo importante.
+
+O sea, si le quieren sacar foto a algo que ellos tienen bajado o algo así, que la foto esté bien sacada, que haya todo un estándar de cómo se tiene que hacer, que la AI la puede procesar, le metes un OCR, no lo vamos a meter hoy. O no, lo que pasa es que a veces hay un poco que te están cocinando, porque hoy en día el procesamiento de imágenes está mucho más pesado. O sea, puede ser... ¿Checarás tu repositorio vos o no? No, hay que crearlo. 
+
+Ahí si quieren, lo van creando. Si querés crearlo privado, diré que te paso el link ahí, el mail. O sea, por lo menos puede ser algo así.
+
+Entonces, tienen algo así, no se entiende un choto. Pero es lo que va a hacer, le tomas la foto, se la manda y dice, esta es mi información. Esto fue lo que vendieron el mes, un libro contable que se suele usar.
+
+Hay mucha gente porque el que lleva todo es a papel, mano y papel. No Excel, no nada. Ahí se manda el audio, supongo.
+
+Puedes mandar el audio, puedes mandar la foto. Para mí lo que hay que vender es cualquier tipo de input, lo que prefiera el usuario. Acoplamos al usuario y además lo educamos.
+
+O sea, él quiere mandar audio por teléfono, él quiere mandar audio por WhatsApp, él manda por WhatsApp. Quiere usar una aplicación, usa una aplicación. Excelente.
+
+Eso se puede hacer, eso es simple. Y pensar en si el sistema que tiene no se puede exportar la data. Se va a aplicar lo que es, así como Google se mete a tus páginas.
+
+Así como Cloud se mete a las páginas de Google y las analiza. Puede así analizar un sistema para explorar la data. Hay que ver la norma del sistema, pero lo único que podemos decir es.
+
+O sea, yo diría que para la fase actual podemos mencionarlo de que se propone de integraciones con todos los sistemas. Si no, se puede exportar la data, ver cómo podemos hacer. Eso se llama un, se van a olvidar, un web scrapping.
+
+Scrapping, sí, sí. Exacto, se le puede hacer un web scrapping a las páginas que ya tienes. O a tu misma página web, supongo que necesitas hacer un SEO para vender más.
+
+Por poner un ejemplo. Pero siento que eso no, o sea, si bien es importante la carga de data, no importa si un sistema queda por fuera. Como mencionar que se puede adaptar el sistema.
+
+Excelente. Como que el sistema se adapta a ti. Bien.
+
+Exacto. Eso. Eso no al revés.
+
+Eso. Y no al revés. Y además te eduques, porque hoy en día lo que falta es conocimiento.
+
+Y esto, lo que, pero aparte yo no quiero basar en lo que mismo Antropic propone. Que dicen esto de que ni ellos saben lo que salió en el día. ¿Entienden? Entonces imaginate el ferretero.
+
+¿Qué mierda vas a ver? ¿Me seguís? Bien. Ahí está la información. Hasta ahora pensamos en el input.
+
+Ahora pensemos en el output. Bien. ¿Por qué? Porque la información tiene que brindarse en base a quién de la empresa esté usando Allpilot.
+
+Y ahora aquí en ML pueden ver que hay diferentes niveles de complejidad de respuestas viendo la diferencia de quién está viendo la aplicación. Por ejemplo. Ahí tenemos que hablar de que hablamos de perfiles de clientes que van a ser un montón.
+
+¿Sí? O sea, nosotros tenemos que adaptarnos al perfil del cliente final. Ya les voy a decir una cosa que ya la veo venir porque ya nos pasó. No se puede decir en 4 minutos todo lo que estamos diciendo.
+
+Por eso. Claro, claro. Pero por eso quiero hacer un paneo general y ver qué vamos a precisar porque si no vamos a precisar es que todo esto que acabamos de traer esté perfecto.
+
+Porque no lo que tenemos es algo funcional y esta idea es venderla rápido. Y después cuando tengamos que volver a pichearla, nos van a hacer preguntas y ahí sí podemos defender las cosas. Pichea todo una vez y después se pasa a la siguiente.
+
+Yo creo que hay que hacer un video de 2 minutos donde si les gusta pasamos a hacer el video. ¿Qué vamos a mostrar en ese video? 2 minutos. Es clave.
+
+Y acá es donde entra el storytelling. Hay que hacer una demo por eso. Entonces no me importa tanto lo a qué.
+
+Eso tiene que andar. Pero tiene que andar de alguna manera a prueba de concepto. ¿El video de 2 minutos es del prototipo o de nosotros hablando? Ahora después lo probamos bien pero tengo entendido que es como una presentación estilo una tesis.
+
+Claro. Esta es la idea. Ah, hablamos.
+
+Sí. Ah, bien. Asumo que sí.
+
+Mire, nosotros tenemos ya un video de un minuto. Pero claro, es un minuto obviamente. ¿Ustedes tienen un github? Yo tengo github.
+
+Dame un segundito que me conecto por acá. Este es el video que hicimos nosotros para pasar la final de Red Bull. ¿Usted no tiene el giro automático? No, tengo el giro automático.
+
+No puede que no tenga el giro automático. Y esa es la realidad en millones de pymes en toda Latinoamérica. Tomando decisiones a ciegas.
+
+Porque nadie conoció las herramientas. Quiero escuchar igual. ¿Hay que hacer una demo o no para pasar la siguiente ronda? Yo te puedo comentar.
+
+Dale, no vale. Ustedes tienen que tomar decisiones por instinto. ¿Por qué realmente no hablan? Por eso creamos Gold Fight.
+
+Hemos creado una pequeña empresa. Aquello que nunca tuvo un economista, un operador, un contador, un estratega. Pero todos, avísame los datos con los que ya tienes.
+
+No solo aconsejamos, sino que también ejecutamos. La cosa que hoy vamos a compartir es un sistema que analiza la economía, las regulaciones, conoce el sector y los números de la empresa. Para darle así al dueño, a un socio, alguien que detecte las oportunidades.
+
+Avisa sobre qué es lo que nos está afectando o puede afectar. Y estas son las funciones por las que tenemos que encargarnos. Esto no es software.
+
+Le vamos a dar las pibes, las alas para que crezca diciendo lo jodido. ¿Estamos listos? A mí me gusta. Hay que ver si... Porque esto claramente no lo hicimos hoy.
+
+Hay que ver las reglas del juego. Igual a mí me abrió, eh. Preguntale si se puede.
+
+A ver, me abrió. ¿La creé? Debe ser una consulta específica sobre la competencia. Tenemos que hacer una demo y después se van pasando, son etapas.
+
+¿Cómo funciona el proceso de selección? ¿El proceso de selección? Sí. Me lo anotó. Te confirmo ahora.
+
+Porque estamos ahí por recaud y se está confirmando todo ahora mismo. Tenemos una pregunta bastante básica. ¿El orden como va a ser? ¿Cada uno hace lo que quiere o no van a asignar algo? Eh, yo tengo otra pregunta.
+
+A mí todavía no me han llegado los tokens de Antropic. De Cloud. A ver, ahorita pregunto.
+
+Perdón, que nos fijamos en uno anotado. Está todo en la página de DevCasek. Ahí me meto, a ver.
+
+DevCasek. No tengo Wi-Fi. ¿Sabemos que Wi-Fi hay? Eh, Antropic con H. O sea, Antropic.
+
+Digital House. No, la de acá está Digital House. Digital House.
+
+Y eso.
+
+(Transcrito por TurboScribe. Actualizar a Ilimitado para eliminar este mensaje.)

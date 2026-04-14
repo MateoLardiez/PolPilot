@@ -1,0 +1,49 @@
+@startuml
+title PolPilot: Ciclo de Razonamiento con Stop-Loss Cognitivo
+
+actor Usuario
+participant "Gateway / Orchestrator" as G
+participant "Dummy Analyzer" as DA
+participant "Topic Analyzer" as TA
+participant "Agent Mesh (Especialistas)" as AM
+participant "Stop-Loss Engine" as SL
+participant "Synthesizer" as S
+
+Usuario -> G: Enviar Input (Multimodal)
+activate G
+
+G -> DA: ¿Es simple/follow-up?
+activate DA
+DA --> G: requires_expansion: true (Score: 0.85)
+deactivate DA
+
+G -> TA: Descomponer en tópicos
+activate TA
+TA --> G: Topics: [Legal, Finance, Logistics]
+deactivate TA
+
+loop Iteraciones (Máx N o hasta Stop-Loss)
+    G -> AM: Ejecución Paralela (Structured Artifacts)
+    activate AM
+    AM --> G: Resultados Parciales + Support Requests
+    deactivate AM
+    
+    G -> SL: Evaluación de Valor Incremental
+    activate SL
+    note right: Calcula Delta Coverage\ny Drift Risk
+    SL --> G: Decision: CONTINUE | STOP
+    deactivate SL
+    
+    alt Decision == STOP
+        break
+    end
+end
+
+G -> S: Sintetizar y Resolver Contradicciones
+activate S
+S --> G: Respuesta Ejecutiva + Confianza
+deactivate S
+
+G -> Usuario: Respuesta Final (Accionable)
+deactivate G
+@enduml
