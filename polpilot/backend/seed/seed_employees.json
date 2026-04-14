@@ -1,0 +1,66 @@
+[
+  {
+    "name": "Martín Ruiz",
+    "role": "Encargado de ventas mostrador",
+    "area": "Ventas",
+    "salary": 850000,
+    "workload_pct": 100,
+    "notes": "15 años de antigüedad. Referente del equipo de ventas."
+  },
+  {
+    "name": "Carlos Pereyra",
+    "role": "Vendedor mostrador",
+    "area": "Ventas",
+    "salary": 720000,
+    "workload_pct": 95,
+    "notes": "8 años de antigüedad."
+  },
+  {
+    "name": "Lucía Gómez",
+    "role": "Administración y facturación",
+    "area": "Administración",
+    "salary": 680000,
+    "workload_pct": 110,
+    "notes": "5 años de antigüedad. Sobrecargada con facturación electrónica."
+  },
+  {
+    "name": "Diego Fernández",
+    "role": "Depósito y logística",
+    "area": "Logística",
+    "salary": 620000,
+    "workload_pct": 90,
+    "notes": "4 años de antigüedad. Maneja stock y despacho."
+  },
+  {
+    "name": "Pablo Acosta",
+    "role": "Vendedor mayorista",
+    "area": "Ventas",
+    "salary": 750000,
+    "workload_pct": 105,
+    "notes": "3 años de antigüedad. Atiende red de talleres y lubricentros."
+  },
+  {
+    "name": "Ana Torres",
+    "role": "Cobranzas",
+    "area": "Administración",
+    "salary": 650000,
+    "workload_pct": 85,
+    "notes": "2 años de antigüedad. Gestión de cuentas por cobrar."
+  },
+  {
+    "name": "Ramiro Díaz",
+    "role": "Chofer y entregas",
+    "area": "Logística",
+    "salary": 580000,
+    "workload_pct": 100,
+    "notes": "1.5 años de antigüedad. Entregas zona Venado Tuerto y alrededores."
+  },
+  {
+    "name": "Sofía Méndez",
+    "role": "Atención al cliente / redes",
+    "area": "Marketing",
+    "salary": 550000,
+    "workload_pct": 80,
+    "notes": "8 meses de antigüedad. Maneja redes sociales y atención online."
+  }
+]
