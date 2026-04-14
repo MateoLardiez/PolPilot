@@ -1,0 +1,34 @@
+[
+  {
+    "period": "2026-03",
+    "gross_margin": 0.317,
+    "net_margin": 0.016,
+    "roa": 0.011,
+    "roe": 0.015,
+    "current_ratio": 0.91,
+    "quick_ratio": 0.23,
+    "working_capital": -8100000,
+    "debt_to_equity": 0.38,
+    "days_receivable": 28,
+    "days_payable": 42,
+    "inventory_turnover": 35,
+    "cash_cycle": 21,
+    "health_score": 58
+  },
+  {
+    "period": "2025-Q4",
+    "gross_margin": 0.33,
+    "net_margin": 0.045,
+    "roa": 0.03,
+    "roe": 0.04,
+    "current_ratio": 1.15,
+    "quick_ratio": 0.35,
+    "working_capital": 5200000,
+    "debt_to_equity": 0.32,
+    "days_receivable": 25,
+    "days_payable": 38,
+    "inventory_turnover": 30,
+    "cash_cycle": 17,
+    "health_score": 72
+  }
+]

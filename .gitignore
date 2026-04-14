@@ -1,1 +1,4 @@
 .claude
+polpilot/.venv/
+polpilot/data/empresa_demo/
+.agents
