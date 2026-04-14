@@ -8,6 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="api.js"></script>
 <style>
 /* ═══════════════════════════════════════════════
    CSS RESET & VARIABLES
@@ -4530,10 +4531,12 @@ tr:last-child td { border-bottom: none; }
             </div>
           </div>
           <div class="chat-suggestions" id="chat-suggestions">
-            <button class="chat-chip" onclick="askAngela('Necesito importar discos de freno de Brasil. ¿Qué crédito me conviene para financiar la importación?')">🏦 Crédito para importación</button>
-            <button class="chat-chip" onclick="askAngela('¿Cómo viene mi caja esta semana?')">💰 ¿Cómo viene mi caja?</button>
-            <button class="chat-chip" onclick="askAngela('¿Mi negocio crea o destruye valor?')">📐 ¿Creo valor real?</button>
-            <button class="chat-chip" onclick="askAngela('¿Cómo me preparo para la VTV de abril?')">🚗 Preparar VTV abril</button>
+            <button class="chat-chip" onclick="askAngela('¿Cómo está el dólar blue hoy?')">💵 Dólar blue ahora</button>
+            <button class="chat-chip" onclick="askAngela('¿Cuál es el flujo de caja de los últimos meses?')">📉 Flujo de caja</button>
+            <button class="chat-chip" onclick="askAngela('¿Qué créditos PyME puedo tomar?')">🏦 Créditos PyME</button>
+            <button class="chat-chip" onclick="askAngela('Dame un diagnóstico financiero completo')">🩺 Diagnóstico completo</button>
+            <button class="chat-chip" onclick="askAngela('¿Cuánto debo a proveedores?')">📦 Deuda proveedores</button>
+            <button class="chat-chip" onclick="askAngela('¿Me conviene tomar un crédito en pesos con la inflación actual?')">💡 Crédito vs inflación</button>
           </div>
           <div class="chat-input-area" style="flex-direction:column;gap:8px;">
             <div style="display:flex;gap:8px;width:100%;">
@@ -4947,50 +4950,49 @@ function askAngela(question) {
 
 function runAngelaQuery(text) {
   if (cancelStream) { cancelStream(); cancelStream = null; }
-  const lower = text.toLowerCase();
-  const isCreditsQuery = lower.includes('crédito') || lower.includes('credito') || lower.includes('financ') || lower.includes('importa') || lower.includes('banco') || lower.includes('tasa');
 
-  if (isCreditsQuery) {
-    cancelStream = sendQueryStreaming(text, { current_view: 'angela' },
-      function(stepData) { addThinkingStep(stepData); },
-      function(result) {
-        cancelStream = null;
-        removeThinkingSteps();
-        var rendered = (typeof marked !== 'undefined' && marked.parse) ? marked.parse(result.response) : result.response.replace(/\n/g, '<br>');
-        var msg = addChatMsg('bot', rendered);
-        if (result.navigate_to) {
-          var link = document.createElement('div');
-          link.style.cssText = 'margin-top:12px;padding-top:12px;border-top:1px solid var(--border);';
-          link.innerHTML = '<a href="#" onclick="switchView(\'creditos\'); return false;" style="color:var(--blue);font-weight:700;font-size:0.85rem;text-decoration:none;">Ver créditos recomendados →</a>';
-          msg.querySelector('.chat-bubble').appendChild(link);
-        }
-        if (result.cards && result.cards.length) {
-          var cardsDiv = document.createElement('div');
-          cardsDiv.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;';
-          result.cards.forEach(function(c) {
-            var matchColor = c.match ? 'var(--green)' : 'var(--yellow)';
-            cardsDiv.innerHTML += '<div style="padding:10px 14px;background:var(--bg);border-radius:10px;border:1px solid var(--border);border-left:3px solid ' + matchColor + ';flex:1;min-width:140px;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);">' + c.bank + '</div><div style="font-size:0.82rem;font-weight:700;margin:4px 0;">' + c.name + '</div><div style="font-size:0.72rem;color:var(--text-secondary);">Tasa: ' + c.rate + ' · Hasta ' + c.amount + '</div></div>';
-          });
-          msg.querySelector('.chat-bubble').appendChild(cardsDiv);
-        }
-        document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+  // Siempre usar el agente real (Angela con Agent SDK)
+  cancelStream = sendQueryStreaming(text, { current_view: 'angela' },
+    function(stepData) { addThinkingStep(stepData); },
+    function(result) {
+      cancelStream = null;
+      removeThinkingSteps();
+
+      var rendered = (typeof marked !== 'undefined' && marked.parse)
+        ? marked.parse(result.response)
+        : result.response.replace(/\n/g, '<br>');
+      var msg = addChatMsg('bot', rendered);
+      var bubble = msg.querySelector('.chat-bubble');
+
+      // Créditos card (modo mock)
+      if (result.cards && result.cards.length) {
+        var cardsDiv = document.createElement('div');
+        cardsDiv.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;';
+        result.cards.forEach(function(c) {
+          var matchColor = c.match ? 'var(--green)' : 'var(--yellow)';
+          cardsDiv.innerHTML += '<div style="padding:10px 14px;background:var(--bg);border-radius:10px;border:1px solid var(--border);border-left:3px solid ' + matchColor + ';flex:1;min-width:140px;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-secondary);">' + c.bank + '</div><div style="font-size:0.82rem;font-weight:700;margin:4px 0;">' + c.name + '</div><div style="font-size:0.72rem;color:var(--text-secondary);">Tasa: ' + c.rate + ' · Hasta ' + c.amount + '</div></div>';
+        });
+        bubble.appendChild(cardsDiv);
       }
-    );
-  } else {
-    setTimeout(function() {
-      var response = angelaResponses[text];
-      if (!response) {
-        var lw = text.toLowerCase();
-        if (lw.includes('caja') || lw.includes('plata') || lw.includes('dinero')) response = angelaResponses['¿Cómo viene mi caja esta semana?'];
-        else if (lw.includes('pastilla') || lw.includes('comprar') || lw.includes('ferrante')) response = angelaResponses['¿Me conviene comprar pastillas esta semana?'];
-        else if (lw.includes('moroso') || lw.includes('cobr')) response = angelaResponses['¿Qué pasa si no le cobro a Gutiérrez?'];
-        else if (lw.includes('vtv') || lw.includes('abril') || lw.includes('prepar')) response = angelaResponses['¿Cómo me preparo para la VTV de abril?'];
-        else if (lw.includes('valor') || lw.includes('eva') || lw.includes('roic')) response = angelaResponses['¿Mi negocio crea o destruye valor?'];
-        else response = 'Buena pregunta, Gonzalo. Dejame cruzar eso con los datos de tu negocio...\n\nBasado en tu historial y el contexto actual del mercado, te recomiendo que revisemos esto con más detalle.\n\n¿Querés que lo prepare como entregable descargable?';
+
+      // Follow-up suggestions del agente real
+      if (result.follow_up_suggestions && result.follow_up_suggestions.length) {
+        var sugsDiv = document.createElement('div');
+        sugsDiv.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);';
+        result.follow_up_suggestions.forEach(function(s) {
+          var btn = document.createElement('button');
+          btn.className = 'chat-chip';
+          btn.style.cssText = 'font-size:0.72rem;padding:4px 12px;';
+          btn.textContent = s;
+          btn.onclick = function() { askAngela(s); };
+          sugsDiv.appendChild(btn);
+        });
+        bubble.appendChild(sugsDiv);
       }
-      addChatMsg('bot', response.replace(/\n/g, '<br>'));
-    }, 800);
-  }
+
+      document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+    }
+  );
 }
 
 function addThinkingStep(stepData) {

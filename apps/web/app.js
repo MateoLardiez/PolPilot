@@ -477,19 +477,19 @@ function updateAngelaContext() {
 
   const suggestions = {
     dashboard: [
-      { q: '¿A qué crédito puedo aplicar para importar discos de freno?', label: '💳 ¿Qué créditos tengo?' },
-      { q: '¿Por qué mi flujo de caja es negativo?', label: '📉 ¿Por qué flujo negativo?' },
-      { q: '¿Cuáles son mis clientes morosos y cuánto me deben?', label: '⚠️ Clientes morosos' }
+      { q: '¿Cómo está el dólar blue hoy?',             label: '💵 Dólar blue ahora' },
+      { q: '¿Por qué mi flujo de caja es negativo?',    label: '📉 Flujo negativo' },
+      { q: 'Dame un diagnóstico financiero completo',   label: '🩺 Diagnóstico completo' },
     ],
     finanzas: [
-      { q: '¿Cuál es mi producto más rentable?', label: '🏆 Producto más rentable' },
-      { q: '¿Cómo puedo mejorar mi capital de trabajo?', label: '💡 Mejorar capital' },
-      { q: '¿Mi margen está por encima o debajo del sector?', label: '📊 Benchmark margen' }
+      { q: '¿Cuánto debo a proveedores?',               label: '📦 Deuda proveedores' },
+      { q: '¿Cuánto me deben los clientes?',            label: '🧾 Cobranzas pendientes' },
+      { q: 'Enero fue un mes negativo, ¿por qué?',      label: '📉 Análisis enero 2026' },
     ],
     creditos: [
-      { q: '¿A qué crédito puedo aplicar para importar discos de freno?', label: '🏦 Mejor crédito para importar' },
-      { q: '¿Cuánto puedo pedir prestado dado mi flujo actual?', label: '📐 Capacidad de endeudamiento' },
-      { q: '¿Hay regulaciones nuevas que me beneficien?', label: '📜 Regulaciones recientes' }
+      { q: '¿Qué créditos PyME puedo tomar?',           label: '🏦 Créditos disponibles' },
+      { q: '¿Cuáles son las tasas BCRA hoy?',           label: '📊 Tasas BCRA actuales' },
+      { q: '¿Me conviene tomar un crédito en pesos con la inflación actual?', label: '💡 Crédito vs inflación' },
     ]
   };
 
@@ -535,11 +535,17 @@ async function handleSend() {
       const rendered = renderMarkdown(result.response);
       addMessage('assistant', rendered, true);
 
+      // Cards de crédito (modo mock)
       if (result.cards && result.cards.length > 0) {
         addCreditCards(result.cards);
       }
+      // Navigate hint (modo mock)
       if (result.navigate_to && result.navigate_to !== currentView) {
         addMessage('assistant', `<div style="font-size:0.78rem;color:var(--accent);cursor:pointer;" onclick="navigateTo('${result.navigate_to}')">📍 Ver vista de ${result.navigate_to} →</div>`, true);
+      }
+      // Follow-up suggestions del agente real
+      if (result.follow_up_suggestions && result.follow_up_suggestions.length > 0) {
+        addFollowUpChips(result.follow_up_suggestions);
       }
 
       isQuerying = false;
@@ -547,6 +553,25 @@ async function handleSend() {
       document.getElementById('angelaSuggestions').style.display = 'flex';
     }
   );
+}
+
+function addFollowUpChips(suggestions) {
+  const container = document.getElementById('angelaMessages');
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;padding-left:4px;';
+  wrapper.innerHTML = suggestions.map(s =>
+    `<button onclick="document.getElementById('angelaInput').value=this.dataset.q;handleSend();"
+       data-q="${s.replace(/"/g, '&quot;')}"
+       style="background:var(--bg-glass);border:1px solid var(--border);border-radius:20px;
+              padding:4px 12px;font-size:0.72rem;color:var(--text-secondary);cursor:pointer;
+              font-family:var(--font);transition:all 0.15s;"
+       onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'"
+       onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+       ${s}
+     </button>`
+  ).join('');
+  container.appendChild(wrapper);
+  container.scrollTop = container.scrollHeight;
 }
 
 function getVisibleMetrics() {
