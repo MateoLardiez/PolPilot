@@ -215,7 +215,7 @@ CRITERIOS:
 
         try:
             response = await client.messages.create(
-                model="claude-haiku-4-20250414",  # modelo ligero para stop-loss
+                model="claude-haiku-4-5-20251001",  # modelo ligero para stop-loss
                 max_tokens=512,
                 messages=[{"role": "user", "content": prompt}],
             )

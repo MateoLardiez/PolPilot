@@ -34,7 +34,7 @@ from schemas import (
 from services.context_store import context_store
 from services.message_broker import message_broker
 from services.shared_memory import shared_memory
-from services.stop_loss_engine import create_stop_loss_engine
+from services.stop_loss_engine import StopLossDecision, create_stop_loss_engine
 
 logger = logging.getLogger(__name__)
 
@@ -75,11 +75,15 @@ Respondé ÚNICAMENTE con un JSON válido con esta estructura (sin texto adicion
   "topics": {{
     "finanzas": {{
       "relevance": 0.0-1.0,
-      "questions": ["pregunta 1", "pregunta 2"]
+      "questions": ["pregunta sobre datos internos del negocio"]
     }},
     "economia": {{
       "relevance": 0.0-1.0,
-      "questions": ["pregunta 1", "pregunta 2"]
+      "questions": ["pregunta sobre créditos, macro, regulaciones"]
+    }},
+    "investigacion": {{
+      "relevance": 0.0-1.0,
+      "questions": ["pregunta que requiere datos en tiempo real"]
     }}
   }}
 }}
@@ -88,6 +92,10 @@ Reglas:
 - Si un tópico no es relevante, poné relevance < 0.2 y questions vacío.
 - Máximo {settings.MAX_QUESTIONS_PER_TOPIC} preguntas por tópico.
 - Las preguntas deben ser específicas y accionables.
+- Usá "investigacion" cuando la consulta menciona: dólar hoy, precio actual, tasa vigente,
+  BCRA en tiempo real, tipo de cambio, cotización, dato fresco o cualquier dato de mercado live.
+- "finanzas" = datos internos del negocio (caja, clientes, proveedores, stock, empleados).
+- "economia" = análisis de créditos disponibles, macro contextual, regulaciones AFIP/BCRA.
 """
 
     response = await client.messages.create(
@@ -405,6 +413,10 @@ async def process_query(
         total_sub_questions += len(topic_data.questions)
 
     synthesis_raw = None
+    prev_agent_responses: dict | None = None
+    prev_synthesis_raw: str | None = None
+    stop_loss = create_stop_loss_engine()
+    last_sl_eval = None
 
     while iteration < settings.MAX_REASK_ITERATIONS:
         iteration += 1
@@ -432,22 +444,33 @@ async def process_query(
             agent_responses=agent_responses,
         )
 
-        # Etapa 5: Evaluar repreguntas
-        follow_up = await evaluate_follow_up(
+        # Etapa 5: Stop-Loss Cognitivo (reemplaza evaluate_follow_up)
+        last_sl_eval = await stop_loss.evaluate(
             original_query=expansion.original_query,
-            synthesis=synthesis_raw,
+            current_answers=agent_responses,
+            current_synthesis=synthesis_raw,
+            previous_answers=prev_agent_responses,
+            previous_synthesis=prev_synthesis_raw,
             iteration=iteration,
         )
 
-        if not follow_up.needs_follow_up:
+        prev_agent_responses = agent_responses
+        prev_synthesis_raw = synthesis_raw
+
+        if last_sl_eval.decision != StopLossDecision.CONTINUE:
+            logger.info(
+                "Stop-Loss HALT iter=%d score=%.3f reason='%s'",
+                iteration, last_sl_eval.score, last_sl_eval.reason,
+            )
             break
 
-        # Re-expandir con las nuevas preguntas
-        for topic_name, questions in follow_up.follow_up_questions.items():
-            if topic_name in expansion.topics:
-                expansion.topics[topic_name].questions = questions
-                total_sub_questions += len(questions)
-            # Si el tópico no existía, lo ignoramos (solo finanzas y economia)
+        # Re-expandir con preguntas sugeridas por el Stop-Loss
+        if last_sl_eval.suggested_new_topics:
+            new_qs = last_sl_eval.suggested_new_topics[:settings.MAX_QUESTIONS_PER_TOPIC]
+            for topic_name, topic_data in expansion.topics.items():
+                if topic_data.relevance >= settings.RELEVANCE_THRESHOLD:
+                    topic_data.questions = new_qs
+                    total_sub_questions += len(new_qs)
 
     # Etapa 6: Parsear síntesis a respuesta estructurada
     if synthesis_raw and synthesis_raw.startswith("```"):
@@ -497,5 +520,7 @@ async def process_query(
             agents_activated=list(agents_activated),
             total_sub_questions=total_sub_questions,
             inter_agent_calls=inter_agent_calls,
+            stop_loss_score=round(last_sl_eval.score, 3) if last_sl_eval else None,
+            stop_loss_decision=last_sl_eval.decision.value if last_sl_eval else None,
         ),
     )

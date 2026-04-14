@@ -35,6 +35,7 @@ from schemas import (
 )
 from services.agent_economia import query_economia
 from services.agent_finanzas import query_finanzas
+from services.agent_investigador import query_investigador
 from services.context_store import context_store
 from services.message_broker import message_broker
 from services.orchestrator import process_query
@@ -78,11 +79,13 @@ app.add_middleware(
 AGENT_REGISTRY = {
     "finanzas": query_finanzas,
     "economia": query_economia,
+    "investigacion": query_investigador,
 }
 
 # Registrar agentes en el Message Broker para colaboración inter-agente
 message_broker.register_agent("finanzas", query_finanzas)
 message_broker.register_agent("economia", query_economia)
+message_broker.register_agent("investigacion", query_investigador)
 
 
 # ── Endpoints ──────────────────────────────────────────
@@ -167,6 +170,21 @@ async def economia_query(request: AgentQueryRequest):
     ```
     """
     return await query_economia(request)
+
+
+@app.post("/agents/investigador/query", response_model=AgentQueryResponse)
+async def investigador_query(request: AgentQueryRequest):
+    """
+    Endpoint directo al Agente Investigador.
+
+    Consulta APIs públicas argentinas en tiempo real:
+    - DolarAPI.com: tipos de cambio (oficial, blue, MEP, CCL, cripto, tarjeta, mayorista)
+    - BCRA Monetarias: tasas, inflación, reservas, UVA, CER
+    - BCRA Transparencia: préstamos PyME vigentes
+
+    No requiere DB inicializada — datos directos de APIs externas.
+    """
+    return await query_investigador(request)
 
 
 # ── Endpoints: Colaboración Inter-Agente ───────────────

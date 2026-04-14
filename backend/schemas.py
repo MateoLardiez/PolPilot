@@ -32,6 +32,7 @@ class Urgency(str, Enum):
 class TopicName(str, Enum):
     finanzas = "finanzas"
     economia = "economia"
+    investigacion = "investigacion"
 
 
 # ── Request / Response del Gateway ─────────────────────
@@ -71,6 +72,8 @@ class OrchestratorMetadata(BaseModel):
     agents_activated: list[str]
     total_sub_questions: int
     inter_agent_calls: int = 0
+    stop_loss_score: Optional[float] = None
+    stop_loss_decision: Optional[str] = None
 
 
 class QueryResponse(BaseModel):
