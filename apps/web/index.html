@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <style>
 /* ═══════════════════════════════════════════════
    CSS RESET & VARIABLES
@@ -32,9 +33,9 @@
   --sidebar-text: #8B95A8;
   --sidebar-active: #FFFFFF;
   --sidebar-hover: rgba(255,255,255,0.06);
-  --shadow-sm: 0 1px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.09), 0 2px 6px rgba(0,0,0,0.05);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.11), 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.03);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04);
   --radius: 14px;
   --radius-sm: 10px;
   --transition: 0.2s ease;
@@ -118,6 +119,12 @@ body {
   display: flex; align-items: center; justify-content: center;
   font-size: 1.1rem;
 }
+.sidebar-brand h1 .logo-img {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
 .sidebar-brand p {
   color: var(--sidebar-text);
   font-size: 0.72rem;
@@ -175,13 +182,19 @@ body {
   font-size: 0.95rem;
   width: 32px;
   height: 32px;
-  border-radius: 50%;
+  border-radius: 8px;
   background: rgba(255,255,255,0.07);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   transition: background var(--transition);
+}
+.sidebar-item .icon svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.75;
+  color: currentColor;
 }
 .sidebar-item.active .icon {
   background: rgba(0,87,255,0.3);
@@ -315,9 +328,12 @@ body {
   border: 1px solid var(--border);
   padding: 24px;
   box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--transition);
+  transition: box-shadow var(--transition), transform var(--transition);
 }
-.card:hover { box-shadow: var(--shadow-md); }
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
 
 .card-title {
   font-size: 0.88rem;
@@ -338,9 +354,26 @@ body {
 .metric-card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 20px;
+  border-radius: var(--radius);
+  padding: 20px 22px;
   box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), transform var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.metric-card:hover::before { opacity: 1; }
+.metric-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 .metric-card .metric-label {
   font-size: 0.75rem;
@@ -581,6 +614,12 @@ body {
   border-right: 1px solid var(--border);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+.priority-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 .priority-card.opportunity { border-left-color: var(--blue); }
 .priority-card.warning { border-left-color: var(--yellow); }
@@ -771,9 +810,16 @@ tr:last-child td { border-bottom: none; }
 }
 .eva-item {
   text-align: center;
-  padding: 16px 8px;
-  background: var(--bg);
-  border-radius: var(--radius-sm);
+  padding: 18px 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+.eva-item:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 .eva-item .eva-label {
   font-size: 0.68rem;
@@ -809,6 +855,12 @@ tr:last-child td { border-bottom: none; }
   padding: 24px;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+.macro-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 .macro-card .macro-icon {
   font-size: 1.6rem;
@@ -1064,11 +1116,13 @@ tr:last-child td { border-bottom: none; }
   padding: 22px;
   display: flex;
   flex-direction: column;
-  transition: all var(--transition);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), transform var(--transition);
   cursor: default;
 }
 .doc-card:hover {
   box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
   border-color: var(--blue);
 }
 .doc-card .doc-icon {
@@ -1329,78 +1383,78 @@ tr:last-child td { border-bottom: none; }
   <!-- ═══ SIDEBAR ═══ -->
   <nav class="sidebar">
     <div class="sidebar-brand">
-      <h1><span class="logo-icon">✈️</span> PolPilot</h1>
+      <h1><img src="assets/logo1.jpeg" alt="PP" class="logo-img"> PolPilot</h1>
       <p>Inteligencia Empresarial</p>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Principal</div>
       <div class="sidebar-item active" data-view="home">
-        <span class="icon">🏠</span> Inicio
+        <span class="icon"><i data-lucide="layout-dashboard"></i></span> Inicio
       </div>
       <div class="sidebar-item" data-view="perfil">
-        <span class="icon">👤</span> Mi Perfil y Plan
+        <span class="icon"><i data-lucide="building-2"></i></span> Mi Perfil y Plan
       </div>
       <div class="sidebar-item" data-view="objetivos">
-        <span class="icon">🎯</span> Objetivos
+        <span class="icon"><i data-lucide="target"></i></span> Objetivos
       </div>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Inteligencia del Negocio</div>
       <div class="sidebar-item" data-view="finanzas">
-        <span class="icon">💰</span> Caja y Finanzas
+        <span class="icon"><i data-lucide="wallet"></i></span> Caja y Finanzas
       </div>
       <div class="sidebar-item" data-view="eva">
-        <span class="icon">📊</span> Indicadores Financieros
+        <span class="icon"><i data-lucide="bar-chart-3"></i></span> Indicadores Financieros
       </div>
       <div class="sidebar-item" data-view="gestion">
-        <span class="icon">📦</span> Compras e Inventario
+        <span class="icon"><i data-lucide="package"></i></span> Compras e Inventario
       </div>
       <div class="sidebar-item" data-view="estacionalidad">
-        <span class="icon">📅</span> Estacionalidad
+        <span class="icon"><i data-lucide="calendar-range"></i></span> Estacionalidad
       </div>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Inteligencia del Entorno</div>
       <div class="sidebar-item" data-view="mercado">
-        <span class="icon">📊</span> Contexto Económico
+        <span class="icon"><i data-lucide="trending-up"></i></span> Contexto Económico
       </div>
       <div class="sidebar-item" data-view="creditos">
-        <span class="icon">🏦</span> Créditos y Financiamiento
+        <span class="icon"><i data-lucide="landmark"></i></span> Créditos y Financiamiento
       </div>
       <div class="sidebar-item" data-view="legal">
-        <span class="icon">⚖️</span> Legal y Regulatorio
+        <span class="icon"><i data-lucide="scale"></i></span> Legal y Regulatorio
       </div>
       <div class="sidebar-item" data-view="sector">
-        <span class="icon">🎯</span> Sector y Competencia
+        <span class="icon"><i data-lucide="radar"></i></span> Sector y Competencia
       </div>
       <div class="sidebar-item" data-view="colectiva">
-        <span class="icon">🌐</span> Inteligencia Colectiva
+        <span class="icon"><i data-lucide="globe"></i></span> Inteligencia Colectiva
       </div>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Memoria del Negocio</div>
       <div class="sidebar-item" data-view="memoria">
-        <span class="icon">🧠</span> Historia y Procesos
+        <span class="icon"><i data-lucide="brain"></i></span> Historia y Procesos
       </div>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Gestión</div>
       <div class="sidebar-item" data-view="whatsapp">
-        <span class="icon">💬</span> WhatsApp
+        <span class="icon"><i data-lucide="message-circle"></i></span> WhatsApp
       </div>
       <div class="sidebar-item" data-view="documentos">
-        <span class="icon">📄</span> Documentos y Entregables
+        <span class="icon"><i data-lucide="file-text"></i></span> Documentos y Entregables
       </div>
     </div>
 
     <div class="sidebar-angela">
       <div class="sidebar-item" data-view="angela">
-        <span class="icon">🤖</span> Hablar con Ángela
+        <span class="icon"><i data-lucide="sparkles"></i></span> Hablar con Ángela
       </div>
     </div>
 
@@ -1591,29 +1645,29 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">🎯 Prioridades de esta semana</div>
+        <div class="section-title"><i data-lucide="alert-circle" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Prioridades de esta semana</div>
         <div class="grid-3">
           <div class="priority-card" style="border-left:3px solid var(--coral);background:linear-gradient(135deg,rgba(255,96,68,0.06),rgba(255,96,68,0.02));">
-            <div class="pc-icon">🚨</div>
+            <div class="pc-icon"><i data-lucide="alert-triangle" style="width:18px;height:18px;color:var(--coral);stroke-width:2;"></i></div>
             <div class="pc-title" style="color:var(--coral);">Urgente: Flujo de caja negativo</div>
             <div class="pc-text">Marzo cerró con <strong>-$2.07M de flujo neto</strong> por pago a proveedores de importación. Caja en $1.1M — menos de 1 día de operación. Necesitás inyección de liquidez.</div>
-            <div class="pc-action"><button class="btn btn-primary btn-sm" onclick="switchView('creditos')">🏦 Ver créditos disponibles</button></div>
+            <div class="pc-action"><button class="btn btn-primary btn-sm" onclick="switchView('creditos')">Ver créditos disponibles</button></div>
           </div>
           <div class="priority-card warning">
-            <div class="pc-icon">🟡</div>
+            <div class="pc-icon"><i data-lucide="clock" style="width:18px;height:18px;color:var(--yellow);stroke-width:2;"></i></div>
             <div class="pc-title">3 clientes morosos — $1M en riesgo</div>
             <div class="pc-text"><strong>Lubricentro San Martín</strong> (95 días, $450K), <strong>Taller Rossi</strong> (120 días, $320K) y <strong>Frenos del Sur</strong> (105 días, $230K). Promedio 107 días de atraso.</div>
             <div class="pc-action"><button class="btn btn-outline btn-sm" onclick="switchView('finanzas')">Ver detalle de morosos</button></div>
           </div>
           <div class="priority-card opportunity" style="border-left:3px solid var(--green);background:linear-gradient(135deg,rgba(0,196,140,0.06),rgba(0,87,255,0.04));">
-            <div class="pc-icon">🎉</div>
+            <div class="pc-icon"><i data-lucide="check-circle" style="width:18px;height:18px;color:var(--green);stroke-width:2;"></i></div>
             <div class="pc-title" style="color:var(--green);font-size:0.95rem;">Calificás a 3 créditos PyME — desde 15% TNA</div>
             <div class="pc-text">Tu perfil BCRA es <strong>Situación 1 sin deuda</strong>. Banco Provincia a 26% TNA para importación, Banco Nación a 29% TNA, y FONDEP a 15% TNA subsidiada. Ideales para resolver la caja y stockear importados.<br><br><span style="font-size:0.72rem;color:var(--text-secondary);">PolPilot analizó tu perfil vs. requisitos de cada línea.</span></div>
-            <div class="pc-action"><button class="btn btn-primary btn-sm" onclick="switchView('creditos')">🏦 Ver análisis de créditos</button></div>
+            <div class="pc-action"><button class="btn btn-primary btn-sm" onclick="switchView('creditos')">Ver análisis de créditos</button></div>
           </div>
         </div>
 
-        <div class="section-title">✅ Para hacer esta semana</div>
+        <div class="section-title"><i data-lucide="check-square" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Para hacer esta semana</div>
         <div class="card">
           <div class="todo-item">
             <div class="todo-check" onclick="this.classList.toggle('checked'); this.nextElementSibling.classList.toggle('done')"></div>
@@ -1637,7 +1691,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">📡 Pulso semanal</div>
+        <div class="section-title"><i data-lucide="activity" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Pulso semanal</div>
         <div class="pulse-grid">
           <div class="card">
             <div class="card-title">🏭 Tu negocio</div>
@@ -1679,7 +1733,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title" style="margin-top:24px;">💰 Lo que PolPilot generó para este negocio</div>
+        <div class="section-title" style="margin-top:24px;"><i data-lucide="zap" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Lo que PolPilot generó para este negocio</div>
         <div style="background:linear-gradient(135deg,var(--sidebar-bg),#131B33);border-radius:var(--radius);padding:22px 26px;">
           <div style="font-size:0.78rem;color:rgba(255,255,255,0.5);margin-bottom:18px;">Este mes — Gonzalo Calatayud Frenos y Embragues</div>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
@@ -1796,7 +1850,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">✈️ Tu plan y módulos disponibles</div>
+        <div class="section-title"><i data-lucide="layers" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Tu plan y módulos disponibles</div>
         <div class="card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border); flex-wrap:wrap; gap:12px;">
             <div>
@@ -1849,7 +1903,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title" style="margin-top:28px;">⚡ La diferencia que hace PolPilot</div>
+        <div class="section-title" style="margin-top:28px;"><i data-lucide="zap" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>La diferencia que hace PolPilot</div>
         <div style="margin-bottom:24px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-md);">
 
           <div style="display:grid;grid-template-columns:1fr auto 1fr;">
@@ -1950,7 +2004,7 @@ tr:last-child td { border-bottom: none; }
 
         </div>
 
-        <div class="section-title" style="margin-top:28px;">💰 Lo que PolPilot generó para tu negocio</div>
+        <div class="section-title" style="margin-top:28px;"><i data-lucide="zap" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Lo que PolPilot generó para tu negocio</div>
         <div class="card">
           <div style="font-size:0.83rem;color:var(--text-secondary);margin-bottom:20px;line-height:1.55;">
             PolPilot muestra exactamente cuánto valor generó desde que lo usás. Cuando el ahorro supera lo que pagás, la decisión de renovar se toma sola.
@@ -2231,7 +2285,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">📈 Rentabilidad por producto</div>
+        <div class="section-title"><i data-lucide="trending-up" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Rentabilidad por producto</div>
         <div class="card">
           <div class="table-container">
             <table>
@@ -2330,7 +2384,7 @@ tr:last-child td { border-bottom: none; }
         <div class="fiscal-badge" id="fiscalBadge">🏦 Modo Presentación a Bancos activado — Solo datos validados por AFIP</div>
 
         <!-- CATEGORÍA 1: RENTABILIDAD -->
-        <div class="section-title">💰 Rentabilidad — ¿Cuánto ganás por lo que vendés?</div>
+        <div class="section-title"><i data-lucide="coins" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Rentabilidad — ¿Cuánto ganás por lo que vendés?</div>
         <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px;">
           <div class="eva-item">
             <div class="eva-label">Margen Bruto</div>
@@ -2371,7 +2425,7 @@ tr:last-child td { border-bottom: none; }
         </div>
 
         <!-- CATEGORÍA 2: LIQUIDEZ -->
-        <div class="section-title">💧 Liquidez — ¿Podés pagar lo que debés hoy?</div>
+        <div class="section-title"><i data-lucide="droplets" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Liquidez — ¿Podés pagar lo que debés hoy?</div>
         <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px;">
           <div class="eva-item">
             <div class="eva-label">Razón Corriente</div>
@@ -2403,7 +2457,7 @@ tr:last-child td { border-bottom: none; }
         </div>
 
         <!-- CATEGORÍA 3: EFICIENCIA OPERATIVA -->
-        <div class="section-title">⚙️ Eficiencia Operativa — ¿Qué tan bien usás los recursos?</div>
+        <div class="section-title"><i data-lucide="settings" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Eficiencia Operativa — ¿Qué tan bien usás los recursos?</div>
         <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px;">
           <div class="eva-item">
             <div class="eva-label">Días de Cobro</div>
@@ -2444,7 +2498,7 @@ tr:last-child td { border-bottom: none; }
         </div>
 
         <!-- CATEGORÍA 4: ENDEUDAMIENTO -->
-        <div class="section-title">🏦 Endeudamiento — ¿Cuánto de lo que tenés es tuyo?</div>
+        <div class="section-title"><i data-lucide="landmark" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Endeudamiento — ¿Cuánto de lo que tenés es tuyo?</div>
         <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px;">
           <div class="eva-item">
             <div class="eva-label">Ratio Deuda / Capital</div>
@@ -2476,7 +2530,7 @@ tr:last-child td { border-bottom: none; }
         </div>
 
         <!-- CATEGORÍA 5: VALOR REAL (EVA) -->
-        <div class="section-title">📐 Valor Real — ¿Tu negocio crea o destruye riqueza?</div>
+        <div class="section-title"><i data-lucide="diamond" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Valor Real — ¿Tu negocio crea o destruye riqueza?</div>
         <div class="eva-grid" style="margin-bottom:16px;">
           <div class="eva-item">
             <div class="eva-label">NOPAT</div>
@@ -2531,7 +2585,7 @@ tr:last-child td { border-bottom: none; }
           </p>
         </div>
 
-        <div class="section-title">🧮 Simulador de decisiones</div>
+        <div class="section-title"><i data-lucide="calculator" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Simulador de decisiones</div>
         <div class="card">
           <div style="padding:16px;background:var(--bg);border-radius:10px;margin-bottom:16px;">
             <div style="font-weight:600;font-size:0.88rem;margin-bottom:8px;">💬 "¿Me conviene comprar la rectificadora nueva por $4.500.000?"</div>
@@ -2661,7 +2715,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">🎯 Oportunidades detectadas</div>
+        <div class="section-title"><i data-lucide="target" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Oportunidades detectadas</div>
         <div class="grid-3">
           <div class="card" style="border-left:4px solid var(--blue);">
             <div style="font-size:1.3rem; margin-bottom:8px;">🏦</div>
@@ -2683,7 +2737,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">💤 ¿Te sobró caja? Cómo hacerla trabajar</div>
+        <div class="section-title"><i data-lucide="piggy-bank" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>¿Te sobró caja? Cómo hacerla trabajar</div>
         <div class="card" style="margin-bottom:24px;">
           <div style="font-size:0.83rem; color:var(--text-secondary); margin-bottom:16px; line-height:1.55;">
             Cuando el taller tiene plata en caja que no va a usar en los próximos días, hay dos instrumentos que los negocios suelen usar para no dejarla quieta. PolPilot te muestra las opciones según tu situación actual.
@@ -2790,7 +2844,7 @@ tr:last-child td { border-bottom: none; }
         </div>
 
         <!-- CREDIT CARDS -->
-        <div class="section-title">🏦 Créditos disponibles para tu perfil</div>
+        <div class="section-title"><i data-lucide="landmark" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Créditos disponibles para tu perfil</div>
         <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px;">
 
           <!-- Credit 1: Banco Nación -->
@@ -2962,7 +3016,7 @@ tr:last-child td { border-bottom: none; }
         </div>
 
         <!-- PERFIL BCRA -->
-        <div class="section-title">📋 Tu perfil crediticio BCRA</div>
+        <div class="section-title"><i data-lucide="shield-check" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Tu perfil crediticio BCRA</div>
         <div class="card" style="margin-bottom:24px;">
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;">
             <div style="text-align:center;padding:14px;background:var(--green-light);border-radius:10px;border:1px solid var(--green);">
@@ -3016,7 +3070,7 @@ tr:last-child td { border-bottom: none; }
         </div>
 
         <!-- REGULACIONES RELEVANTES -->
-        <div class="section-title">📢 Regulaciones que te impactan</div>
+        <div class="section-title"><i data-lucide="scroll-text" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Regulaciones que te impactan</div>
         <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
           <div class="card" style="border-left:4px solid var(--blue);">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
@@ -3045,7 +3099,7 @@ tr:last-child td { border-bottom: none; }
         </div>
 
         <!-- SECTOR SIGNALS -->
-        <div class="section-title">📡 Señales del sector</div>
+        <div class="section-title"><i data-lucide="radio" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Señales del sector</div>
         <div class="grid-2" style="margin-bottom:24px;">
           <div class="card" style="border-left:4px solid var(--coral);">
             <div style="font-size:1.2rem;margin-bottom:6px;">📈</div>
@@ -3100,7 +3154,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">📅 Vencimientos próximos</div>
+        <div class="section-title"><i data-lucide="calendar-clock" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Vencimientos próximos</div>
         <div class="card" style="margin-bottom:24px;">
           <table>
             <thead>
@@ -3167,7 +3221,7 @@ tr:last-child td { border-bottom: none; }
           </table>
         </div>
 
-        <div class="section-title">📢 Novedades regulatorias</div>
+        <div class="section-title"><i data-lucide="megaphone" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Novedades regulatorias</div>
         <div class="grid-2" style="margin-bottom:20px;">
           <div class="card">
             <div style="font-size:1.3rem; margin-bottom:8px;">🏦</div>
@@ -3228,7 +3282,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">🔔 Historial de alertas regulatorias</div>
+        <div class="section-title"><i data-lucide="bell" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Historial de alertas regulatorias</div>
         <div style="margin-bottom:16px;padding:14px 18px;background:linear-gradient(135deg,rgba(255,184,0,0.08),rgba(255,184,0,0.03));border-radius:12px;border:1px solid rgba(255,184,0,0.2);">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
             <span style="font-size:1rem;">📡</span>
@@ -3321,7 +3375,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">🔍 FODA automático — Marzo 2026</div>
+        <div class="section-title"><i data-lucide="search" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>FODA automático — Abril 2026</div>
         <div class="grid-2">
           <div class="card" style="border-left:4px solid var(--green);">
             <div class="card-title" style="color:var(--green);">💪 Fortalezas</div>
@@ -3361,7 +3415,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">🔎 Movimientos en tu zona</div>
+        <div class="section-title"><i data-lucide="map-pin" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Movimientos en tu zona</div>
         <div class="grid-3">
           <div class="card" style="border-top:3px solid var(--green);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -3438,7 +3492,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">📡 Señales del sector — Esta semana</div>
+        <div class="section-title"><i data-lucide="radio" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Señales del sector — Esta semana</div>
         <div class="grid-3">
           <div class="card">
             <div style="font-size:0.72rem; color:var(--text-secondary); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">Pastillas de freno</div>
@@ -3457,7 +3511,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">💡 Insights para tu negocio</div>
+        <div class="section-title"><i data-lucide="lightbulb" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Insights para tu negocio</div>
         <div class="card">
           <div class="ai-note" style="margin-bottom:12px;">
             📊 <strong>Tu proveedor principal (Frasle Argentina) mantiene precios estables</strong> esta semana — el promedio del sector subió 6.2%. Tu mix de proveedores te da mejor precio que el 73% de los talleres.
@@ -3470,7 +3524,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">🏆 Tu posición en el sector</div>
+        <div class="section-title"><i data-lucide="trophy" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Tu posición en el sector</div>
         <div class="card" style="margin-bottom:20px; border-left:4px solid var(--green);">
           <div style="display:flex; align-items:center; gap:24px; flex-wrap:wrap;">
             <div style="text-align:center; min-width:160px;">
@@ -3543,7 +3597,7 @@ tr:last-child td { border-bottom: none; }
           <h2 class="view-header-title">Compras e Inventario</h2>
           <p class="view-header-desc">Comparador de proveedores, control de stock y señales de reposición.</p>
         </div>
-        <div class="section-title" style="margin-top:0;">🏪 Comparador de proveedores</div>
+        <div class="section-title" style="margin-top:0;"><i data-lucide="store" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Comparador de proveedores</div>
         <div class="card" style="margin-bottom:24px;">
           <div class="table-container">
             <table>
@@ -3602,7 +3656,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">📦 Stock actual</div>
+        <div class="section-title"><i data-lucide="package" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Stock actual</div>
         <div class="card" style="margin-bottom:24px;">
           <div class="stock-item">
             <div class="stock-name">Pastillas de freno Ferodo (340 u.)</div>
@@ -3636,7 +3690,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">📅 Vencimientos impositivos próximos</div>
+        <div class="section-title"><i data-lucide="calendar-clock" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Vencimientos impositivos próximos</div>
         <div class="card">
           <table>
             <thead>
@@ -3698,7 +3752,7 @@ tr:last-child td { border-bottom: none; }
         </div>
 
         <!-- CALENDARIO ANUAL -->
-        <div class="section-title">📆 Demanda esperada — Año completo</div>
+        <div class="section-title"><i data-lucide="calendar-range" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Demanda esperada — Año completo</div>
         <div class="card" style="margin-bottom:24px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
             <div style="font-size:0.82rem; color:var(--text-secondary);">Basado en historial 2023–2025 + contexto sectorial actual</div>
@@ -3805,7 +3859,7 @@ tr:last-child td { border-bottom: none; }
         </div>
 
         <!-- COMPARACIÓN DE TEMPORADAS -->
-        <div class="section-title">📊 Comparación de temporadas — Este año vs. año anterior</div>
+        <div class="section-title"><i data-lucide="bar-chart-3" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Comparación de temporadas — Este año vs. año anterior</div>
         <div class="grid-2" style="margin-bottom:24px;">
           <div class="card">
             <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
@@ -3853,7 +3907,7 @@ tr:last-child td { border-bottom: none; }
         </div>
 
         <!-- ANÁLISIS ÁNGELA: CONTEXTO VS GESTIÓN -->
-        <div class="section-title">🤖 Análisis de Ángela — ¿Fue el contexto o fue el negocio?</div>
+        <div class="section-title"><i data-lucide="sparkles" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Análisis de Ángela — ¿Fue el contexto o fue el negocio?</div>
         <div class="card" style="margin-bottom:24px;">
           <div style="font-size:0.83rem; color:var(--text-secondary); margin-bottom:16px; line-height:1.55;">
             Ángela descompone cada resultado en dos factores: lo que hizo el mercado y lo que hizo el negocio. Porque no es lo mismo vender más porque el campo estuvo bien, que vender más porque ganaste clientes nuevos.
@@ -3906,7 +3960,7 @@ tr:last-child td { border-bottom: none; }
           </div>
         </div>
 
-        <div class="section-title">🏆 Top clientes por rentabilidad real</div>
+        <div class="section-title"><i data-lucide="trophy" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Top clientes por rentabilidad real</div>
         <div class="card" style="margin-bottom:24px;">
           <div class="client-row">
             <div class="client-avatar" style="background:var(--blue-light);">🚛</div>
@@ -3956,7 +4010,7 @@ tr:last-child td { border-bottom: none; }
 
         <div class="grid-2">
           <div>
-            <div class="section-title">📋 Manual de procesos</div>
+            <div class="section-title"><i data-lucide="clipboard-list" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Manual de procesos</div>
             <div class="card">
               <div style="font-size:0.85rem; line-height:1.7; color:var(--text-secondary);">
                 <div style="padding:10px 0; border-bottom:1px solid var(--border);"><strong style="color:var(--text);">Recepción de vehículo:</strong> Inspección visual → diagnóstico → presupuesto WhatsApp → aprobación del cliente → orden de trabajo</div>
@@ -3968,7 +4022,7 @@ tr:last-child td { border-bottom: none; }
             </div>
           </div>
           <div>
-            <div class="section-title">👥 Organigrama del equipo</div>
+            <div class="section-title"><i data-lucide="users" style="width:16px;height:16px;stroke-width:2;display:inline-block;vertical-align:-2px;margin-right:6px;"></i>Organigrama del equipo</div>
             <div class="card" style="padding:20px;">
               <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
                 <div style="flex:1;">
@@ -4728,7 +4782,7 @@ tr:last-child td { border-bottom: none; }
   <div id="angela-widget-panel" style="display:none;width:380px;max-height:520px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow-lg);border:1px solid var(--border);overflow:hidden;margin-bottom:12px;animation:fadeIn 0.25s ease;">
     <div style="padding:14px 18px;background:linear-gradient(135deg,var(--sidebar-bg),#131B33);color:white;display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:1.2rem;">🤖</span>
+        <i data-lucide="sparkles" style="width:20px;height:20px;stroke-width:1.75;color:white;flex-shrink:0;"></i>
         <div>
           <div style="font-weight:700;font-size:0.88rem;">Ángela</div>
           <div id="angela-widget-context" style="font-size:0.68rem;color:rgba(255,255,255,0.5);">Viendo: Inicio</div>
@@ -4747,7 +4801,7 @@ tr:last-child td { border-bottom: none; }
     </div>
   </div>
   <button id="angela-fab" onclick="toggleAngelaWidget()" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0040CC);color:white;border:none;cursor:pointer;font-size:1.5rem;box-shadow:0 4px 20px rgba(0,87,255,0.4);display:flex;align-items:center;justify-content:center;transition:transform 0.2s;margin-left:auto;">
-    🤖
+    <i data-lucide="sparkles" style="width:24px;height:24px;stroke-width:1.75;"></i>
   </button>
 </div>
 
@@ -5159,7 +5213,8 @@ function toggleAngelaWidget() {
   var fab = document.getElementById('angela-fab');
   panel.style.display = angelaWidgetOpen ? 'block' : 'none';
   fab.style.transform = angelaWidgetOpen ? 'rotate(180deg)' : '';
-  fab.innerHTML = angelaWidgetOpen ? '✕' : '🤖';
+  fab.innerHTML = angelaWidgetOpen ? '<i data-lucide="x" style="width:24px;height:24px;stroke-width:2;"></i>' : '<i data-lucide="sparkles" style="width:24px;height:24px;stroke-width:1.75;"></i>';
+  lucide.createIcons({root: fab});
   if (angelaWidgetOpen) updateWidgetContext();
 }
 
@@ -5214,6 +5269,8 @@ function handleFileUpload(files) {
     showToast('✅ ' + result.angela_comment);
   });
 }
+
+lucide.createIcons();
 </script>
 </body>
 </html>
