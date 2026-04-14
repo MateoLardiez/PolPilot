@@ -425,6 +425,46 @@ def run_external_sync(empresa_id: str, mode: str = "all") -> dict:
         return {"success": False, "error": str(exc)}
 
 
+def ingest_document(
+    empresa_id: str,
+    title: str,
+    content: str,
+    source: str = "manual",
+    collection: str = "internal_docs",
+) -> dict:
+    """
+    Ingresa un documento de texto al vector store de la empresa (ChromaDB).
+
+    Args:
+        empresa_id: ID de la empresa.
+        title: Título del documento (usado como id y metadato).
+        content: Texto del documento.
+        source: Origen — 'manual', 'file', 'audio_transcript', etc.
+        collection: 'internal_docs' o 'external_research'.
+
+    Retorna dict con doc_id y estado.
+    """
+    if not _POLPILOT_AVAILABLE:
+        return {"success": False, "error": "data module not available"}
+    try:
+        import re
+        import uuid as _uuid
+        from data.vector_store import VectorStore
+
+        vs = VectorStore(empresa_id)
+        doc_id = f"{source}_{re.sub(r'[^a-z0-9]', '_', title.lower()[:40])}_{_uuid.uuid4().hex[:8]}"
+
+        vs.add_documents(
+            collection_name=collection,
+            documents=[content],
+            metadatas=[{"title": title, "source": source, "empresa_id": empresa_id}],
+            ids=[doc_id],
+        )
+        return {"success": True, "doc_id": doc_id, "chars": len(content), "collection": collection}
+    except Exception as exc:
+        return {"success": False, "error": str(exc)}
+
+
 def get_live_dollar_rates() -> dict:
     """
     Obtiene los tipos de cambio en tiempo real desde DolarAPI.com.

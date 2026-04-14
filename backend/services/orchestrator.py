@@ -125,6 +125,7 @@ async def dispatch_all(
     company_id: str,
     conversation_context: str | None,
     agent_registry: dict,
+    conversation_id: str = "",
 ) -> dict[str, AgentQueryResponse]:
     """Despacha en paralelo a todos los agentes relevantes."""
 
@@ -141,6 +142,7 @@ async def dispatch_all(
             questions=topic_data.questions,
             company_id=company_id,
             conversation_context=conversation_context,
+            thread_id=conversation_id,  # mismo id para toda la conversación
         )
 
         tasks[topic_name] = asyncio.create_task(
@@ -387,6 +389,15 @@ async def process_query(
     total_sub_questions = 0
     iteration = 0
     agents_activated: set[str] = set()
+    conv_id = request.conversation_id or str(__import__("uuid").uuid4())
+
+    # Guardar mensaje del usuario en memoria compartida
+    shared_memory.add_message(
+        company_id=request.company_id,
+        conversation_id=conv_id,
+        role=MemoryMessageRole.user,
+        content=request.user_message,
+    )
 
     # Etapa 1+2: Expandir
     expansion = await expand_query(request)
@@ -404,6 +415,7 @@ async def process_query(
             company_id=request.company_id,
             conversation_context=request.conversation_context,
             agent_registry=agent_registry,
+            conversation_id=conv_id,
         )
         agents_activated.update(agent_responses.keys())
 
@@ -454,14 +466,33 @@ async def process_query(
             sources_used=list(agents_activated),
         )
 
-    # Obtener log de colaboración inter-agente
-    collab_log = message_broker.get_collaboration_log(request.conversation_id or "default")
+    # Guardar respuesta del asistente en memoria compartida
+    shared_memory.add_message(
+        company_id=request.company_id,
+        conversation_id=conv_id,
+        role=MemoryMessageRole.assistant,
+        content=payload.message,
+        metadata={
+            "agents": list(agents_activated),
+            "iterations": iteration,
+            "confidence": payload.confidence,
+        },
+    )
+
+    # Generar merge summary si la conversación lo necesita (background, no bloquea)
+    if shared_memory.needs_merge(request.company_id, conv_id):
+        asyncio.create_task(
+            shared_memory.generate_merge_summary(request.company_id, conv_id)
+        )
+
+    # Obtener log de colaboración inter-agente (con el conv_id consistente)
+    collab_log = message_broker.get_collaboration_log(conv_id)
     inter_agent_calls = collab_log.total_inter_calls if collab_log else 0
 
     return QueryResponse(
         response=payload,
         metadata=OrchestratorMetadata(
-            conversation_id=request.conversation_id or "",
+            conversation_id=conv_id,
             iterations=iteration,
             agents_activated=list(agents_activated),
             total_sub_questions=total_sub_questions,

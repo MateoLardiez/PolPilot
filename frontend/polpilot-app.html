@@ -4493,14 +4493,79 @@ const angelaResponses = {
   '¿Mi negocio crea o destruye valor?': `<strong>Tu negocio CREA valor real. ✅</strong>\n\nTe lo explico simple:\n\n📊 <strong>ROIC (21.8%):</strong> Cada peso invertido en el taller te rinde 21.8 centavos\n📊 <strong>WACC (18.4%):</strong> Pero tu capital te "cuesta" 18.4 centavos (entre lo que pagás de intereses y lo que ganarías en otro lado)\n\n<strong>La diferencia es positiva: +3.4 puntos.</strong> Eso significa que tu taller genera $968.000 de valor genuino por encima de lo que ganarías poniendo esa plata en un plazo fijo.\n\nEn lenguaje simple: <strong>el taller vale más vivo que cerrado</strong>. Y la tendencia es positiva — tu margen subió de 34% a 38% este mes.\n\nSi querés, puedo simular cuánto cambia esto si comprás la rectificadora nueva.`
 };
 
-function askAngela(question) {
-  addChatMsg('user', question);
-  document.getElementById('chat-suggestions').style.display = 'none';
+// ── API config ────────────────────────────────────────────────────────────────
+const API_BASE = 'http://localhost:8000';
+const COMPANY_ID = 'emp_001';
 
-  setTimeout(() => {
-    const response = angelaResponses[question] || 'Dejame analizar eso con tus datos actualizados. Un momento... 🔍\n\nBasado en lo que conozco de tu negocio, te recomiendo que lo revisemos juntos. ¿Querés que profundice en algún aspecto específico?';
-    addChatMsg('bot', response.replace(/\n/g, '<br>'));
-  }, 800);
+// conversation_id persiste durante la sesión del navegador
+let _conversationId = sessionStorage.getItem('pol_conv_id');
+if (!_conversationId) {
+  _conversationId = crypto.randomUUID();
+  sessionStorage.setItem('pol_conv_id', _conversationId);
+}
+
+// ── Typing indicator ──────────────────────────────────────────────────────────
+function addTypingIndicator() {
+  const container = document.getElementById('chat-messages');
+  const el = document.createElement('div');
+  el.className = 'chat-msg bot';
+  el.id = 'typing-indicator';
+  el.innerHTML = `
+    <div class="chat-avatar">🤖</div>
+    <div class="chat-bubble" style="color:#888;font-style:italic">Angela está analizando...</div>
+  `;
+  container.appendChild(el);
+  container.scrollTop = container.scrollHeight;
+}
+
+function removeTypingIndicator() {
+  const el = document.getElementById('typing-indicator');
+  if (el) el.remove();
+}
+
+// ── Llamada real al backend ───────────────────────────────────────────────────
+async function _callBackend(question) {
+  try {
+    const resp = await fetch(`${API_BASE}/query`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        company_id: COMPANY_ID,
+        user_message: question,
+        conversation_id: _conversationId,
+      }),
+    });
+
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+    const data = await resp.json();
+    const message = data?.response?.message || 'Recibí tu consulta, pero la respuesta llegó vacía.';
+    const recs = data?.response?.recommendations || [];
+    const suggestions = data?.response?.follow_up_suggestions || [];
+
+    let html = message.replace(/\n/g, '<br>');
+
+    if (recs.length > 0) {
+      html += '<br><br><strong>Acciones recomendadas:</strong><ul>';
+      recs.forEach(r => {
+        html += `<li><strong>${r.action}</strong> — ${r.impact} <em>(${r.urgency})</em></li>`;
+      });
+      html += '</ul>';
+    }
+
+    if (suggestions.length > 0) {
+      html += '<br><span style="color:#888;font-size:0.9em">Podés preguntarme: ';
+      html += suggestions.slice(0, 2).map(s => `"${s}"`).join(' o ');
+      html += '</span>';
+    }
+
+    return html;
+
+  } catch (err) {
+    // Fallback al mock cuando el servidor no responde (demo offline-safe)
+    console.warn('Backend no disponible, usando respuesta mock:', err.message);
+    return null;  // caller maneja el fallback
+  }
 }
 
 function addChatMsg(type, html) {
@@ -4508,7 +4573,6 @@ function addChatMsg(type, html) {
   const msg = document.createElement('div');
   msg.className = 'chat-msg ' + type;
   const avatar = type === 'bot' ? '🤖' : 'GC';
-  const avatarStyle = type === 'bot' ? '' : '';
   msg.innerHTML = `
     <div class="chat-avatar">${avatar}</div>
     <div class="chat-bubble">${html}</div>
@@ -4517,7 +4581,25 @@ function addChatMsg(type, html) {
   container.scrollTop = container.scrollHeight;
 }
 
-function sendChat() {
+async function askAngela(question) {
+  addChatMsg('user', question);
+  document.getElementById('chat-suggestions').style.display = 'none';
+  addTypingIndicator();
+
+  const backendHtml = await _callBackend(question);
+  removeTypingIndicator();
+
+  if (backendHtml) {
+    addChatMsg('bot', backendHtml);
+  } else {
+    // Fallback mock
+    const mock = angelaResponses[question] ||
+      'Dejame analizar eso con tus datos actualizados. Un momento...\n\nBasado en lo que conozco de tu negocio, te recomiendo que lo revisemos juntos.';
+    addChatMsg('bot', mock.replace(/\n/g, '<br>'));
+  }
+}
+
+async function sendChat() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text) return;
@@ -4525,26 +4607,32 @@ function sendChat() {
   addChatMsg('user', text);
   input.value = '';
   document.getElementById('chat-suggestions').style.display = 'none';
+  addTypingIndicator();
 
-  setTimeout(() => {
-    // Check for keyword matches
-    let response = '';
+  const backendHtml = await _callBackend(text);
+  removeTypingIndicator();
+
+  if (backendHtml) {
+    addChatMsg('bot', backendHtml);
+  } else {
+    // Fallback mock por keyword
     const lower = text.toLowerCase();
+    let response;
     if (lower.includes('caja') || lower.includes('plata') || lower.includes('dinero')) {
       response = angelaResponses['¿Cómo viene mi caja esta semana?'];
     } else if (lower.includes('pastilla') || lower.includes('comprar') || lower.includes('ferrante')) {
       response = angelaResponses['¿Me conviene comprar pastillas esta semana?'];
-    } else if (lower.includes('gutiérrez') || lower.includes('gutierrez') || lower.includes('moroso') || lower.includes('cobr')) {
+    } else if (lower.includes('gutiérrez') || lower.includes('gutierrez') || lower.includes('cobr')) {
       response = angelaResponses['¿Qué pasa si no le cobro a Gutiérrez?'];
     } else if (lower.includes('vtv') || lower.includes('abril') || lower.includes('prepar')) {
       response = angelaResponses['¿Cómo me preparo para la VTV de abril?'];
-    } else if (lower.includes('valor') || lower.includes('eva') || lower.includes('roic') || lower.includes('crea') || lower.includes('destruy')) {
+    } else if (lower.includes('valor') || lower.includes('roic') || lower.includes('crea')) {
       response = angelaResponses['¿Mi negocio crea o destruye valor?'];
     } else {
-      response = `Buena pregunta, Gonzalo. Dejame cruzar eso con los datos de tu negocio...\n\nBasado en tu historial y el contexto actual del mercado, te recomiendo que revisemos esto con más detalle. Puedo generar un análisis específico si me das un minuto.\n\n<strong>¿Querés que lo prepare como entregable descargable?</strong>`;
+      response = 'Buena pregunta. Dejame cruzar eso con los datos de tu negocio...\n\n<strong>¿Querés que lo prepare como entregable descargable?</strong>';
     }
     addChatMsg('bot', response.replace(/\n/g, '<br>'));
-  }, 1000);
+  }
 }
 
 // ═══════════════════════════════════════════════

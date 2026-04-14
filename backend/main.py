@@ -17,7 +17,8 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, File, Form, UploadFile
+from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings
@@ -37,7 +38,7 @@ from services.agent_finanzas import query_finanzas
 from services.context_store import context_store
 from services.message_broker import message_broker
 from services.orchestrator import process_query
-from services.data_bridge import ensure_initialized, run_seed, run_external_sync, get_live_dollar_rates
+from services.data_bridge import ensure_initialized, run_seed, run_external_sync, get_live_dollar_rates, ingest_document
 
 
 # ── Lifespan ───────────────────────────────────────────
@@ -341,6 +342,63 @@ async def db_sync(empresa_id: str, mode: str = "all"):
     result = run_external_sync(empresa_id, mode=mode)
     if not result.get("success"):
         raise HTTPException(status_code=500, detail=result.get("error", "Sync falló"))
+    return result
+
+
+@app.post("/ingest")
+async def ingest(
+    company_id: str = Form(default="emp_001"),
+    title: str = Form(default="documento"),
+    text: Optional[str] = Form(default=None),
+    collection: str = Form(default="internal_docs"),
+    file: Optional[UploadFile] = File(default=None),
+):
+    """
+    Ingresa texto o archivo al vector store de la empresa (ChromaDB).
+
+    Formatos soportados (MVP): texto plano, .txt, .md.
+    Uso:
+      - Texto directo:  form-data con `text` y `title`.
+      - Archivo:        form-data con `file` (multipart).
+
+    La empresa debe tener la DB inicializada (POST /db/init primero).
+    """
+    content: str = ""
+
+    if file is not None:
+        filename = file.filename or "archivo"
+        ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+        if ext not in ("txt", "md", ""):
+            raise HTTPException(
+                status_code=415,
+                detail=f"Formato .{ext} no soportado aún. Usá .txt o .md, o enviá texto directo.",
+            )
+        raw = await file.read()
+        try:
+            content = raw.decode("utf-8")
+        except UnicodeDecodeError:
+            content = raw.decode("latin-1")
+        title = title if title != "documento" else filename
+
+    elif text:
+        content = text.strip()
+    else:
+        raise HTTPException(status_code=422, detail="Enviá 'text' o un 'file'.")
+
+    if not content:
+        raise HTTPException(status_code=422, detail="El contenido está vacío.")
+
+    source = "file" if file else "manual"
+    result = ingest_document(
+        empresa_id=company_id,
+        title=title,
+        content=content,
+        source=source,
+        collection=collection,
+    )
+
+    if not result.get("success"):
+        raise HTTPException(status_code=500, detail=result.get("error", "Ingest falló"))
     return result
 
 
