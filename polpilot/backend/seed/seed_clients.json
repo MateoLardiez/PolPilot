@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Red de Talleres Venado Tuerto (12 talleres)",
+    "client_type": "fleet",
+    "annual_revenue": 144000000,
+    "avg_payment_days": 30,
+    "outstanding_balance": 4500000,
+    "risk_level": "low",
+    "notes": "Cliente histórico, pago puntual. 12 talleres de la zona."
+  },
+  {
+    "name": "Lubricentros zona sur Santa Fe (8 locales)",
+    "client_type": "fleet",
+    "annual_revenue": 102000000,
+    "avg_payment_days": 35,
+    "outstanding_balance": 3200000,
+    "risk_level": "low",
+    "notes": "Red de lubricentros, buen volumen mayorista."
+  },
+  {
+    "name": "Mostrador particular",
+    "client_type": "individual",
+    "annual_revenue": 222000000,
+    "avg_payment_days": 0,
+    "outstanding_balance": 0,
+    "risk_level": "low",
+    "notes": "Ventas de mostrador al contado."
+  },
+  {
+    "name": "MercadoLibre (tienda online)",
+    "client_type": "workshop",
+    "annual_revenue": 50400000,
+    "avg_payment_days": 14,
+    "outstanding_balance": 2100000,
+    "risk_level": "low",
+    "notes": "Canal e-commerce. ML retiene y liquida a 14 días."
+  },
+  {
+    "name": "Concesionarias usados región",
+    "client_type": "fleet",
+    "annual_revenue": 63600000,
+    "avg_payment_days": 45,
+    "outstanding_balance": 5300000,
+    "risk_level": "medium",
+    "notes": "Pago a 45 días, algunos retrasos esporádicos."
+  },
+  {
+    "name": "Lubricentro San Martín",
+    "client_type": "workshop",
+    "annual_revenue": 8400000,
+    "avg_payment_days": 95,
+    "outstanding_balance": 450000,
+    "risk_level": "high",
+    "notes": "Moroso — 95 días de atraso."
+  },
+  {
+    "name": "Taller Mecánico Rossi",
+    "client_type": "workshop",
+    "annual_revenue": 5200000,
+    "avg_payment_days": 120,
+    "outstanding_balance": 320000,
+    "risk_level": "high",
+    "notes": "Moroso — 120 días de atraso."
+  },
+  {
+    "name": "Frenos del Sur",
+    "client_type": "workshop",
+    "annual_revenue": 3600000,
+    "avg_payment_days": 105,
+    "outstanding_balance": 230000,
+    "risk_level": "high",
+    "notes": "Moroso — 105 días de atraso."
+  }
+]

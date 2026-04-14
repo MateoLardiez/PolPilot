@@ -1,0 +1,56 @@
+[
+  {
+    "year": 2025, "month": 10,
+    "revenue": 48000000, "expenses": 46500000,
+    "net_cash_flow": 1500000, "cash_balance": 4200000,
+    "accounts_receivable": 11000000, "accounts_payable": 18500000,
+    "inventory_value": 40000000,
+    "notes": "Mes estable, inicio temporada pre-verano",
+    "source": "manual"
+  },
+  {
+    "year": 2025, "month": 11,
+    "revenue": 51200000, "expenses": 48800000,
+    "net_cash_flow": 2400000, "cash_balance": 6600000,
+    "accounts_receivable": 12500000, "accounts_payable": 19200000,
+    "inventory_value": 41500000,
+    "notes": "Sube demanda mayorista por temporada",
+    "source": "manual"
+  },
+  {
+    "year": 2025, "month": 12,
+    "revenue": 58500000, "expenses": 54200000,
+    "net_cash_flow": 4300000, "cash_balance": 10900000,
+    "accounts_receivable": 13800000, "accounts_payable": 20000000,
+    "inventory_value": 38000000,
+    "notes": "Pico de ventas diciembre, stock baja por alta demanda",
+    "source": "manual"
+  },
+  {
+    "year": 2026, "month": 1,
+    "revenue": 42000000, "expenses": 45000000,
+    "net_cash_flow": -3000000, "cash_balance": 7900000,
+    "accounts_receivable": 10500000, "accounts_payable": 21000000,
+    "inventory_value": 42000000,
+    "notes": "Enero bajo por vacaciones, se repuso stock",
+    "source": "manual"
+  },
+  {
+    "year": 2026, "month": 2,
+    "revenue": 49800000, "expenses": 47200000,
+    "net_cash_flow": 2600000, "cash_balance": 5500000,
+    "accounts_receivable": 13200000, "accounts_payable": 21500000,
+    "inventory_value": 43500000,
+    "notes": "Recuperación post-vacaciones",
+    "source": "manual"
+  },
+  {
+    "year": 2026, "month": 3,
+    "revenue": 56500000, "expenses": 55588600,
+    "net_cash_flow": -2068600, "cash_balance": 1131400,
+    "accounts_receivable": 14200000, "accounts_payable": 22300000,
+    "inventory_value": 45000000,
+    "notes": "Flujo negativo por pago fuerte a proveedores de importación",
+    "source": "manual"
+  }
+]
