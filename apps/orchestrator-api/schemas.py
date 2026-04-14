@@ -70,6 +70,7 @@ class OrchestratorMetadata(BaseModel):
     iterations: int
     agents_activated: list[str]
     total_sub_questions: int
+    inter_agent_calls: int = 0
 
 
 class QueryResponse(BaseModel):
@@ -134,3 +135,81 @@ class FollowUpEvaluation(BaseModel):
     follow_up_questions: dict[str, list[str]] = {}
     iteration_count: int
     stop_loss_check: StopLossCheck
+
+
+# ── Colaboración Inter-Agente ─────────────────────────
+
+class ArtifactType(str, Enum):
+    FACT = "FACT"
+    CLAIM = "CLAIM"
+    RECOMMENDATION = "RECOMMENDATION"
+    VALIDATION = "VALIDATION"
+
+
+class ArtifactStatus(str, Enum):
+    pending = "pending"
+    resolved = "resolved"
+    rejected = "rejected"
+
+
+class Artifact(BaseModel):
+    """Artefacto estructurado que los agentes producen e intercambian."""
+    artifact_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    artifact_type: ArtifactType
+    source_agent: str
+    data: dict
+    confidence: float = Field(ge=0, le=1)
+    context_ref: Optional[str] = None
+    created_at: Optional[str] = Field(default_factory=lambda: __import__("datetime").datetime.now().isoformat())
+
+
+class SupportRequest(BaseModel):
+    """Solicitud de un agente a otro vía el Gateway/Auditor."""
+    request_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    source_agent: str
+    target_agent: str
+    question: str
+    context_payload: Optional[dict] = None
+    company_id: str
+    thread_id: Optional[str] = None
+    original_query: Optional[str] = None
+
+
+class SupportResponse(BaseModel):
+    """Respuesta a un support_request."""
+    request_id: str
+    source_agent: str
+    target_agent: str
+    artifacts: list[Artifact] = []
+    summary: str
+    resolved: bool = True
+
+
+class BrokerMessage(BaseModel):
+    """Mensaje interno del Message Broker."""
+    message_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    from_agent: str
+    to_agent: str
+    message_type: str  # "support_request" | "support_response" | "artifact_delivery" | "notification"
+    payload: dict
+    status: str = "pending"  # "pending" | "delivered" | "processed"
+    created_at: Optional[str] = Field(default_factory=lambda: __import__("datetime").datetime.now().isoformat())
+
+
+class ContextEntry(BaseModel):
+    """Entrada en el Context Store (estado compartido)."""
+    key: str
+    value: dict
+    source_agent: str
+    version: int = 1
+    memory_priority: str = "M_conv"  # "M_int" (máxima) | "M_onb" (media) | "M_conv" (baja)
+    updated_at: Optional[str] = Field(default_factory=lambda: __import__("datetime").datetime.now().isoformat())
+
+
+class CollaborationLog(BaseModel):
+    """Log de una interacción inter-agente completa."""
+    thread_id: str
+    support_requests: list[SupportRequest] = []
+    support_responses: list[SupportResponse] = []
+    artifacts_exchanged: list[Artifact] = []
+    total_inter_calls: int = 0

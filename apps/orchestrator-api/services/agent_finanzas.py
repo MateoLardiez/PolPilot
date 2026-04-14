@@ -1,70 +1,57 @@
+
 """Agente de Finanzas — analiza datos internos de la empresa."""
 
 from __future__ import annotations
 
 import json
+from pathlib import Path
+from typing import Optional
 
 import anthropic
 
 from config import settings
-from schemas import AgentAnswer, AgentQueryRequest, AgentQueryResponse, DataPoint
+from schemas import (
+    AgentAnswer,
+    AgentQueryRequest,
+    AgentQueryResponse,
+    DataPoint,
+    SupportRequest,
+)
+from services.mock_data import build_finanzas_context
 
 client = anthropic.AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
 
-FINANZAS_SYSTEM = """Sos el Agente de Finanzas de PolPilot. Tu rol es analizar la situación financiera INTERNA de la empresa.
+_PROMPT_PATH = Path(__file__).parent / "agents_models" / "agent_finanzas.md"
+_BASE_SYSTEM = _PROMPT_PATH.read_text(encoding="utf-8")
 
-Tus fuentes de datos:
-- Flujo de caja (ingresos, egresos, neto)
-- Márgenes (bruto, neto)
-- Liquidez disponible
-- Cuentas por cobrar / pagar
-- Deudas vigentes
-- Proyecciones financieras
-- Health Score financiero
-- Datos de clientes morosos
-- Inventario y stock
 
-Reglas:
-- Solo respondés con datos concretos. Si no tenés un dato, decí "dato no disponible".
-- NUNCA inventés números.
-- Siempre incluí la fuente del dato (ej: "financials_monthly.cash_balance").
-- Respondé en JSON.
-"""
+def _build_system(company_id: str) -> str:
+    """Combina el system prompt base con los datos reales de la empresa."""
+    data_context = build_finanzas_context(company_id)
+    return f"{_BASE_SYSTEM}\n\n---\n\n{data_context}"
 
 
 async def query_finanzas(request: AgentQueryRequest) -> AgentQueryResponse:
     """Procesa las preguntas del orquestador sobre finanzas."""
 
+    system_prompt = _build_system(request.company_id)
     questions_text = "\n".join(f"- {q}" for q in request.questions)
 
-    user_prompt = f"""Empresa: {request.company_id}
+    user_prompt = f"""Empresa ID: {request.company_id}
 Pregunta original del usuario: "{request.original_query}"
 
-Preguntas que debés responder:
+Preguntas específicas que debés responder usando los datos de la empresa:
 {questions_text}
 
-Contexto previo: {request.conversation_context or "Ninguno"}
+Contexto de conversación previa: {request.conversation_context or "Ninguno"}
 
-Respondé con JSON:
-{{
-  "answers": [
-    {{
-      "question": "la pregunta",
-      "answer": "tu respuesta con datos concretos",
-      "confidence": 0.0-1.0,
-      "data_points": [{{"label": "nombre", "value": "valor", "source": "tabla.columna"}}]
-    }}
-  ],
-  "summary": "resumen ejecutivo de todas las respuestas",
-  "needs_external_support": false,
-  "external_support_question": null
-}}
+Respondé ÚNICAMENTE con JSON válido. Sin texto adicional antes ni después.
 """
 
     response = await client.messages.create(
         model=settings.AGENT_MODEL,
         max_tokens=2048,
-        system=FINANZAS_SYSTEM,
+        system=system_prompt,
         messages=[{"role": "user", "content": user_prompt}],
     )
 
@@ -77,10 +64,19 @@ Respondé con JSON:
 
     try:
         data = json.loads(raw)
+        answers = []
+        for a in data.get("answers", []):
+            data_points = [DataPoint(**dp) for dp in a.get("data_points", [])]
+            answers.append(AgentAnswer(
+                question=a.get("question", ""),
+                answer=a.get("answer", ""),
+                confidence=float(a.get("confidence", 0.8)),
+                data_points=data_points,
+            ))
         return AgentQueryResponse(
             thread_id=request.thread_id,
             topic="finanzas",
-            answers=[AgentAnswer(**a) for a in data.get("answers", [])],
+            answers=answers,
             summary=data.get("summary", ""),
             needs_external_support=data.get("needs_external_support", False),
             external_support_question=data.get("external_support_question"),
@@ -92,3 +88,23 @@ Respondé con JSON:
             answers=[],
             summary=raw,
         )
+
+
+def build_support_request(
+    question: str,
+    target_agent: str,
+    company_id: str,
+    thread_id: Optional[str] = None,
+    original_query: Optional[str] = None,
+    context_payload: Optional[dict] = None,
+) -> SupportRequest:
+    """Construye un support_request desde el agente de Finanzas hacia otro agente."""
+    return SupportRequest(
+        source_agent="finanzas",
+        target_agent=target_agent,
+        question=question,
+        company_id=company_id,
+        thread_id=thread_id,
+        original_query=original_query,
+        context_payload=context_payload,
+    )

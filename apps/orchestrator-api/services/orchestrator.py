@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import time
 from pathlib import Path
 
@@ -13,7 +14,11 @@ from config import settings
 from schemas import (
     AgentQueryRequest,
     AgentQueryResponse,
+    Artifact,
+    ArtifactType,
+    CollaborationLog,
     Complexity,
+    ContextEntry,
     FollowUpEvaluation,
     OrchestratorMetadata,
     QueryRequest,
@@ -21,7 +26,12 @@ from schemas import (
     QuestionExpansion,
     ResponsePayload,
     StopLossCheck,
+    SupportRequest,
 )
+from services.context_store import context_store
+from services.message_broker import message_broker
+
+logger = logging.getLogger(__name__)
 
 
 def _load_system_prompt() -> str:
@@ -135,6 +145,108 @@ async def dispatch_all(
         results[topic_name] = await task
 
     return results
+
+
+# ── Etapa 3.5: Colaboración Inter-Agente ──────────────
+
+async def resolve_inter_agent_dependencies(
+    agent_responses: dict[str, AgentQueryResponse],
+    company_id: str,
+    original_query: str,
+) -> dict[str, AgentQueryResponse]:
+    """
+    Revisa si algún agente necesita soporte de otro agente.
+    Si needs_external_support == True, envía un support_request via el Message Broker.
+    Luego enriquece la respuesta del agente solicitante con los artefactos recibidos.
+    """
+    enriched = dict(agent_responses)
+
+    for topic, response in agent_responses.items():
+        if not response.needs_external_support or not response.external_support_question:
+            continue
+
+        # Determinar el agente destino (el "otro" agente)
+        other_agents = [t for t in agent_responses.keys() if t != topic]
+        if not other_agents:
+            continue
+
+        target = other_agents[0]
+
+        logger.info(
+            "Inter-agent: %s solicita soporte de %s: '%s'",
+            topic, target, response.external_support_question,
+        )
+
+        # Construir y enviar el support_request via el broker
+        support_req = SupportRequest(
+            source_agent=topic,
+            target_agent=target,
+            question=response.external_support_question,
+            company_id=company_id,
+            thread_id=response.thread_id,
+            original_query=original_query,
+            context_payload={
+                "source_summary": response.summary,
+                "source_answers_count": len(response.answers),
+            },
+        )
+
+        support_resp = await message_broker.handle_support_request(support_req)
+
+        if support_resp.resolved and support_resp.artifacts:
+            # Agregar los artefactos como respuestas adicionales al agente original
+            from schemas import AgentAnswer, DataPoint
+
+            extra_answers = []
+            for artifact in support_resp.artifacts:
+                extra_answers.append(AgentAnswer(
+                    question=f"[Inter-agent: {target}] {artifact.data.get('question', 'Soporte')}",
+                    answer=artifact.data.get("answer", support_resp.summary),
+                    confidence=artifact.confidence,
+                    data_points=[
+                        DataPoint(**dp) for dp in artifact.data.get("data_points", [])
+                    ],
+                ))
+
+            # Enriquecer la respuesta original
+            enriched_response = AgentQueryResponse(
+                thread_id=response.thread_id,
+                topic=response.topic,
+                answers=response.answers + extra_answers,
+                summary=f"{response.summary}\n\n[Soporte de {target}]: {support_resp.summary}",
+                needs_external_support=False,
+                external_support_question=None,
+            )
+            enriched[topic] = enriched_response
+
+            # Guardar contexto en el store
+            context_store.put(
+                company_id,
+                ContextEntry(
+                    key=f"inter_agent_{topic}_{target}_{response.thread_id}",
+                    value={
+                        "source": topic,
+                        "target": target,
+                        "question": response.external_support_question,
+                        "artifacts_count": len(support_resp.artifacts),
+                        "summary": support_resp.summary,
+                    },
+                    source_agent=topic,
+                    memory_priority="M_conv",
+                ),
+            )
+
+            logger.info(
+                "Inter-agent resolved: %s ← %s (%d artefactos)",
+                topic, target, len(support_resp.artifacts),
+            )
+        else:
+            logger.warning(
+                "Inter-agent failed: %s → %s: %s",
+                topic, target, support_resp.summary,
+            )
+
+    return enriched
 
 
 # ── Etapa 4: Síntesis (MESH) ─────────────────────────
@@ -284,6 +396,13 @@ async def process_query(
         )
         agents_activated.update(agent_responses.keys())
 
+        # Etapa 3.5: Resolver dependencias inter-agente
+        agent_responses = await resolve_inter_agent_dependencies(
+            agent_responses=agent_responses,
+            company_id=request.company_id,
+            original_query=expansion.original_query,
+        )
+
         # Etapa 4: Síntesis
         synthesis_raw = await synthesize(
             original_query=expansion.original_query,
@@ -324,6 +443,10 @@ async def process_query(
             sources_used=list(agents_activated),
         )
 
+    # Obtener log de colaboración inter-agente
+    collab_log = message_broker.get_collaboration_log(request.conversation_id or "default")
+    inter_agent_calls = collab_log.total_inter_calls if collab_log else 0
+
     return QueryResponse(
         response=payload,
         metadata=OrchestratorMetadata(
@@ -331,5 +454,6 @@ async def process_query(
             iterations=iteration,
             agents_activated=list(agents_activated),
             total_sub_questions=total_sub_questions,
+            inter_agent_calls=inter_agent_calls,
         ),
     )
