@@ -1,4 +1,17 @@
 .claude
-polpilot/.venv/
-polpilot/data/empresa_demo/
 .agents
+
+# Runtime data (SQLite + ChromaDB) — generado en ejecución, no commitear
+/data/
+
+# Virtual environments
+.venv/
+backend/.venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment files
+.env
