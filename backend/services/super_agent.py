@@ -1,23 +1,24 @@
 """
-Super-Agente PolPilot — Único punto de orquestación.
+Super-Agente PolPilot v3 — Agent SDK con Tool Use.
 
-Reemplaza el sistema multiagente (orchestrator + agent_finanzas + agent_economia
-+ agent_investigador + message_broker) por un pipeline secuencial con skills.
+Arquitectura:
+  - Un único agente (Angela) con TODAS las skills registradas como tools
+  - El agente decide cuándo y cómo llamar cada skill (no hay pipeline fijo)
+  - Loop: mensaje → tool_use → tool_results → … → end_turn → respuesta final
+  - Skills son funciones puras; el LLM solo orquesta qué llamar y cuándo
 
-Pipeline obligatorio:
-  1. ingest_skill       — normaliza y enriquece el input
-  2. client_db_skill    — lee DB de empresa + memoria conversacional
-  3. novelty_skill      — detecta si la query es nueva o repetida
-  4. CLASSIFY (LLM)     — clasifica tópico + intención (un solo call LLM)
-  5. execute skills     — reúne datos según tópicos activos (sin LLM)
-  6. SYNTHESIZE (LLM)   — genera la respuesta final (un solo call LLM)
-  7. memory_write_skill — persiste interacción en memoria y context_store
+Flujo de ejecución:
+  1. Recibe QueryRequest con mensaje del usuario + company_id
+  2. Construye mensajes iniciales con contexto de empresa y conversación
+  3. Corre el agent loop: el LLM llama tools hasta tener suficiente info
+  4. En end_turn: parsea la respuesta final como ResponsePayload JSON
+  5. Escribe en memoria y devuelve QueryResponse
 
-Decisiones técnicas:
-  - Solo 2 llamadas LLM por query: classify + synthesize
-  - El LLM NO se llama dentro de las skills (son funciones puras de datos)
-  - No hay despacho paralelo a sub-agentes ni inter-agent calls
-  - La respuesta final mantiene el schema QueryResponse para compatibilidad de API
+Skills disponibles como tools:
+  ingest_skill, client_db_skill, novelty_skill,
+  finance_skill, economy_skill, research_skill,
+  memory_management_skill, skill_creator_skill,
+  eval_skill, system_prompt_skill
 """
 
 from __future__ import annotations
@@ -34,327 +35,576 @@ import anthropic
 
 from config import settings
 from schemas import (
-    MemoryMessageRole,
     OrchestratorMetadata,
     QueryRequest,
     QueryResponse,
     ResponsePayload,
 )
-from services.context_store import context_store
 from services.shared_memory import shared_memory
 from services.skills import (
     client_db_skill,
     economy_skill,
+    eval_skill,
     finance_skill,
     ingest_skill,
-    intent_skill,
+    memory_management_skill,
     memory_write_skill,
     novelty_skill,
     research_skill,
-    topic_skill,
+    skill_creator_skill,
+    system_prompt_skill,
 )
 
 logger = logging.getLogger(__name__)
 
-# ── Configuración ──────────────────────────────────────
-
-_SYSTEM_PROMPT_PATH = Path(settings.PROMPTS_DIR) / "super_agent_system.md"
-SYSTEM_PROMPT: str = _SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
-
-client = anthropic.AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
-
-RELEVANCE_THRESHOLD = 0.20
+# ── Límite de iteraciones del loop ─────────────────────
+MAX_TOOL_ITERATIONS = 8
 
 
-# ── Etapa 4: Clasificación (LLM) ──────────────────────
+# ── System Prompt ──────────────────────────────────────
 
-async def _classify_query(
-    user_message: str,
-    detected_keywords: list[str],
-    memory_context: str,
-    company_profile_summary: str,
-) -> topic_skill.TopicClassification:
-    """
-    Única llamada LLM para clasificar tópico + intención simultáneamente.
-    Evita el call duplicado que existía en el orchestrator original.
-    """
-    prompt = topic_skill.build_classification_prompt(
-        user_message=user_message,
-        memory_context=memory_context,
-        company_profile_summary=company_profile_summary,
-        detected_keywords=detected_keywords,
-        max_questions_per_topic=settings.MAX_QUESTIONS_PER_TOPIC,
-    )
-
-    response = await client.messages.create(
-        model=settings.ORCHESTRATOR_MODEL,
-        max_tokens=1024,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": prompt}],
-    )
-
-    raw = response.content[0].text.strip()
+def _load_system_prompt() -> str:
+    path = Path(settings.PROMPTS_DIR) / "super_agent_system.md"
     try:
-        return topic_skill.parse_llm_response(raw)
-    except (json.JSONDecodeError, Exception) as e:
-        logger.warning("super_agent: classification parse error: %s — using fallback", e)
-        # Fallback: activar todos los tópicos con baja relevance
-        return topic_skill.TopicClassification(
-            primary_topic="mixed",
-            intent="consulta general",
-            intent_description=user_message,
-            complexity="simple",
-            requires_live_data=bool(detected_keywords),
-            finanzas=topic_skill.TopicDetail(relevance=0.5, sub_questions=[user_message]),
-            economia=topic_skill.TopicDetail(relevance=0.3, sub_questions=[user_message]),
-            investigacion=topic_skill.TopicDetail(relevance=0.2 if detected_keywords else 0.0),
+        return path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        logger.error("super_agent: system prompt no encontrado en %s", path)
+        return "Sos Angela, asistente de PolPilot. Respondé en JSON."
+
+
+# ── Cliente Anthropic ──────────────────────────────────
+
+def _get_client() -> anthropic.AsyncAnthropic:
+    if not settings.ANTHROPIC_API_KEY:
+        raise ValueError(
+            "ANTHROPIC_API_KEY no configurada. "
+            "Revisar el archivo .env del backend."
         )
+    return anthropic.AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
 
 
-# ── Etapa 5: Ejecución de skills de datos ─────────────
+# ── Definición de Tools (Skills como Tools del Agent SDK) ──
 
-async def _execute_data_skills(
+SKILL_TOOLS: list[dict] = [
+    {
+        "name": "ingest_skill",
+        "description": (
+            "Normaliza el mensaje del usuario, detecta keywords financieras "
+            "y económicas, e identifica si requiere datos en tiempo real. "
+            "Llamar SIEMPRE como primer paso."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "user_message": {"type": "string"},
+                "company_id": {"type": "string"},
+            },
+            "required": ["user_message", "company_id"],
+        },
+    },
+    {
+        "name": "client_db_skill",
+        "description": (
+            "Obtiene datos internos de la empresa: finanzas, economía local "
+            "y contexto de conversación previa desde la base de datos."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "company_id": {"type": "string"},
+                "conversation_id": {"type": "string"},
+            },
+            "required": ["company_id", "conversation_id"],
+        },
+    },
+    {
+        "name": "novelty_skill",
+        "description": (
+            "Detecta si la consulta es nueva o similar a preguntas anteriores "
+            "en la conversación, para evitar repetir información."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "company_id": {"type": "string"},
+                "conversation_id": {"type": "string"},
+                "normalized_message": {"type": "string"},
+            },
+            "required": ["company_id", "conversation_id", "normalized_message"],
+        },
+    },
+    {
+        "name": "finance_skill",
+        "description": (
+            "Obtiene y formatea datos financieros internos: flujo de caja, "
+            "liquidez, cuentas por cobrar/pagar, stock y health score. "
+            "Usar cuando la consulta es sobre finanzas de la empresa."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "company_id": {"type": "string"},
+                "sub_questions": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Preguntas específicas a responder con datos financieros",
+                },
+            },
+            "required": ["company_id"],
+        },
+    },
+    {
+        "name": "economy_skill",
+        "description": (
+            "Obtiene datos macroeconómicos argentinos: créditos PyME disponibles, "
+            "tasas BCRA, inflación, regulaciones AFIP. "
+            "Usar cuando la consulta es sobre el contexto económico."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "company_id": {"type": "string"},
+                "sub_questions": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                },
+            },
+            "required": ["company_id"],
+        },
+    },
+    {
+        "name": "research_skill",
+        "description": (
+            "Obtiene datos en TIEMPO REAL desde APIs públicas: tipos de cambio "
+            "(dólar oficial, blue, MEP, CCL), tasas BCRA, reservas internacionales, "
+            "préstamos PyME vigentes. Usar para cualquier consulta sobre cotizaciones actuales."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "original_query": {"type": "string"},
+                "sub_questions": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                },
+            },
+            "required": ["original_query"],
+        },
+    },
+    {
+        "name": "memory_management_skill",
+        "description": (
+            "Gestión avanzada de memoria persistente: leer hechos históricos "
+            "de la empresa, escribir datos importantes para recordar, "
+            "obtener perfil acumulado."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": ["read", "write", "get_facts", "clear"],
+                },
+                "company_id": {"type": "string"},
+                "conversation_id": {"type": "string"},
+                "content": {
+                    "type": "string",
+                    "description": "Hecho a guardar (solo action=write)",
+                },
+            },
+            "required": ["action", "company_id"],
+        },
+    },
+    {
+        "name": "skill_creator_skill",
+        "description": (
+            "Crea una nueva skill personalizada cuando ninguna existente "
+            "resuelve el caso de uso. Genera el archivo .py desde un template. "
+            "Usar solo cuando realmente falte una capacidad nueva."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "skill_name": {
+                    "type": "string",
+                    "description": "Nombre en snake_case sin sufijo _skill",
+                },
+                "description": {"type": "string"},
+                "use_case": {"type": "string"},
+            },
+            "required": ["skill_name", "description", "use_case"],
+        },
+    },
+    {
+        "name": "eval_skill",
+        "description": (
+            "Ejecuta o prepara evaluaciones de calidad de respuestas. "
+            "Devuelve casos de prueba predefinidos o evalúa una respuesta inline."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "company_id": {"type": "string"},
+                "evaluate_response": {
+                    "type": "object",
+                    "description": "ResponsePayload a evaluar (opcional)",
+                },
+                "evaluate_against_case_id": {
+                    "type": "string",
+                    "description": "ID del test case (tc_001…tc_005)",
+                },
+            },
+            "required": ["company_id"],
+        },
+    },
+    {
+        "name": "system_prompt_skill",
+        "description": (
+            "Lee o actualiza el system prompt del agente. "
+            "Usar para inspeccionar el comportamiento actual o ajustarlo."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": ["read", "update", "reset", "list"],
+                },
+                "prompt_name": {
+                    "type": "string",
+                    "description": "super_agent_system | orchestrator_system",
+                },
+                "content": {
+                    "type": "string",
+                    "description": "Nuevo contenido (solo action=update)",
+                },
+            },
+            "required": ["action", "prompt_name"],
+        },
+    },
+]
+
+
+# ── Tool Dispatcher ────────────────────────────────────
+
+async def _dispatch(tool_name: str, tool_input: dict, ctx: dict) -> str:
+    """
+    Ejecuta la skill correspondiente y devuelve el resultado como JSON string.
+    ctx contiene company_id, conversation_id y user_message del request.
+    """
+    cid = tool_input.get("company_id", ctx["company_id"])
+    conv = tool_input.get("conversation_id", ctx["conversation_id"])
+
+    try:
+        if tool_name == "ingest_skill":
+            r = ingest_skill.execute(
+                tool_input.get("user_message", ctx["user_message"]),
+                cid,
+            )
+            return json.dumps({
+                "normalized_message": r.normalized_message,
+                "requires_live_data": r.requires_live_data,
+                "keywords": r.all_detected_keywords[:10],
+            })
+
+        elif tool_name == "client_db_skill":
+            r = client_db_skill.execute(cid, conv)
+            return json.dumps({
+                "has_real_data": r.has_real_data,
+                "has_memory": r.has_memory,
+                "finanzas_summary": r.finanzas_context[:400] if r.finanzas_context else None,
+                "economia_summary": r.economia_context[:400] if r.economia_context else None,
+                "memory_context": r.memory_context[:300] if r.memory_context else None,
+            })
+
+        elif tool_name == "novelty_skill":
+            r = novelty_skill.execute(
+                company_id=cid,
+                conversation_id=conv,
+                normalized_message=tool_input.get(
+                    "normalized_message", ctx["user_message"]
+                ),
+            )
+            return json.dumps({
+                "is_new_query": r.is_new_query,
+                "similarity_score": r.similarity_score,
+                "similar_message": r.similar_message,
+            })
+
+        elif tool_name == "finance_skill":
+            db = client_db_skill.execute(cid, conv)
+            r = finance_skill.execute(
+                company_id=cid,
+                finanzas_context=db.finanzas_context,
+                sub_questions=tool_input.get("sub_questions", []),
+            )
+            return json.dumps({
+                "is_available": r.is_available(),
+                "data_block": r.as_prompt_block()[:1200],
+            })
+
+        elif tool_name == "economy_skill":
+            db = client_db_skill.execute(cid, conv)
+            r = economy_skill.execute(
+                company_id=cid,
+                economia_context=db.economia_context,
+                sub_questions=tool_input.get("sub_questions", []),
+            )
+            return json.dumps({
+                "is_available": r.is_available(),
+                "data_block": r.as_prompt_block()[:1200],
+            })
+
+        elif tool_name == "research_skill":
+            r = await research_skill.execute(
+                original_query=tool_input.get("original_query", ctx["user_message"]),
+                sub_questions=tool_input.get("sub_questions", []),
+            )
+            return json.dumps({
+                "sources_fetched": r.sources_fetched,
+                "is_available": r.is_available,
+                "data_block": r.as_prompt_block()[:1400],
+            })
+
+        elif tool_name == "memory_management_skill":
+            r = memory_management_skill.execute(
+                action=tool_input.get("action", "read"),
+                company_id=cid,
+                conversation_id=tool_input.get("conversation_id", conv),
+                content=tool_input.get("content"),
+            )
+            return json.dumps(r)
+
+        elif tool_name == "skill_creator_skill":
+            r = skill_creator_skill.execute(
+                skill_name=tool_input.get("skill_name", ""),
+                description=tool_input.get("description", ""),
+                use_case=tool_input.get("use_case", ""),
+            )
+            return json.dumps(r)
+
+        elif tool_name == "eval_skill":
+            r = eval_skill.execute(
+                company_id=cid,
+                evaluate_response=tool_input.get("evaluate_response"),
+                evaluate_against_case_id=tool_input.get("evaluate_against_case_id"),
+            )
+            return json.dumps(r)
+
+        elif tool_name == "system_prompt_skill":
+            r = system_prompt_skill.execute(
+                action=tool_input.get("action", "read"),
+                prompt_name=tool_input.get("prompt_name", "super_agent_system"),
+                content=tool_input.get("content"),
+            )
+            return json.dumps(r)
+
+        else:
+            return json.dumps({"error": f"Skill '{tool_name}' no registrada"})
+
+    except Exception as e:
+        logger.error("dispatch error: tool=%s error=%s", tool_name, e)
+        return json.dumps({"error": str(e), "tool": tool_name})
+
+
+# ── Agent Loop ─────────────────────────────────────────
+
+async def _run_agent_loop(
+    user_message: str,
     company_id: str,
-    classification: topic_skill.TopicClassification,
-    client_data: client_db_skill.ClientDBResult,
-    original_message: str,
-) -> dict[str, object]:
+    conversation_id: str,
+    conversation_context: Optional[str],
+) -> tuple[str, list[str]]:
     """
-    Reúne los datos necesarios ejecutando las skills correspondientes
-    a los tópicos activos en la clasificación.
+    Loop principal del agente con tool_use.
 
-    Nota: research_skill es async (HTTP calls), el resto son sync.
+    El LLM llama tools hasta tener suficiente información,
+    luego genera la respuesta final en end_turn.
+
+    Returns:
+        (raw_response_text, tools_called_list)
     """
-    data: dict[str, object] = {}
+    client = _get_client()
+    system_prompt = _load_system_prompt()
 
-    if classification.finanzas.is_relevant:
-        data["finanzas"] = finance_skill.execute(
-            company_id=company_id,
-            finanzas_context=client_data.finanzas_context,
-            sub_questions=classification.finanzas.sub_questions,
-        )
-        logger.debug("super_agent: finance_skill executed")
+    ctx = {
+        "company_id": company_id,
+        "conversation_id": conversation_id,
+        "user_message": user_message,
+    }
 
-    if classification.economia.is_relevant:
-        data["economia"] = economy_skill.execute(
-            company_id=company_id,
-            economia_context=client_data.economia_context,
-            sub_questions=classification.economia.sub_questions,
-        )
-        logger.debug("super_agent: economy_skill executed")
+    # Mensaje inicial con contexto de empresa y conversación
+    initial_content = (
+        f"[EMPRESA: {company_id} | CONV: {conversation_id[:8]}]\n"
+    )
+    if conversation_context:
+        initial_content += f"[CONTEXTO PREVIO]\n{conversation_context}\n\n"
+    initial_content += f"[CONSULTA]\n{user_message}"
 
-    if classification.investigacion.is_relevant or classification.requires_live_data:
-        data["investigacion"] = await research_skill.execute(
-            original_query=original_message,
-            sub_questions=classification.investigacion.sub_questions,
-        )
-        logger.debug("super_agent: research_skill executed")
+    messages: list[dict] = [
+        {"role": "user", "content": initial_content}
+    ]
 
-    return data
+    tools_called: list[str] = []
 
-
-# ── Etapa 6: Síntesis (LLM) ───────────────────────────
-
-async def _synthesize(
-    user_message: str,
-    classification: topic_skill.TopicClassification,
-    intent_result: intent_skill.IntentResult,
-    execution_data: dict[str, object],
-    memory_context: str,
-    novelty: novelty_skill.NoveltyResult,
-) -> ResponsePayload:
-    """
-    Segunda (y última) llamada LLM: sintetiza todos los datos en la respuesta final.
-    """
-    # Construir bloque de datos para el prompt
-    data_blocks: list[str] = []
-    for topic_name, data_obj in execution_data.items():
-        if hasattr(data_obj, "as_prompt_block"):
-            block = data_obj.as_prompt_block()
-            if block:
-                data_blocks.append(block)
-
-    data_section = "\n\n".join(data_blocks) if data_blocks else "Sin datos disponibles."
-
-    novelty_note = ""
-    if not novelty.is_new_query and novelty.similar_message:
-        novelty_note = (
-            f"\nNOTA: El usuario preguntó algo similar antes: \"{novelty.similar_message[:100]}...\" "
-            "— Complementá sin repetir lo ya dicho."
+    for iteration in range(MAX_TOOL_ITERATIONS):
+        response = await client.messages.create(
+            model=settings.ORCHESTRATOR_MODEL,
+            max_tokens=4096,
+            system=system_prompt,
+            tools=SKILL_TOOLS,
+            messages=messages,
         )
 
-    synthesis_prompt = f"""Sos Angela, la asistente de PolPilot. Respondé esta consulta usando ÚNICAMENTE los datos provistos.
+        logger.debug(
+            "agent_loop: iter=%d stop_reason=%s",
+            iteration, response.stop_reason,
+        )
 
-CONSULTA DEL USUARIO:
-"{user_message}"
+        # ── Respuesta final ────────────────────────────
+        if response.stop_reason == "end_turn":
+            final_text = "".join(
+                block.text for block in response.content if hasattr(block, "text")
+            )
+            return final_text.strip(), tools_called
 
-INTENCIÓN DETECTADA: {classification.intent} ({intent_result.urgency} urgencia)
-INSTRUCCIÓN DE TONO: {intent_result.tone_hint}
-{novelty_note}
+        # ── Tool use ───────────────────────────────────
+        if response.stop_reason == "tool_use":
+            tool_results: list[dict] = []
 
-CONTEXTO DE CONVERSACIÓN PREVIA:
-{memory_context or "Sin conversación previa."}
+            for block in response.content:
+                if block.type == "tool_use":
+                    tools_called.append(block.name)
+                    logger.info(
+                        "agent: tool=%s input_keys=%s",
+                        block.name, list(block.input.keys()),
+                    )
+                    result_str = await _dispatch(block.name, block.input, ctx)
+                    tool_results.append({
+                        "type": "tool_result",
+                        "tool_use_id": block.id,
+                        "content": result_str,
+                    })
 
-DATOS DISPONIBLES:
-{data_section}
+            # Agregar al historial de mensajes
+            messages.append({"role": "assistant", "content": response.content})
+            messages.append({"role": "user", "content": tool_results})
 
-TÓPICOS ACTIVOS: {", ".join(classification.active_topics) or "ninguno"}
+        else:
+            logger.warning("agent_loop: stop_reason inesperado=%s", response.stop_reason)
+            break
 
-Respondé ÚNICAMENTE con el JSON especificado en el system prompt. Sin texto adicional.
-"""
-
-    response = await client.messages.create(
-        model=settings.ORCHESTRATOR_MODEL,
-        max_tokens=2048,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": synthesis_prompt}],
+    # Iteraciones agotadas
+    logger.warning("agent_loop: MAX_TOOL_ITERATIONS alcanzado para conv=%s", conversation_id[:8])
+    return (
+        json.dumps({
+            "message": (
+                "Alcancé el límite de procesamiento para esta consulta. "
+                "Por favor, reformulá la pregunta o dividila en partes más simples."
+            ),
+            "confidence": 0.3,
+            "sources_used": tools_called,
+        }),
+        tools_called,
     )
 
-    raw = response.content[0].text.strip()
-    # Strip markdown code blocks
-    if raw.startswith("```"):
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-    raw = raw.strip()
+
+# ── Parser de respuesta final ──────────────────────────
+
+def _parse_response(raw: str) -> ResponsePayload:
+    """
+    Intenta parsear la respuesta del agente como JSON ResponsePayload.
+    Si falla (el agente respondió en texto libre), lo envuelve como mensaje.
+    """
+    text = raw.strip()
+
+    # Strip markdown code fences
+    if text.startswith("```"):
+        parts = text.split("```")
+        text = parts[1] if len(parts) > 1 else text
+        if text.startswith("json"):
+            text = text[4:]
+    text = text.strip()
 
     try:
-        data = json.loads(raw)
+        data = json.loads(text)
         return ResponsePayload(**data)
-    except (json.JSONDecodeError, Exception) as e:
-        logger.warning("super_agent: synthesis parse error: %s — using raw text", e)
+    except Exception:
+        # El agente respondió en texto libre — lo aceptamos como mensaje
         return ResponsePayload(
             message=raw or "No pude generar una respuesta en este momento.",
-            confidence=0.3,
-            sources_used=classification.active_topics,
+            confidence=0.4,
+            sources_used=["agent"],
         )
 
 
-# ── Pipeline principal ─────────────────────────────────
+# ── Entry point ────────────────────────────────────────
 
 async def process_query(request: QueryRequest) -> QueryResponse:
     """
-    Pipeline completo del super-agente.
+    Punto de entrada del super-agente v3.
 
-    Reemplaza process_query() del orchestrator.py original con un flujo
-    secuencial y un único punto de orquestación LLM.
+    El agente decide qué skills llamar basándose en la consulta.
+    No hay pipeline fijo: el LLM orquesta las tools.
     """
     start = time.time()
+
+    if not settings.ANTHROPIC_API_KEY:
+        raise ValueError(
+            "ANTHROPIC_API_KEY no configurada. Revisar .env del backend."
+        )
+
     conv_id = request.conversation_id or str(uuid.uuid4())
 
     logger.info(
-        "super_agent: START company=%s conv=%s msg='%s...'",
-        request.company_id, conv_id[:8], request.user_message[:60],
+        "super_agent_v3: START company=%s conv=%s msg='%.60s'",
+        request.company_id, conv_id[:8], request.user_message,
     )
 
-    # ── Stage 1: INGEST ───────────────────────────────
-    ingest = ingest_skill.execute(request.user_message, request.company_id)
-    logger.debug("super_agent: ingest done keywords=%s", ingest.all_detected_keywords[:5])
-
-    # ── Stage 2: CLIENT DB ────────────────────────────
-    client_data = client_db_skill.execute(request.company_id, conv_id)
-    logger.debug(
-        "super_agent: client_db done has_real_data=%s has_memory=%s",
-        client_data.has_real_data, client_data.has_memory,
-    )
-
-    # ── Stage 3: NOVELTY ──────────────────────────────
-    novelty = novelty_skill.execute(
+    # Correr el loop del agente
+    raw_response, tools_called = await _run_agent_loop(
+        user_message=request.user_message,
         company_id=request.company_id,
         conversation_id=conv_id,
-        normalized_message=ingest.normalized_message,
-    )
-    logger.debug(
-        "super_agent: novelty done is_new=%s similarity=%.2f",
-        novelty.is_new_query, novelty.similarity_score,
+        conversation_context=request.conversation_context,
     )
 
-    # ── Stage 4+5: CLASSIFY (LLM) ─────────────────────
-    classification = await _classify_query(
-        user_message=ingest.normalized_message,
-        detected_keywords=ingest.all_detected_keywords,
-        memory_context=client_data.memory_context,
-        company_profile_summary=client_data.summary_for_prompt(),
-    )
-    # Sobrescribir requires_live_data si ingest lo detectó
-    if ingest.requires_live_data:
-        classification.requires_live_data = True
+    # Parsear respuesta final
+    payload = _parse_response(raw_response)
 
-    intent_result = intent_skill.from_classification(
-        intent=classification.intent,
-        intent_description=classification.intent_description,
-    )
-    logger.info(
-        "super_agent: classify done topic=%s intent=%s active=%s",
-        classification.primary_topic, intent_result.intent, classification.active_topics,
-    )
-
-    # ── Stage 6: EXECUTE SKILLS ───────────────────────
-    execution_data = await _execute_data_skills(
-        company_id=request.company_id,
-        classification=classification,
-        client_data=client_data,
-        original_message=ingest.normalized_message,
-    )
-    skills_executed = ["ingest", "client_db", "novelty", "classify"] + [
-        f"{k}_data" for k in execution_data
-    ]
-    logger.debug("super_agent: data skills done: %s", list(execution_data.keys()))
-
-    # ── Stage 7: SYNTHESIZE (LLM) ─────────────────────
-    response_payload = await _synthesize(
-        user_message=ingest.normalized_message,
-        classification=classification,
-        intent_result=intent_result,
-        execution_data=execution_data,
-        memory_context=client_data.memory_context,
-        novelty=novelty,
-    )
-    skills_executed.append("synthesize")
-    logger.info(
-        "super_agent: synthesize done confidence=%.2f sources=%s",
-        response_payload.confidence, response_payload.sources_used,
-    )
-
-    # ── Stage 8: MEMORY WRITE ─────────────────────────
-    skills_executed.append("memory_write")
+    # Persistir en memoria conversacional
     mem_result = memory_write_skill.write_interaction(
         company_id=request.company_id,
         conversation_id=conv_id,
-        user_message=ingest.normalized_message,
-        assistant_response=response_payload.message,
-        skills_invoked=skills_executed,
-        topic=classification.primary_topic,
-        confidence=response_payload.confidence,
-        sub_questions=classification.all_sub_questions,
-    )
-    logger.debug(
-        "super_agent: memory_write done saved=%s/%s needs_merge=%s",
-        mem_result.user_message_saved, mem_result.assistant_response_saved, mem_result.needs_merge,
+        user_message=request.user_message,
+        assistant_response=payload.message,
+        skills_invoked=tools_called,
+        topic="agent_sdk",
+        confidence=payload.confidence,
+        sub_questions=[],
     )
 
-    # Disparar merge summary en background si es necesario
+    # Merge summary en background si la conversación creció mucho
     if mem_result.needs_merge:
         asyncio.create_task(
             shared_memory.generate_merge_summary(request.company_id, conv_id)
         )
 
-    # ── Build response ────────────────────────────────
     elapsed_ms = int((time.time() - start) * 1000)
     logger.info(
-        "super_agent: DONE conv=%s elapsed=%dms",
-        conv_id[:8], elapsed_ms,
+        "super_agent_v3: DONE conv=%s elapsed=%dms tools=%s confidence=%.2f",
+        conv_id[:8], elapsed_ms, tools_called, payload.confidence,
     )
 
     return QueryResponse(
-        response=response_payload,
+        response=payload,
         metadata=OrchestratorMetadata(
             conversation_id=conv_id,
-            iterations=1,                           # single-pass en super-agente
-            agents_activated=skills_executed,       # skills usadas (no agentes)
-            total_sub_questions=len(classification.all_sub_questions),
-            inter_agent_calls=0,                    # eliminado en super-agente
-            stop_loss_score=None,                   # no aplica en single-pass
-            stop_loss_decision="SUPER_AGENT_SINGLE_PASS",
+            iterations=len(tools_called),
+            agents_activated=tools_called,
+            total_sub_questions=0,
+            inter_agent_calls=0,
+            stop_loss_score=None,
+            stop_loss_decision="AGENT_SDK_TOOL_USE",
         ),
     )
