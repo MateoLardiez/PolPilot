@@ -1,0 +1,29 @@
+@startuml
+title Flujo de Resolución de Conflictos y Prioridad de Memoria
+
+start
+:Agente detecta Contradicción;
+:Sintetizador recibe Hecho A y Hecho B;
+
+partition "Evaluación de Jerarquía" {
+    if (¿Uno es Fuente Estructurada (ERP/Integración)?) then (Sí)
+        :Prioridad Máxima: **M_int**;
+        :Invalidar información contradictoria;
+    else (No)
+        if (¿Uno es Onboarding / Perfil PyME?) then (Sí)
+            :Prioridad Media: **M_onb**;
+        else (No)
+            if (¿Uno fue dicho por el Usuario?) then (Sí)
+                :Prioridad Baja: **M_conv**;
+            else (No)
+                :Es Inferencia/Razonamiento;
+                :Marcar como **RIESGO / SUPUESTO**;
+            endif
+        endif
+    endif
+}
+
+:Actualizar Contexto de Verdad;
+:Notificar a los agentes afectados;
+stop
+@enduml

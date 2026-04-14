@@ -1,0 +1,49 @@
+flowchart TD
+    A[Input usuario] --> B[Normalización]
+    B --> C{Decision Manager}
+
+    C -->|Continuidad del contexto| D[Context Query]
+    D --> E[Análisis de contexto]
+    E --> Z[Respuesta]
+
+    C -->|Nueva pregunta| F[Dummy Analyzer]
+    F --> G{¿Requiere expansión?}
+
+    G -->|No| Z
+    G -->|Sí| H[Analyzer Topics]
+
+    H --> I[Detectar tópicos]
+    H --> J[Asignar agentes]
+    H --> K[Detectar dependencias]
+
+    I --> L[Gateway]
+    J --> L
+    K --> L
+
+    L --> M[Hilos paralelos]
+    M --> N1[Agente Legal]
+    M --> N2[Agente Finanzas]
+    M --> N3[Agente Marketing]
+    M --> N4[Agente Operaciones]
+
+    N1 --> O[Sintetizador Global]
+    N2 --> O
+    N3 --> O
+    N4 --> O
+
+    O --> P{¿Hay nuevas preguntas útiles?}
+    P -->|No| Z
+    P -->|Sí| Q{¿Se mantiene el objetivo original?}
+
+    Q -->|No| Z
+    Q -->|Sí| R[Generar nuevas preguntas]
+
+    R --> S{¿Hay dependencias entre agentes?}
+    S -->|Sí| T[Colaboración inter-agente vía Gateway]
+    S -->|No| U[Reasignación directa]
+
+    T --> V{¿Stop-loss alcanzado?}
+    U --> V
+
+    V -->|Sí| Z
+    V -->|No| H

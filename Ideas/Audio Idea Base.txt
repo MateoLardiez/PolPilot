@@ -1,0 +1,43 @@
+(Transcrito por TurboScribe. Actualizar a Ilimitado para eliminar este mensaje.)
+
+Bueno, entonces, retomando ahí, la idea sería como crear una especie de agente multinivel, o sea, un multiagente. ¿Qué es lo que queremos hacer? Bueno, justamente queremos crear que un agente cree en hilos, lo estoy diciendo mal, un agente se cree en hilos y cada hilo tiene un agente especializado en un área, para resolver el problema visto desde esa área, por así decirlo. Entonces, una vez que cada agente te vuelve una respuesta, va con un filtro de caja negra, de caja blanca, de caja negra, no importa, donde el agente que está ahí no tiene contexto del problema y con toda la información. 
+
+¿Podría tener un contexto de que sea crítico? Claro. O que sea la pregunta. Claro, la idea de ese agente es que empieza a preguntar sobre la respuesta final que dieron los agentes. 
+
+De este modo, una vez que vuelva a generar la respuesta, vuelve a los agentes, otra vez, para que respondan las preguntas o resuelvan las dudas, porque eso era lo que está mal, y una vez que devuelve eso, los agentes ahí estaría bueno que se comuniquen entre ellos. En el segundo paso, no en el primero, en el segundo, porque puede ser que un agente necesita algo de economía para poder responder una ley. Entonces, en la segunda instancia es que viene la interacción entre agentes. 
+
+Una vez que vuelvan a interesar a la gente, vuelvo al tópico uno, vuelvo, o sea, vuelvo otra vez al filtro de la caja negra, caja blanca, y ahí recién, si está todo bien, si no genera más preguntas eso, sería como la condición, lo devuelvo al usuario. Entonces, lo que hemos pensado hasta el momento sería ingresa el problema. Lo primero que hacemos es un análisis dummy, o sea, hacemos un análisis dummy, que lo que hace es preguntas boludas, no responde la gente, es decir, pregunta sobre cuál es la capital de Venezuela, no te la va a responder porque no le interesa, o preguntas de cuál es la densidad poblacional de Madagascar, tampoco te la va a responder porque no es su área específica, o si son preguntas del contexto anterior, es decir, que no necesitan repreguntarse.
+
+Si eso pasa, viene después a la siguiente etapa. Si es del contexto anterior, si no es del contexto anterior y tampoco es dummy, lo que va a entrar es por un análisis de tópicos. Lo que va a hacer es analizar los tópicos que puede tener ese prompt. 
+
+Es decir, lo que va a hacer es, dependiendo de cada uno, algo así de economía, finanzas, etcétera, va a empezar a generar más preguntas, va a generar muchas más preguntas, va a hacer tópicos, tópicos, tópicos, tópicos, y después la va a clasificar en categorías para que cada gente la responda. La responda y después con toda la información... Y esa gente tiene que tener registro de cuáles personalidades puede escoger. De hecho, estaría bueno que si, por ejemplo, tú sabes que nada más vas a tener cuatro o cinco agentes especializados, por ejemplo, marketing, derecho, finanza, cotabilidad, creo que es lo mismo que finanza... Eso, que el analyzer de tópicos sepa cuáles son. 
+
+Porque así lo puedes tunear para que lo que te pregunten diga, esto que me están preguntando tiene que ver con esto, o tiene que ver con esto, o tiene que ver con estas tres cosas. Entonces a partir de ahí diga, bueno, tiene que ver con estas tres cosas, abro los agentes, o si ya están abiertos, se los paso. Y esos mismos agentes, bueno, que tengan su propia memoria. 
+
+Claro, ahí mi pregunta está, porque yo estaba pensando que eso ocurriera en el segundo nivel. En el primer nivel lo que hace es que cada uno responde por su cuenta, y después ya empieza a preguntar. Y después en esa vuelta, cuando vuelven los agentes, empiezo a decirle, bueno, el de finanza ahora hable con el de abogados, el de abogacía, el de legales. 
+
+Entonces se pasa la información que necesitan esos dos agentes, y bueno, y bueno, va trabajando el de marketing, por ejemplo, respondiendo preguntas que no están asociadas. Yo lo decía para que una vez el analyzer te defina los tópicos y sepa cuál accionar. Claro, eso sí, el analyzer tiene que identificar los tópicos. 
+
+Exacto. Y después lo que puedes tener es como un gateway que sea entre el analyzer y los otros, y los otros agentes. Entonces, cuando el otro agente dispare algo que el API diga, esta respuesta yo tengo que sintetizarla para hacerlo en el usuario final, o se la tengo que mandar otra vez a otro agente.
+
+Claro, ahí es donde entra el stop loss. ¿Por qué? Porque ahí viene la pregunta, cuántas veces tenemos que volver a preguntarle cuando llega la caja negra justamente para que me dé la información concreta, y cuántas veces tengo que dejar de hacerlo para que no sea muy específica. ¿Por qué? Porque si le empiezo a preguntar, a preguntar, a preguntar, empieza a perder el hilo. 
+
+Y como la memoria se va actualizando, empieza a perder la idea del problema. Entonces ahí lo que puedo hacer, lo que podemos hacer que está bueno desde ese punto de vista, es como crearle otro agente que solamente se enfoque en el problema principal, sin preguntar demás. ¿Me explico? Y ver si la respuesta final ya responde a la pregunta que nos dieron, y le suma más valor. 
+
+Entonces, cuando le suma más valor y responde a la pregunta, ahí recién puedo terminar. ¿Me explico? ¿Qué pasa? Si no responde a la pregunta anterior, pero me responde todo explicativo, todo, no tiene sentido porque no responde a la pregunta principal. Entonces, entraría, entraría en contexto, vamos a poner, tenemos el analizador, tenemos el analizador. 
+
+¿Qué tenemos? Tenemos el analizador de tópicos. Después, bueno, tenemos el analizador de tópicos. Después tenemos los agentes. 
+
+Perdón, después del analizador de tópicos, tenemos que tener como una especie, no de agentes, sino de programitas. ¿Qué gateway? Se le dice gateway porque los gateway son los que administran el tráfico entre el cliente y los servidores. Claro, lo que yo estaba pensando era que te ordenaba la información, supongo que es lo mismo. 
+
+Sí, sí, es lo mismo. O sea, el API gateway lo que dice es, ajá, recibí esto, ¿esto va para dónde? ¿Esto va para otro servidor mío o va para el cliente final? Eso es lo que pasa. Perfecto. 
+
+O el cliente final dice, ajá, ¿esto va para dónde? ¿Esto va para cuál servidor? Ah, va para este servidor, dale. Ok, y ahí sacamos, justamente en ese gateway, se sacan los agentes que se van a usar. Por ejemplo, si es solamente legales y de finanzas, no llamo al de marketing. 
+
+No, yo creo que eso tendría que hacer el analyzer. Por eso te digo, el analyzer tiene que saber qué agentes puede usar. Ok. 
+
+Porque cuando ya lo manda el gateway, diga, mira, activame este, este y este. Y entonces el gateway agarra y dice, ah, bueno, me llegó esto, ¿qué hago con esto? Ah, tengo que activar tres agentes, dale, ¡plum! Porque tampoco correcta tener eso activo todo el día, eso tiene que ser. Claro. 
+
+¿Te devuelvo los tópicos? Bueno, el analyzer quiere mandar sus agentes porque te devuelve los tópicos. Ahí, en los tópicos, justamente, lo que hace...
+
+(Transcrito por TurboScribe. Actualizar a Ilimitado para eliminar este mensaje.)

@@ -1,0 +1,115 @@
+================================================================================
+POLPILOT — ESPECIFICACIÓN LÓGICA Y ARQUITECTURA DE PROCESAMIENTO
+================================================================================
+
+1. EL "PESADO" DEL PROCESAMIENTO (COMPUTATIONAL WEIGHT)
+--------------------------------------------------------------------------------
+El procesamiento en PolPilot no es lineal, sino expansivo-controlado. El "peso" 
+se define por tres variables críticas:
+
+A. Amplitud (W_a): Número de agentes especialistas activados simultáneamente.
+B. Profundidad (W_d): Número de iteraciones o saltos de razonamiento.
+C. Densidad de Contexto (W_c): Cantidad de tokens inyectados en cada agente.
+
+Fórmula de Costo Total Estimado (E_cost):
+E_cost = Σ (Input_Tokens_i + Output_Tokens_i) * Price_Model_j + Overheads_Orch
+
+Donde:
+- El Gateway usa un modelo "Fast" (ej. GPT-4o-mini).
+- El Synthesizer y Stop-Loss usan un modelo "Reasoning" (ej. O1 o GPT-4o).
+- Los Agentes especialistas escalan según la complejidad del tópico.
+
+2. ESTRUCTURA LÓGICA Y MATEMÁTICA DEL STOP-LOSS
+--------------------------------------------------------------------------------
+El sistema opera bajo un modelo de optimización de utilidad. Solo se permite 
+gastar más tokens si la probabilidad de mejorar la decisión es alta.
+
+Definición del Valor Incremental (V_inc):
+V_inc = [ (R * 0.35) + (N * 0.25) + (G * 0.25) + (CR * 0.15) ] - [ (D * 0.40) + Cost_Penalty ]
+
+Variables:
+- R (Relevance): Similitud coseno entre la nueva sub-pregunta y el problema raíz.
+- N (Novelty): Porcentaje de información no presente en iteraciones anteriores.
+- G (Gain): Capacidad de la nueva información para cerrar un KPI de decisión.
+- CR (Contradiction Resolution): Valor de resolver una disputa entre agentes.
+- D (Drift): Desviación semántica acumulada.
+
+Umbral de Decisión (Threshold):
+- Si V_inc < 0.18: El sistema emite STOP y procede a síntesis.
+- Si V_inc >= 0.18: El sistema permite una nueva ronda de consultas.
+
+3. MODELO DE COMUNICACIÓN: ARTEFACTOS ESTRUCTURADOS
+--------------------------------------------------------------------------------
+Para evitar el "ruido de chat", los agentes no conversan libremente. Intercambian 
+"Decision Artifacts" (JSON) a través del Gateway.
+
+Estructura del Artefacto:
+{
+  "artifact_id": "uuid",
+  "source_agent": "legal_agent",
+  "type": "CLAIM | FACT | HYPOTHESIS | REQUEST",
+  "content": "string",
+  "confidence": 0.0-1.0,
+  "dependencies": ["uuid_prior"],
+  "metadata": { "tokens": 450, "latency_ms": 1200 }
+}
+
+Este modelo permite:
+1. Trazabilidad: Saber exactamente qué dato activó qué decisión.
+2. Control de Ciclos: Detectar si el Agente A pide datos al B y el B al A (Deadlock).
+3. Caché: Si un artefacto ya existe, no se re-procesa.
+
+4. FLUJO DE IMPLEMENTACIÓN DETALLADO
+--------------------------------------------------------------------------------
+
+FASE 1: Ingesta y Normalización
+- El Input Layer detecta el intent.
+- El "Dummy Analyzer" filtra ruido (ej. "gracias", "hola"). Si es complejo, 
+  asigna un "Root_Problem_ID".
+
+FASE 2: Descomposición (Topic Mapping)
+- El Topic Analyzer genera un grafo de dependencias inicial.
+- Ejemplo: Para "Importar Pollo", el grafo indica que LEGAL es bloqueante de LOGÍSTICA.
+
+FASE 3: Ejecución en Malla (Mesh Execution)
+- El Orquestador despacha tareas asíncronas.
+- Cada agente recibe: (1) El problema raíz, (2) Su tópico específico, (3) Contexto filtrado.
+
+FASE 4: Evaluación de Stop-Loss (Metacognición)
+- Al terminar la Fase 3, el Stop-Loss Engine evalúa si los "Claims" generados 
+  son suficientes.
+- Si hay una contradicción (ej. Finanzas dice "hay dinero" y Legal dice 
+  "multa impagable"), el Stop-Loss fuerza una iteración de "Contradiction Resolver".
+
+FASE 5: Síntesis y Output
+- El Synthesizer agrupa los artefactos.
+- Genera una respuesta con estructura: [DECISIÓN] -> [RAZONAMIENTO] -> [RIESGOS].
+
+5. ESPECIFICACIÓN DE DATOS (ESTADO DE LA EJECUCIÓN)
+--------------------------------------------------------------------------------
+El "Estado Global" se guarda en un objeto JSON persistente durante la sesión:
+
+{
+  "session_id": "xyz-123",
+  "iteration_count": 2,
+  "global_context": {
+    "facts_confirmed": [...],
+    "unresolved_risks": [...]
+  },
+  "agent_states": {
+    "legal": { "status": "completed", "output_ref": "art_001" },
+    "finance": { "status": "pending_support", "waiting_on": "legal" }
+  },
+  "stop_loss_history": [0.85, 0.42] // El valor baja conforme se resuelve el problema
+}
+
+6. CONCLUSIÓN DE VIABILIDAD
+--------------------------------------------------------------------------------
+La unidad de optimización elegida es la OPCIÓN A: CALIDAD DE DECISIÓN, pero con 
+un "Guardrail de Costo" (Budget). 
+
+El sistema es robusto porque:
+1. No alucina en bucle (el Stop-Loss lo mata).
+2. Es auditable (cada decisión cuelga de un artefacto).
+3. Es eficiente (el Dummy Analyzer evita el over-thinking en tareas triviales).
+================================================================================

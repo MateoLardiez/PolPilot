@@ -1,0 +1,65 @@
+(Transcrito por TurboScribe. Actualizar a Ilimitado para eliminar este mensaje.)
+
+Bueno, seguimos. Toma dos. Recuerdo dos. 
+
+Antes que se me quede sin batería. Tengo dos por ciento. Bueno, entonces.
+
+Viene el problema. Viene el analizador dummy. Identificamos tal, tal.
+
+Después eso si lo requiere, es decir, si ya no es del contexto anterior, sino que es directamente pregunta nueva, entra el analizador de tópicos. ¿Qué hace el analizador de tópicos? Te devuelve los tópicos y te devuelve los entes que vas a usar. Para cada tópico.
+
+Entonces vas a tener, por ejemplo, vas a tener cinco preguntas relacionadas a economía y ¿quién se va a encargar? Finanza. ¿Me explico? Entonces vas a activar ahí el, vas a saber que vas a tener que activar el agente de finanza. Luego viene el gateway que organiza a quien mandárselo.
+
+Sí. Y después viene la creación de los hilos. O sea, pero igual eso lo podemos hacer por app.
+
+Pero aquí viene como que los hilos se activan en simultáneo con los agentes. ¿Cierto? Cada uno retorna en tiempos distintos la información solicitada. Ah, una pregunta, ¿existe alguna forma? Yo sé que de repente no estás vestido directamente con más chamu que con IA, pero ¿hay alguna forma de decirle a la IA tipo, mira, tienes estos agentes que también les puedes consultar cosas? Más de que escribirle.
+
+Eso yo lo estoy probando, pero no está muy bien. Es como que... ¿Algún parámetro? Hay algo que se pausa, bueno, no es justamente lo que me dijiste ahorita, lo que están creando, con los agentes. Claro.
+
+Está bueno. No, no, pero eso ya es como algo prehecho. Lo que habría que ver es cómo hacerlo.
+
+Lo que habría que hacer es ver cómo ellos lo hacen a nivel interno para nosotros hacerlo. Claro, está bueno eso. Bueno, justamente después de que cada uno retorna en tiempos distintos la información solicitada, pasa por un agente sin contexto global.
+
+O sea, sin contexto específico, sino global del problema. Este agente no sabe las preguntas que se hicieron, ni sabe tampoco qué agentes interactuaron. Tiene la pregunta original ¿cierto? Y tiene las respuestas de los agentes activados.
+
+¿Qué va a hacer este agente? Este agente lo que va a hacer es generar más preguntas. ¿Cierto? Eso lo que habíamos dicho. Si las hay.
+
+¿Cómo se determina si las hay? Gran pregunta. Le podría preguntar a una mujer. Bueno, lo primero es que hay un parámetro, me estoy acordando ahorita que cuando integramos Chalepeté con Fixly, que esa vaina la voy a activar dentro de poco, Mónico, porque eso sale.
+
+Que era el porcentaje que ellos creen que eso era verdad. Ah, sí, ese es el parámetro. Entonces, capaz por ese parámetro que te devuelve pronto, pudieras decir está chequeado esto.
+
+Claro. No, hay también otro punto yo importante ahí, pensándolo. Eso está bueno, chequear la veracidad, pero también estaría bueno ver el tema definir el Stop Loss. 
+
+Hay un algoritmo matemático que te dice que tan complejas, cuántas preguntas más se le pueden hacer a un mismo texto, sin perder el contexto original. Eso es lo que te dice, te dice un número, que si contamos más de cierto número ya lo estás sesgando. Entonces la idea es sacar más preguntas sin llegar al sesgo.
+
+Me explico, entonces, cuando sacamos las preguntas sin llegar al sesgo, ahí es donde realmente podemos decir, bueno, devuelve. Eso es como que... No, no, tranqui, pero eso sería como la que llegamos a ver. Entonces, aquí es donde viene la pregunta.
+
+Cómo determinamos si hay que preguntar si se puede extraer más información útil sin llegar al sesgo y que siga respondiendo la pregunta principal. Es más, esto lo podemos subdividir en dos agentes. Uno que pregunte y otro que verifique si responde la pregunta original.
+
+Sería eso, ¿ves? Entonces tenemos dos agentes, uno que pregunta sin llegar al sesgo, o sea, justamente vamos a seguir preguntando hasta que lleguemos al sesgo. ¿Pero eso no es realmente que somos agentes? No, no, porque la gente lo que va a hacer es levantar esa pregunta, pregunta, pregunta, pregunta hasta llegar al sesgo, que es como este aplauso que yo le doy. Cuando llegue ahí, va a dejar de preguntar, va a tener un choclo de preguntas. 
+
+Después de ese choclo de preguntas, lo que tenemos que decir es si esas preguntas están asociadas con la pregunta original. Eso es lo que digo que lo podemos dividir en dos agentes. Pero no es necesario tampoco, porque son el mismo agente.
+
+No, puedes dejar de... Porque viste que ellos tienen o sea, ellos tienen varios parámetros. Dependiendo del modelo que estés usando, tienes como configurar. Pero hay vainas que le puedes decir como límites.
+
+O sea, literalmente como hablamos la gente con los de puertas. Los límites. Límites, no hagas preguntas, no relacionados Ah, claro, sí.
+
+Se le puede poner el límite, está bueno. Claro, yo lo que decía es porque yo determino el sesgo mientras siga respondiendo a la pregunta anterior. Ahí es donde viene tu límite.
+
+Pero ahora el tema es que la pregunta anterior es genérica. La pregunta anterior fue ¿Puedo importar pollo? ¿O qué necesito para importar pollo? Y si yo le digo no me hagas preguntas que no estén asociadas a ¿Qué necesito para el pollo? Empiezo a perder todo el flujo anterior, me explico. Entonces la idea es preguntar como lo estábamos preguntando otra vez, podemos volver a llamarla y salir a los topics por así explicarlo.
+
+Y volver a hacer preguntas con los topics. Entonces volvemos al principio. Tal, tal, tal, tal, tal.
+
+Volvemos al principio. Pero hay que ponerle unos stop loss. El stop loss, para eso estoy haciendo este gente, es que no pierda el contexto principal.
+
+Es decir, toda la respuesta a la que estamos llegando sigue respondiendo lo primero. Ahí es el punto. Si la respuesta es no, tengo que devolver un paso anterior.
+
+Si la respuesta es sí, digo, es necesario preguntar más. O sea, paro y digo, es necesario preguntar más. Ahí puede ser sí o no solamente.
+
+Si la respuesta es sí, pues lo ha preguntado, lo ha preguntado, lo ha preguntado la enero cantidad de veces que sea necesario. Si la respuesta es no, le envío la respuesta al usuario. ¿Qué opinas de eso, Lóquito? No, no, pues sí.
+
+Sería como eso lo que yo digo. Entonces. Entonces.
+
+Ay, pero igual eso, eso... No, pero normal es difícil. No, no, no. O sea, no tanto eso, sino que...
+
+(Transcrito por TurboScribe. Actualizar a Ilimitado para eliminar este mensaje.)

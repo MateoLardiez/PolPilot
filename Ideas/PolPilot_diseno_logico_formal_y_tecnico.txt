@@ -1,0 +1,1086 @@
+PolPilot — Diseño lógico formal, técnico e implementación
+Motor de orquestación cognitiva multiagente con expansión controlada
+
+Versión: 1.0
+Idioma: Español
+Formato: documentación técnica + esquemas PlantUML
+
+=====================================================================
+0. PROPÓSITO DEL DOCUMENTO
+=====================================================================
+
+Este documento formaliza la solución lógica de PolPilot como sistema multiagente orientado a PyMEs, con foco en:
+
+- funcionamiento lógico del sistema
+- formalización matemática de costo, memoria, contexto y stop-loss
+- diseño computacional de runtime y orquestación
+- modelo de datos y contratos de intercambio
+- flujos completos de ejecución e implementación
+- esquemas PlantUML listos para documentación técnica
+
+El objetivo no es solo describir una idea de producto, sino convertirla en una arquitectura explicable, medible, auditable y realizable en backend.
+
+=====================================================================
+1. DEFINICIÓN DEL SISTEMA
+=====================================================================
+
+PolPilot se define como un sistema de decisión asistida multiagente que recibe una consulta empresarial multimodal, evalúa su complejidad, decide si requiere expansión analítica, divide el problema en dominios, activa agentes especializados, coordina colaboración controlada y sintetiza una respuesta accionable bajo restricciones explícitas de costo, latencia y relevancia.
+
+Formalmente:
+
+Sea:
+
+U = input del usuario
+C = contexto disponible
+M = memoria accesible
+A = conjunto de agentes disponibles
+G = gateway/orquestador
+S = sintetizador
+L = política de stop-loss
+
+Entonces el sistema implementa una función:
+
+PolPilot(U, C, M, A) -> R
+
+Donde R es una respuesta final compuesta por:
+
+R = {
+  decision,
+  confidence,
+  assumptions,
+  unresolved_risks,
+  actions,
+  trace_summary
+}
+
+=====================================================================
+2. OBJETIVO DE OPTIMIZACIÓN PRINCIPAL
+=====================================================================
+
+La primera decisión de arquitectura debe fijar la unidad de optimización principal del sistema.
+
+Opciones posibles:
+
+A. calidad de decisión
+B. costo
+C. velocidad
+D. aprendizaje acumulativo
+
+Definición propuesta para MVP serio:
+
+Unidad de optimización principal = utilidad de decisión por costo acotado
+
+Esto significa que el sistema no debe perseguir la respuesta “más profunda posible”, sino la mejor respuesta útil dentro de un presupuesto razonable para PyMEs.
+
+Función objetivo:
+
+Maximizar:
+
+J = alpha * DecisionUtility - beta * Cost - gamma * Latency + delta * Reusability
+
+Donde:
+
+DecisionUtility = valor real de la respuesta para la decisión del usuario
+Cost = costo monetario y computacional
+Latency = tiempo de respuesta
+Reusability = capacidad de reutilizar memoria/artefactos en futuros problemas
+
+Para MVP:
+
+alpha = 0.45
+beta  = 0.30
+gamma = 0.20
+delta = 0.05
+
+Esto refleja que la arquitectura prioriza utilidad real, pero no acepta sobrecosto ni tiempos incompatibles con UX estilo WhatsApp.
+
+=====================================================================
+3. CAPAS LÓGICAS DEL SISTEMA
+=====================================================================
+
+3.1 Input Layer
+
+Responsabilidad:
+- recibir texto, audio, imagen, documento o follow-up
+- normalizar a representación canónica
+- detectar idioma, intención, referencia conversacional y calidad del input
+
+Salida canónica:
+
+NormalizedInput = {
+  problem_id,
+  user_id,
+  session_id,
+  input_type,
+  normalized_problem,
+  extracted_entities,
+  input_confidence,
+  conversation_reference,
+  timestamp
+}
+
+3.2 Dummy Analyzer
+
+Responsabilidad:
+- decidir si la consulta puede resolverse con contexto actual
+- evitar expansión innecesaria
+- clasificar complejidad y multidimensionalidad
+
+Salida:
+
+DummyAnalysis = {
+  requires_expansion,
+  complexity_score,
+  multidomain_score,
+  followup_score,
+  estimated_agents,
+  estimated_cost,
+  routing_reason
+}
+
+3.3 Topic Analyzer
+
+Responsabilidad:
+- descomponer el problema raíz en tópicos
+- detectar dependencias
+- proponer agentes
+- identificar huecos críticos
+
+Salida:
+
+TopicPlan = {
+  topics: [Topic],
+  dependencies: [Dependency],
+  global_context_requirements,
+  estimated_iteration_depth,
+  reasoning_strategy
+}
+
+3.4 Context Builder
+
+Responsabilidad:
+- construir la vista de contexto para cada agente
+- recortar ruido
+- ensamblar memoria relevante
+- versionar el estado activo
+
+3.5 Gateway / Orchestrator
+
+Responsabilidad:
+- crear ejecución
+- asignar agentes
+- resolver dependencias
+- controlar timeouts
+- gestionar presupuesto
+- validar mensajes inter-agente
+- aplicar stop-loss
+- mantener trazabilidad
+
+3.6 Domain Agents
+
+Responsabilidad:
+- producir artefactos especializados y estructurados
+- no conversar libremente
+- emitir facts, hypotheses, risks, questions y recommendations tipadas
+
+3.7 Synthesizer
+
+Responsabilidad:
+- consolidar artefactos
+- detectar contradicciones
+- evaluar cobertura
+- decidir si responder o reexpandir
+
+3.8 Memory Manager
+
+Responsabilidad:
+- decidir qué persiste
+- evitar contaminación
+- separar observación, inferencia y verdad estructurada
+
+=====================================================================
+4. PRINCIPIO DE DISEÑO CENTRAL
+=====================================================================
+
+Decisión técnica recomendada:
+
+No liberar chat libre entre agentes.
+
+Modelo recomendado:
+
+Agentes que intercambian artefactos estructurados vía gateway.
+
+Razón:
+- más controlable
+- más auditable
+- menor costo de tokens
+- menor drift
+- menor probabilidad de loops
+- mejor versionado
+- más fácil de escalar
+
+Esto implica que cada colaboración debe circular como mensaje tipado, versionado y validado.
+
+=====================================================================
+5. MODELO FORMAL DEL PROBLEMA
+=====================================================================
+
+Sea el problema raíz P0.
+
+Cada iteración produce una partición controlada:
+
+P_t -> {p_t1, p_t2, ..., p_tn}
+
+Cada subproblema p_ti es asignado a un agente a_j tal que:
+
+assign(p_ti) = a_j
+
+Cada agente devuelve un artefacto estructurado o_ti:
+
+solve(a_j, p_ti, ctx_j) = o_ti
+
+La síntesis global en iteración t se define como:
+
+Y_t = S({o_t1, o_t2, ..., o_tn}, P0)
+
+Luego el sistema aplica una función de continuación:
+
+continue_t = L(P0, Y_t, Cost_t, Drift_t, Gain_t)
+
+Si continue_t = false, el sistema responde.
+Si continue_t = true, genera siguiente iteración.
+
+=====================================================================
+6. MEMORIA: MODELO FORMAL
+=====================================================================
+
+6.1 Tipos de memoria
+
+M_conv = memoria conversacional observacional
+M_onb  = memoria de onboarding / perfil del negocio
+M_int  = memoria proveniente de integraciones y datos estructurados
+M_inf  = memoria inferida por el sistema
+M_reason = reasoning tree y artefactos intermedios
+
+6.2 Prioridad de verdad
+
+Para evitar contradicciones, se define orden de prioridad canónica:
+
+M_int > M_onb > M_conv > M_inf > M_reason
+
+Interpretación:
+- dato estructurado del negocio prevalece sobre conversación
+- conversación prevalece sobre inferencia
+- reasoning previo no debe imponerse como verdad factual
+
+6.3 Clasificación de memoria
+
+Cada unidad de memoria se almacena como:
+
+MemoryUnit = {
+  memory_id,
+  user_id,
+  scope,
+  memory_type,
+  content,
+  source,
+  truth_level,
+  confidence,
+  created_at,
+  expires_at,
+  invalidation_rule,
+  version,
+  tags
+}
+
+truth_level:
+- factual_verified
+- user_stated
+- inferred
+- temporary_reasoning
+
+6.4 Regla de promoción de memoria
+
+Una interacción solo debe pasar de memoria temporal a persistente si cumple:
+
+PersistScore = w1 * relevance_future + w2 * stability + w3 * confidence - w4 * contamination_risk
+
+Promover si:
+
+PersistScore > tau_persist
+
+Valor sugerido:
+
+tau_persist = 0.72
+
+6.5 Regla de invalidación
+
+Una memoria persistida debe invalidarse si:
+- contradice nueva fuente estructurada
+- supera vencimiento semántico
+- fue inferida sobre supuestos refutados
+- pierde relevancia operativa
+
+=====================================================================
+7. CONTEXTO: MODELO OPERATIVO
+=====================================================================
+
+7.1 Definición
+
+El contexto activo K_t es el subconjunto mínimo útil de información necesario para resolver el problema en una iteración.
+
+K_t = select(C, M, P_t)
+
+7.2 Principio
+
+Nunca enviar el mismo contexto global a todos los agentes.
+
+Cada agente recibe una vista filtrada:
+
+K_t^j = filter(K_t, domain_j, topic_j)
+
+7.3 Versionado de contexto
+
+Todo contexto debe tener:
+
+ContextVersion = {
+  problem_version,
+  iteration,
+  topic_version,
+  root_hash,
+  generated_at
+}
+
+Si un agente responde con versión vieja, el gateway puede:
+- descartar
+- reprocesar
+- marcar como stale
+
+7.4 Degradación controlada
+
+Si el contexto ya no entra en ventana:
+- resumir memoria operativa
+- conservar hechos críticos
+- descartar ruido conversacional
+- mantener referencias estructuradas
+
+=====================================================================
+8. TOKENS Y COSTO COMPUTACIONAL
+=====================================================================
+
+8.1 Costo total de una ejecución
+
+Sea:
+
+T_in  = tokens de entrada
+T_out = tokens de salida
+n_a   = cantidad de agentes activados
+n_i   = cantidad de iteraciones
+n_x   = cantidad de llamadas cruzadas
+
+Costo total aproximado:
+
+TokenCost = sum_{t=1..n_i} ( Base_t + Agent_t + Cross_t + Synth_t )
+
+Donde:
+
+Base_t  = tokens de dummy + topic + routing + control
+Agent_t = suma de tokens de cada agente activado
+Cross_t = tokens de colaboración inter-agente
+Synth_t = tokens del sintetizador y validador
+
+8.2 Modelo económico simplificado
+
+MonetaryCost = sum(model_k_input_cost * tokens_in_k + model_k_output_cost * tokens_out_k)
+
+8.3 Presupuesto por ejecución
+
+Budget = {
+  max_total_tokens,
+  max_iterations,
+  max_agents,
+  max_cross_calls,
+  max_latency_ms,
+  max_monetary_cost
+}
+
+Sugerencia MVP:
+- max_iterations = 3
+- max_agents = 4
+- max_cross_calls = 4
+- max_latency_ms = 7000 para problemas complejos
+- target_latency_ms = 2500 para preguntas simples
+
+8.4 Regla formal para no activar un agente
+
+No activar agente a_j si:
+
+ActivationScore_j = lambda1 * domain_relevance + lambda2 * expected_gain - lambda3 * expected_cost - lambda4 * redundancy
+
+Si ActivationScore_j < tau_activate => no activar
+
+Valor sugerido:
+
+tau_activate = 0.20
+
+8.5 Estrategia de modelos
+
+Pipeline recomendado:
+- Dummy Analyzer -> modelo low-cost, rápido
+- Topic Analyzer -> modelo medio
+- Domain Agents -> modelo adaptativo por criticidad
+- Synthesizer -> modelo robusto
+- Contradiction Validator -> modelo medio o robusto según riesgo
+
+Principio:
+No usar modelo premium en todas las etapas.
+
+=====================================================================
+9. STOP-LOSS COGNITIVO
+=====================================================================
+
+9.1 Definición
+
+El stop-loss cognitivo es la política formal que determina si una nueva iteración agrega suficiente valor como para justificar mayor costo, tiempo y complejidad.
+
+9.2 Variables
+
+relevance_t      = similitud semántica con problema raíz
+novelty_t        = novedad informativa
+coverage_gain_t  = aumento de cobertura de decisión
+contradiction_gain_t = reducción de contradicciones
+cost_t           = costo incremental
+latency_t        = latencia incremental
+drift_risk_t     = riesgo de deriva semántica
+redundancy_t     = repetición conceptual
+
+9.3 Función propuesta
+
+StopLossScore_t =
+(
+  0.30 * relevance_t +
+  0.20 * novelty_t +
+  0.25 * coverage_gain_t +
+  0.15 * contradiction_gain_t +
+  0.10 * actionability_gain_t
+)
+-
+(
+  0.30 * drift_risk_t +
+  0.20 * redundancy_t +
+  0.20 * normalized_token_cost_t +
+  0.15 * normalized_latency_t +
+  0.15 * complexity_bloat_t
+)
+
+Decisión:
+
+if StopLossScore_t < tau_stop -> STOP
+else -> CONTINUE
+
+Valor sugerido:
+
+tau_stop = 0.18
+
+9.4 Definición de valor incremental
+
+Una iteración agrega valor si mejora al menos una de estas dimensiones:
+- resuelve una incertidumbre crítica
+- reduce contradicción material
+- mejora una acción concreta
+- cambia la recomendación final
+- incorpora evidencia relevante para la decisión
+
+9.5 Stop-loss global y por tópico
+
+Diseño recomendado:
+
+- stop-loss global para la ejecución completa
+- stop-loss local por tópico para evitar sobreanálisis parcial
+
+Esto evita que un dominio siga iterando cuando ya no aporta, pero permite que otro dominio aún crítico continúe.
+
+9.6 Casos límite
+
+Si score de utilidad y drift quedan empatados:
+- priorizar detener en problemas triviales
+- priorizar continuar en problemas de alta criticidad legal/financiera si hay presupuesto
+
+=====================================================================
+10. COLABORACIÓN ENTRE AGENTES
+=====================================================================
+
+10.1 Regla general
+
+Toda colaboración ocurre vía gateway.
+
+No se permiten mensajes directos peer-to-peer fuera del control del runtime.
+
+10.2 Contrato de mensaje inter-agente
+
+InterAgentMessage = {
+  message_id,
+  execution_id,
+  iteration,
+  from_agent,
+  to_agent,
+  message_type,
+  priority,
+  topic_id,
+  problem_version,
+  context_version,
+  payload,
+  deadline_ms,
+  created_at
+}
+
+message_type:
+- support_request
+- partial_answer
+- contradiction_flag
+- dependency_resolved
+- context_update
+- assumption_check
+- fact_request
+
+10.3 Artefactos permitidos
+
+Los agentes no intercambian “conversación libre”.
+Intercambian:
+- facts
+- claims
+- hypotheses
+- risks
+- recommendations
+- questions
+- constraints
+
+10.4 Dependencias circulares
+
+Regla:
+- mantener grafo dirigido de dependencias
+- si aparece ciclo, cortar y escalar al sintetizador/árbitro
+
+Formalmente:
+
+Sea D = grafo de dependencias
+Si cycle(D) = true -> bloquear nueva dependencia y elevar conflicto
+
+=====================================================================
+11. ESTADO Y VERSIONADO
+=====================================================================
+
+11.1 Fuente de verdad del estado
+
+La fuente de verdad de una ejecución es el Execution State Store.
+
+ExecutionState = {
+  execution_id,
+  user_id,
+  root_problem,
+  root_problem_version,
+  current_iteration,
+  status,
+  active_topics,
+  active_agents,
+  pending_dependencies,
+  budget_state,
+  context_version,
+  synthesis_state,
+  created_at,
+  updated_at
+}
+
+11.2 Reglas
+
+- toda tarea corre asociada a una versión de problema
+- toda salida debe indicar versión consumida
+- toda rama obsoleta debe cancelarse o marcarse stale
+
+11.3 Invalidación
+
+Si cambia root_problem_version:
+- invalidar artefactos incompatibles
+- permitir reaprovechar solo hechos compatibles
+- no mezclar síntesis nueva con outputs viejos sin reconciliación
+
+=====================================================================
+12. MODELO DE DATOS
+=====================================================================
+
+12.1 Entidades principales
+
+1. User
+2. Session
+3. Problem
+4. Execution
+5. Topic
+6. Agent
+7. AgentRun
+8. InterAgentMessage
+9. Artifact
+10. MemoryUnit
+11. BudgetLedger
+12. StopLossDecision
+13. Synthesis
+14. Contradiction
+
+12.2 Esquema lógico simplificado
+
+User( user_id, profile_data, business_profile )
+Session( session_id, user_id, started_at, ended_at )
+Problem( problem_id, session_id, raw_input, normalized_input, created_at )
+Execution( execution_id, problem_id, status, iteration, root_problem_version, context_version )
+Topic( topic_id, execution_id, domain, description, priority, status )
+Agent( agent_id, domain, capability_profile, cost_profile )
+AgentRun( run_id, execution_id, topic_id, agent_id, input_tokens, output_tokens, latency_ms, status )
+Artifact( artifact_id, run_id, artifact_type, payload, confidence, version )
+InterAgentMessage( message_id, execution_id, from_agent, to_agent, message_type, payload, version )
+MemoryUnit( memory_id, user_id, scope, memory_type, truth_level, content, confidence )
+BudgetLedger( ledger_id, execution_id, tokens_in, tokens_out, cost_usd, latency_ms )
+StopLossDecision( decision_id, execution_id, iteration, score, decision, rationale )
+Synthesis( synthesis_id, execution_id, iteration, summary, action_plan, confidence )
+Contradiction( contradiction_id, execution_id, artifact_a, artifact_b, severity, resolution_status )
+
+=====================================================================
+13. ARQUITECTURA DE IMPLEMENTACIÓN
+=====================================================================
+
+13.1 Backend recomendado
+
+Arquitectura híbrida orientada a eventos:
+- API Gateway / entrypoint
+- Orchestrator service
+- Context service
+- Memory service
+- Agent runtime workers
+- Synthesis service
+- Budget & observability service
+- Persistence layer
+
+13.2 Patrón de ejecución
+
+Modelo recomendado:
+- síncrono para preguntas simples
+- asíncrono/híbrido para multiagente
+
+13.3 Infraestructura compatible
+
+- HTTP para entrada de usuario
+- cola o bus interno para tareas de agentes
+- workers especializados por dominio
+- store transaccional para estado
+- store documental/vectorial para memoria recuperable
+- observabilidad por trazas/eventos
+
+13.4 Qué vive como código clásico y qué como inferencia LLM
+
+Código clásico:
+- routing estructural
+- control de presupuesto
+- versionado
+- stop-loss arithmetic
+- detección de ciclos
+- invalidación de contexto
+- políticas de memoria
+- auditoría
+
+LLM / inferencia:
+- normalización semántica
+- clasificación de complejidad
+- topic extraction
+- razonamiento por dominio
+- síntesis final
+- detección semántica de contradicciones
+
+=====================================================================
+14. FLUJO COMPLETO DE EJECUCIÓN
+=====================================================================
+
+14.1 Etapas
+
+Etapa 1. Ingesta
+- usuario envía problema
+- normalización multimodal
+
+Etapa 2. Evaluación rápida
+- dummy analyzer estima complejidad
+- decide simple vs expansión
+
+Etapa 3. Planificación
+- topic analyzer genera tópicos
+- se calculan dependencias
+- se define presupuesto inicial
+
+Etapa 4. Construcción de contexto
+- contexto global mínimo
+- vista filtrada por agente
+
+Etapa 5. Ejecución multiagente
+- activación de agentes
+- producción de artefactos
+- mensajes cruzados tipados si se requieren
+
+Etapa 6. Síntesis y validación
+- consolidación
+- detección de contradicciones
+- medición de cobertura y actionability
+
+Etapa 7. Stop-loss
+- cálculo de score
+- continuar o responder
+
+Etapa 8. Respuesta y memoria
+- generar respuesta final
+- decidir persistencia
+- registrar trazabilidad
+
+=====================================================================
+15. PLANTUML — FLUJOS Y ESQUEMAS
+=====================================================================
+
+15.1 Flujo principal del sistema
+
+@startuml
+start
+:Recibir input del usuario;
+:Normalizar input;
+:Construir NormalizedInput;
+
+:Dummy Analyzer;
+if (¿Requiere expansión?) then (No)
+  :Recuperar contexto actual;
+  :Responder con flujo simple;
+  stop
+else (Sí)
+  :Topic Analyzer;
+  :Detectar tópicos y dependencias;
+  :Definir presupuesto inicial;
+  :Construir contexto por agente;
+  :Activar agentes en paralelo;
+
+  :Recolectar artefactos;
+  :Síntesis global;
+  :Evaluar contradicciones;
+  :Calcular StopLossScore;
+
+  if (¿Continuar?) then (Sí)
+    :Generar nueva iteración controlada;
+    back to :Topic Analyzer;
+  else (No)
+    :Emitir respuesta final;
+    :Evaluar persistencia de memoria;
+    stop
+  endif
+endif
+@enduml
+
+15.2 Arquitectura de componentes
+
+@startuml
+package "Input Layer" {
+  [WhatsApp / UI]
+  [Normalizer]
+}
+
+package "Decision Layer" {
+  [Dummy Analyzer]
+  [Topic Analyzer]
+  [Stop-Loss Engine]
+}
+
+package "Runtime Layer" {
+  [Gateway / Orchestrator]
+  [Context Builder]
+  [Synthesis Engine]
+  [Contradiction Validator]
+}
+
+package "Agent Layer" {
+  [Legal Agent]
+  [Finance Agent]
+  [Operations Agent]
+  [Marketing Agent]
+}
+
+package "Data Layer" {
+  [Execution State Store]
+  [Memory Store]
+  [Artifact Store]
+  [Budget Ledger]
+}
+
+[WhatsApp / UI] --> [Normalizer]
+[Normalizer] --> [Dummy Analyzer]
+[Dummy Analyzer] --> [Topic Analyzer]
+[Topic Analyzer] --> [Gateway / Orchestrator]
+[Gateway / Orchestrator] --> [Context Builder]
+[Gateway / Orchestrator] --> [Legal Agent]
+[Gateway / Orchestrator] --> [Finance Agent]
+[Gateway / Orchestrator] --> [Operations Agent]
+[Gateway / Orchestrator] --> [Marketing Agent]
+[Legal Agent] --> [Synthesis Engine]
+[Finance Agent] --> [Synthesis Engine]
+[Operations Agent] --> [Synthesis Engine]
+[Marketing Agent] --> [Synthesis Engine]
+[Synthesis Engine] --> [Contradiction Validator]
+[Contradiction Validator] --> [Stop-Loss Engine]
+[Stop-Loss Engine] --> [Gateway / Orchestrator]
+[Gateway / Orchestrator] --> [Execution State Store]
+[Gateway / Orchestrator] --> [Artifact Store]
+[Context Builder] --> [Memory Store]
+[Gateway / Orchestrator] --> [Budget Ledger]
+@enduml
+
+15.3 Secuencia de ejecución multiagente
+
+@startuml
+actor Usuario
+participant API
+participant Normalizer
+participant Dummy
+participant Topic
+participant Gateway
+participant Context
+participant Legal
+participant Finance
+participant Synth
+participant StopLoss
+participant Memory
+
+Usuario -> API: consulta
+API -> Normalizer: normalizar(input)
+Normalizer -> Dummy: NormalizedInput
+Dummy -> Dummy: evaluar complejidad
+
+alt consulta simple
+  Dummy -> Gateway: respuesta simple
+  Gateway -> Memory: recuperar contexto mínimo
+  Gateway -> API: respuesta
+  API -> Usuario: output
+else requiere expansión
+  Dummy -> Topic: activar planning
+  Topic -> Gateway: tópicos + dependencias + presupuesto
+  Gateway -> Context: construir vistas por agente
+  Context -> Legal: contexto legal
+  Context -> Finance: contexto financiero
+  Legal -> Gateway: artifact_legal
+  Finance -> Gateway: artifact_finance
+  Gateway -> Synth: consolidar artefactos
+  Synth -> StopLoss: score de continuación
+  alt continuar
+    StopLoss -> Gateway: nueva iteración
+  else responder
+    StopLoss -> Gateway: finalizar
+    Gateway -> Memory: persistir selectivamente
+    Gateway -> API: respuesta final
+    API -> Usuario: output
+  end
+end
+@enduml
+
+15.4 Colaboración controlada entre agentes
+
+@startuml
+participant Legal
+participant Gateway
+participant Finance
+participant Synth
+
+Legal -> Gateway: support_request("validar caja para permisos")
+Gateway -> Gateway: validar contrato + versión + presupuesto
+Gateway -> Finance: reenviar request estructurado
+Finance -> Gateway: dependency_resolved(facts + estimate)
+Gateway -> Legal: contexto faltante validado
+Legal -> Gateway: artifact_refinado
+Gateway -> Synth: reenviar nueva evidencia
+@enduml
+
+15.5 Stop-loss por iteración
+
+@startuml
+start
+:Tomar resultados de iteración t;
+:Calcular relevance;
+:Calcular novelty;
+:Calcular coverage_gain;
+:Calcular contradiction_gain;
+:Calcular drift_risk;
+:Calcular redundancy;
+:Calcular token_cost;
+:Calcular latency_cost;
+
+:Computar StopLossScore_t;
+if (StopLossScore_t < tau_stop?) then (Sí)
+  :STOP;
+  :Responder;
+  stop
+else (No)
+  if (¿Budget restante suficiente?) then (No)
+    :STOP por guardrail de presupuesto;
+    :Responder;
+    stop
+  else (Sí)
+    :CONTINUE;
+    :Generar nueva iteración;
+    stop
+  endif
+endif
+@enduml
+
+15.6 Gestión de memoria
+
+@startuml
+start
+:Recibir artefactos y síntesis final;
+:Clasificar unidades de memoria;
+if (¿Fuente estructurada verificada?) then (Sí)
+  :Persistir como factual_verified;
+else (No)
+  if (¿Es inferencia útil y estable?) then (Sí)
+    :Calcular PersistScore;
+    if (PersistScore > tau_persist) then (Sí)
+      :Persistir como inferred con metadata;
+    else (No)
+      :Mantener temporal;
+    endif
+  else (No)
+    :Descartar o mantener efímera;
+  endif
+endif
+stop
+@enduml
+
+15.7 Grafo de dependencias con control de ciclos
+
+@startuml
+start
+:Registrar nueva dependencia A -> B;
+:Actualizar grafo D;
+if (¿cycle(D) = true?) then (Sí)
+  :Bloquear dependencia;
+  :Escalar al sintetizador/árbitro;
+  stop
+else (No)
+  :Permitir colaboración controlada;
+  stop
+endif
+@enduml
+
+=====================================================================
+16. RESPUESTA FINAL: ESTRUCTURA RECOMENDADA
+=====================================================================
+
+La respuesta final al usuario no debe ser solo “texto generado”.
+Debe respetar una estructura mínima:
+
+FinalResponse = {
+  executive_answer,
+  recommended_actions,
+  confidence_score,
+  assumptions,
+  unresolved_risks,
+  domains_consulted,
+  stop_reason,
+  optional_trace_summary
+}
+
+Esto mejora explicabilidad sin exponer reasoning interno completo.
+
+=====================================================================
+17. OBSERVABILIDAD Y DEBUGGING
+=====================================================================
+
+Métricas mínimas por ejecución:
+- latencia total
+- latencia por agente
+- tokens input/output por agente
+- costo estimado por iteración
+- cantidad de iteraciones
+- cantidad de mensajes cruzados
+- cantidad de contradicciones detectadas
+- gain marginal por iteración
+- motivo de stop-loss
+- porcentaje de artefactos reutilizados
+
+Preguntas que el sistema debe poder responder en debugging:
+- qué agente se activó
+- por qué se activó
+- cuánto costó
+- cuánto aportó
+- qué dependencias abrió
+- qué contradicción encontró
+- por qué se siguió o se frenó
+
+=====================================================================
+18. RIESGOS LÓGICOS PRINCIPALES
+=====================================================================
+
+1. Memoria contaminada
+Si inferencias viejas quedan persistidas como verdad, el sistema degrada decisiones futuras.
+
+2. Contexto sobredimensionado
+Mandar demasiado contexto eleva costo y reduce precisión.
+
+3. Loops entre agentes
+La colaboración libre puede destruir rentabilidad y trazabilidad.
+
+4. Stop-loss mal definido
+Si “valor incremental” no está bien modelado, aparece reasoning inflation.
+
+5. Dependencias circulares
+El sistema puede quedar encerrado en subconsultas sin cierre.
+
+6. Síntesis mediocre
+Mucho análisis parcial no garantiza una respuesta final útil.
+
+7. Costo no compatible con PyMEs
+Una buena arquitectura técnica puede fallar económicamente si cada consulta compleja es demasiado cara.
+
+=====================================================================
+19. DECISIONES TÉCNICAS RECOMENDADAS PARA MVP
+=====================================================================
+
+1. Interacción entre agentes mediante artefactos estructurados, no chat libre.
+2. Gateway central con autoridad total sobre routing, validación y presupuesto.
+3. Memoria con jerarquía de verdad explícita.
+4. Context builder dedicado por agente.
+5. Máximo 3 iteraciones por ejecución en MVP.
+6. Máximo 4 agentes simultáneos por problema en MVP.
+7. Stop-loss doble: global + por tópico.
+8. Detección temprana de ciclos de dependencia.
+9. Observabilidad obligatoria por agente y por iteración.
+10. Respuesta final con acciones, riesgos y supuestos.
+
+=====================================================================
+20. CONCLUSIÓN TÉCNICA
+=====================================================================
+
+PolPilot no debe pensarse como “muchos agentes hablando”, sino como un sistema de resolución ejecutiva controlada.
+
+La fortaleza real no está en tener varios agentes, sino en combinar:
+- orquestación estricta
+- artefactos estructurados
+- contexto filtrado
+- memoria jerarquizada
+- control formal de costo
+- stop-loss matemáticamente definido
+
+Si estos seis elementos quedan bien implementados, la arquitectura puede ser robusta, rentable y escalable.
+
+Si no quedan bien definidos, el sistema corre el riesgo de convertirse en una arquitectura cara, opaca, lenta y difícil de gobernar.
+
+=====================================================================
+21. TEMAS ABIERTOS A DEFINIR EN SIGUIENTE ITERACIÓN DE DISEÑO
+=====================================================================
+
+1. Definir función exacta de DecisionUtility por tipo de problema.
+2. Calibrar thresholds reales de stop-loss con pruebas empíricas.
+3. Diseñar catálogo formal de agentes y capacidades.
+4. Definir política de escalado entre modelos low-cost y premium.
+5. Diseñar esquema de persistencia operacional y de memoria semántica.
+6. Determinar qué grado de explicabilidad verá el usuario final.
+7. Ajustar tiempos máximos compatibles con UX WhatsApp.
+8. Estimar costo real por consulta compleja en escenarios de carga.
+
+Fin del documento.

@@ -1,0 +1,125 @@
+Marco formal de preguntas críticas
+Evaluación de viabilidad lógica, costo y robustez
+1) Memoria
+Riesgos de verdad, consistencia y contaminación
+Fuente de verdad
+¿Cuál es la fuente canónica de verdad del sistema cuando la memoria conversacional contradice datos estructurados del negocio?
+¿Qué prioridad tiene cada tipo de memoria (conversación, onboarding, integraciones, inferencias, reasoning previo)?
+¿Cómo resolvemos conflictos entre memoria observacional (“el usuario dijo X”) y memoria inferida (“el sistema dedujo Y”)?
+Persistencia
+¿Qué criterio formal determina que una interacción debe promoverse de memoria temporal a memoria persistente?
+¿Quién tiene autoridad para escribir memoria persistente: todos los agentes, solo el sintetizador o una capa de validación?
+¿Cómo invalidamos memoria vieja, contradictoria o basada en supuestos incorrectos?
+¿Cómo evitamos que un error de una iteración contamine decisiones futuras?
+Reutilización
+¿Qué parte del árbol de razonamiento vale la pena persistir y cuál debe descartarse por costo o riesgo de sesgo?
+¿Tiene sentido reutilizar reasoning trees entre problemas similares o el dominio cambia demasiado rápido?
+¿Cómo evitamos que la reutilización de reasoning previo genere overfitting cognitivo?
+2) Tokens y costo computacional
+Riesgos de escalabilidad económica
+Expansión
+¿Cuál es el costo máximo aceptable por consulta antes de que el modelo deje de ser rentable para PyMEs?
+¿Cómo evitamos crecimiento exponencial de costo cuando aparecen dependencias entre agentes?
+¿Qué sucede si una sola pregunta activa 6–8 agentes y 3 iteraciones?
+¿Existe un presupuesto por respuesta, por usuario, por sesión o por problema?
+Routing
+¿Qué criterio formal define cuándo NO activar un agente?
+¿Cómo medimos si un agente realmente aportó valor marginal o solo consumió tokens?
+¿Cómo detectamos agentes redundantes dentro de una misma ejecución?
+Model strategy
+¿Qué etapas justifican modelos premium y cuáles deberían correr en modelos low-cost?
+¿Tiene sentido usar modelos diferentes para dummy, topic analysis, síntesis y contradicción?
+¿Qué parte del pipeline genera el peor costo/beneficio?
+3) Contexto
+Riesgos de drift, sobrecarga y pérdida de coherencia
+Disponibilidad
+¿Qué hacemos cuando el contexto necesario ya no entra en ventana?
+¿El sistema debe depender de contexto conversacional o debe reconstruirlo desde memoria?
+¿Cómo degradamos elegantemente cuando falta contexto crítico?
+Retención
+¿Cuánto tiempo vive el contexto operativo antes de degradarse a resumen?
+¿Cuántos mensajes atrás siguen siendo útiles antes de introducir ruido?
+¿Qué tipo de información jamás debería permanecer en contexto activo?
+Coherencia
+¿Cómo evitamos que cada agente opere con versiones distintas del contexto?
+¿Quién sincroniza la “versión vigente” del problema raíz?
+¿Qué pasa si un agente trabaja sobre una rama vieja del análisis?
+4) Stop-loss
+Riesgo principal de la arquitectura
+
+Este es probablemente el punto más frágil de toda la idea.
+
+Definición
+¿Qué significa formalmente “seguir aportando valor” en una nueva iteración?
+¿Cómo distinguimos profundidad útil de sobreanálisis?
+¿Cómo medimos cuándo una nueva pregunta sigue respondiendo el objetivo raíz?
+Drift
+¿Cómo detectamos drift semántico antes de que consuma otra iteración?
+¿Qué señales objetivas determinan que ya entramos en sesgo?
+¿Cómo prevenimos loops donde nuevas preguntas siempre parecen “útiles”?
+Gran debilidad lógica
+¿El stop-loss es global o por tópico?
+¿Qué ocurre si legal necesita seguir profundizando pero marketing ya no?
+¿Quién tiene la última palabra para cortar: gateway, sintetizador o score matemático?
+Casos límite
+¿Qué hacemos si el score de utilidad y el score de drift quedan empatados?
+¿Cómo evitamos cortar demasiado pronto en decisiones críticas?
+¿Cómo evitamos seguir iterando demasiado en decisiones triviales?
+5) Colaboración entre agentes
+Riesgos de dependencia circular
+¿Puede un agente pedir ayuda a otro sin pasar por gateway?
+¿Qué pasa si legal depende de finanzas y finanzas vuelve a depender de legal?
+¿Cómo detectamos ciclos de colaboración infinitos?
+¿Existe profundidad máxima de colaboración entre agentes?
+Autoridad
+¿Qué respuesta prevalece si dos agentes expertos contradicen el mismo tópico?
+¿Necesitamos un árbitro de contradicciones?
+¿La síntesis final debe mostrar contradicciones no resueltas?
+6) Riesgos de producto
+Donde la idea puede romper negocio
+¿El tiempo de respuesta sigue siendo aceptable para UX tipo WhatsApp?
+¿Cuánta complejidad interna podemos ocultar sin perder confianza del usuario?
+¿El usuario necesita ver cómo “pensó” el sistema o solo la decisión?
+¿Cómo evitamos que la arquitectura sea demasiado cara para el ticket promedio de una PyME?
+7) Pregunta más importante de todas
+
+La pregunta que realmente define si esto funciona:
+
+¿Cuál es la unidad de optimización principal del sistema?
+
+Hay 4 opciones, y elegir mal rompe la arquitectura:
+
+A. Calidad de decisión
+
+mejor respuesta posible aunque tarde más
+
+B. Costo
+
+respuesta suficientemente buena al menor costo
+
+C. Velocidad
+
+UX casi instantánea
+
+D. Aprendizaje acumulativo
+
+cada problema mejora el sistema futuro
+
+Mi lectura crítica
+
+La debilidad más fuerte hoy no está en multiagentes.
+
+Está en esto:
+
+todavía no está matemáticamente definido qué significa “valor incremental suficiente para seguir pensando”
+
+Ese es el verdadero corazón del sistema.
+
+Si eso no queda sólido:
+
+se dispara el costo
+aparece drift
+loops
+reasoning inflation
+baja rentabilidad
+UX lenta

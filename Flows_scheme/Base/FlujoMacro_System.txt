@@ -1,0 +1,36 @@
+flowchart TD
+    A[Input del usuario] --> B[Process In<br/>Normalización del input]
+    B --> C{Decision Manager}
+
+    C -->|Es continuidad del contexto| D[Context Query]
+    D --> E[Análisis de contexto]
+    E --> F[Responder sin expandir tópicos]
+
+    C -->|Es pregunta nueva o requiere expansión| G[Pregunta Dummy]
+    G --> H{¿Requiere análisis profundo?}
+
+    H -->|No| I[Respuesta directa]
+    H -->|Sí| J[Analyzer Topics]
+
+    J --> K[Detectar tópicos]
+    J --> L[Mapear agentes por tópico]
+    J --> M[Definir dependencias]
+
+    K --> N[Gateway / Orquestador]
+    L --> N
+    M --> N
+
+    N --> O[Crear hilos en paralelo]
+    O --> P1[Agente 1]
+    O --> P2[Agente 2]
+    O --> P3[Agente N]
+
+    P1 --> Q[Sintetizador global]
+    P2 --> Q
+    P3 --> Q
+
+    Q --> R{¿Hay nuevas preguntas útiles?}
+    R -->|No| S[Respuesta final]
+    R -->|Sí| T[Nuevas preguntas]
+    T --> U[Reinyectar al ciclo de análisis]
+    U --> J

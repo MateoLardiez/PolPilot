@@ -1,0 +1,236 @@
+BOCETO 1
+Arquitectura conceptual de la nueva idea
+Recursive Topic Intelligence Engine
+Núcleo cognitivo de PolPilot
+
+La propuesta consiste en transformar una pregunta inicial del usuario en un árbol controlado de investigación multiagente, capaz de profundizar sin perder el objetivo principal.
+
+La lógica no busca responder directamente la pregunta, sino entender qué capas de análisis requiere, qué especialistas deben intervenir y hasta qué profundidad conviene seguir preguntando antes de introducir sesgo.
+
+Flujo general
+Problema del usuario
+   ↓
+Dummy Analyzer
+   ↓
+¿requiere expansión?
+   ├─ No → reinterpretar contexto previo + responder
+   └─ Sí
+        ↓
+   Analyzer Topics
+        ↓
+   Gateway de agentes
+        ↓
+   Hilos paralelos por especialidad
+        ↓
+   Agente global sintetizador
+        ↓
+   ¿faltan preguntas útiles?
+        ├─ Sí → nueva iteración con stop-loss
+        └─ No → respuesta final
+1) Dummy Analyzer
+
+Primer filtro cognitivo.
+
+Su función es decidir si la consulta:
+
+A. Es continuidad del contexto previo
+
+Ejemplo:
+
+“¿Y eso cuánto me costaría?”
+
+Acá no hace falta expandir tópicos.
+Se responde usando memoria conversacional y el análisis ya realizado.
+
+B. Es una nueva problemática
+
+Ejemplo:
+
+“Quiero importar pollo”
+
+En este caso sí activa el Analyzer Topics.
+
+La función principal del dummy es evitar costo innecesario y prevenir repreguntas redundantes.
+
+2) Analyzer Topics
+
+Este es el corazón de tu innovación.
+
+Toma la pregunta original y la divide en capas temáticas especializadas.
+
+No responde todavía.
+
+Su objetivo es:
+
+identificar dominios de análisis
+generar subpreguntas útiles
+agrupar por categoría
+mapear agentes expertos
+limitar profundidad con stop-loss
+Ejemplo real
+
+Pregunta:
+
+“Quiero importar pollo”
+
+El sistema genera:
+
+Económico
+¿Tenemos presupuesto para importar?
+¿Cuál es el costo del pollo en origen?
+¿Cuál sería el impacto en flujo de caja?
+Legal / regulatorio
+¿Qué leyes aplican a importación de alimentos?
+¿Se requieren permisos sanitarios?
+¿Interviene SENASA?
+Marketing / marca
+¿La importación de pollo está alineada con nuestra marca?
+¿Existe demanda en nuestra base de clientes?
+Operaciones
+¿Tenemos cadena de frío?
+¿Podemos almacenar inventario perecedero?
+
+Acá ya se ve el valor brutal para PolPilot: replica la forma en la que una PyME debería pensar, pero no sabe cómo hacerlo sola.
+
+3) Gateway Orchestrator
+
+Una vez definidos tópicos y agentes, el gateway decide:
+
+qué agentes ejecutar
+prioridad
+dependencia entre ellos
+concurrencia
+timeout
+costo máximo
+fallback si uno falla
+
+Ejemplo:
+
+Economía → CFO Agent
+Legal → Regulatory Agent
+Marca → Strategist Agent
+Inventario → Procurement Agent
+
+Esto está 100% alineado con los 7 módulos conceptuales de PolPilot.
+
+4) Hilos paralelos
+
+Tu idea de “crear N hilos” es excelente.
+
+Cada categoría activa un hilo independiente:
+
+Thread 1 → financiero
+Thread 2 → legal
+Thread 3 → compras
+Thread 4 → marketing
+
+Todos corren en simultáneo.
+
+Esto permite:
+
+menor latencia
+respuestas especializadas
+trazabilidad por dominio
+score individual por agente
+streaming parcial de resultados
+
+Ideal para UX tipo WhatsApp:
+
+“Ya revisé la parte legal…”
+“Estoy calculando costos…”
+“Encontré un riesgo de marca…”
+
+5) Agente Global de Síntesis
+
+Esta parte de tu idea es MUY poderosa.
+
+Este agente recibe:
+
+pregunta original
+respuestas de los agentes
+contexto global del negocio
+
+Pero no recibe las subpreguntas generadas.
+
+Eso lo obliga a pensar desde el objetivo original, evitando sobreajuste a la estructura interna.
+
+Su trabajo es:
+
+A. responder la pregunta principal
+B. detectar vacíos de información
+C. decidir si vale la pena seguir preguntando
+D. mantener alineación con objetivo negocio
+6) Meta-loop de expansión
+
+Acá está tu innovación más fuerte: recursive questioning with stop-loss.
+
+El sistema puede volver a preguntar si todavía existe información útil por extraer.
+
+Pero solo si cumple:
+
+condición de utilidad
+
+la nueva pregunta agrega valor real a la decisión
+
+condición de no sesgo
+
+la nueva pregunta sigue respondiendo el objetivo principal
+
+7) Stop-loss cognitivo
+
+Esto es brillante y muy diferencial.
+
+Tu stop-loss no es técnico, es epistemológico.
+
+La expansión se detiene cuando profundizar más empieza a:
+
+alejarse de la pregunta original
+introducir microdetalles irrelevantes
+sobreoptimizar una dimensión
+aumentar costo sin mejorar decisión
+sesgar la recomendación final
+
+Tu propia definición de los audios es excelente:
+
+seguir preguntando mientras siga respondiendo la pregunta inicial.
+
+Yo lo formalizaría así:
+
+Fórmula conceptual
+Expansion Score =
+Relevancia × Utilidad × Cobertura
+----------------------------------
+Sesgo × Costo × Desviación
+
+Si baja de cierto threshold → STOP.
+
+Cómo conecta perfecto con PolPilot
+
+Esto puede convertirse en el motor de razonamiento central de Ángela.
+
+Hoy PolPilot tiene módulos especialistas.
+
+Tu idea hace que esos módulos:
+
+no se activen de forma rígida
+se invoquen dinámicamente
+colaboren como comité ejecutivo
+profundicen iterativamente
+se autolimiten para no sobrepensar
+
+Eso convierte a PolPilot en algo mucho más defensible:
+
+no solo responde preguntas
+aprende a pensar como una mesa directiva PyME
+
+Mi recomendación estratégica
+
+Tu innovación no la vendería como “multiagentes”.
+
+La vendería como:
+
+Recursive Decision Intelligence
+
+Un motor que descompone cualquier problema empresarial en capas especializadas, activa expertos en paralelo y decide autónomamente cuándo seguir investigando o cuándo ya existe suficiente certeza para actuar.
+
+Eso suena mucho más premium para inversores y devs.

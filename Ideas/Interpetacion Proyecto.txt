@@ -1,0 +1,33 @@
+Ingresa el porblema -> Anlyzer_topics -> Identifico a que topicos 
+                          |
+			Rereguntar -> Identifcar que podemos interpertar a raiz de eso (ejemplo que mercanci comprar) -> Puedo llamr aboagado para saber si es legal, o llamar al de ifnanzas a ver si lo puedo costear o que me productos que cppuedo constera o llamar al de marketing a ver si 	cumple con nsuestra polticas etc
+
+Entonces la idea principal del anaylzer_topics es dividr en capaz la pregunta o la idea principal que se dice.
+
+Se puede dividir en n capaz. Pero debe tener un stop loss para no sesgar el analisis.
+
+Antes del analyzer_topics se tiene que llamar al dummy_topics que identifcaria seria si la peunta es de la respuesta anterior o si es una pregunta no context. aqui debemos entender si la pregunta e simple o si de verdad hay que llamar al analyzer.
+
+Ingres el porblema -> Dummy_analyzer -> Si lo requiere -> Anaylzer_Topics -> Si no lo requiere entonces no se repregutna sino que se reinterpeta el contexto que teniaos guarado antes.
+
+Entonces el analyzer topics nos va a devolver la pregunta principal y los topics (repricgas) agrupados por categoria.
+Ejmplo: si yo soy un mayorista de venta de tazas y pregunto quieor improtar pollo
+entonces el analyzer topicos va a hacer los sigueintes.
+
+va a repreguntar pero por categorias 
+econmia: 
+viene y saca las siguiente pregutns: ¿Tenemos prespeusto par aimprotar pollo? ¿Cual es le costo del pollo en el mercado?
+abogado y pegunta: ¿Cuales son las leyes de improtancion de alimoientos? ¿Que permisos neceisto?
+Viene el de marketing y ptegunta ->  ¿la importacion de pollo esta asociada a nuestra marca?
+
+Es importante aqui poner el stop_loss pues no queremos que se vaya tanto a lo especifoc pero queremos abarcar la amour cantidad de ideas.
+
+Luego de tener el lsitado de topics.
+Creamos la n cantidad de hilos que se necesiten para responder la porblematica. Donde cada Hilo va ahacer un agente especilaizado en el area de los topicos.
+
+
+Analizador dummy -> Analizaro de tpicos -> Te devuelve los topicos y te deuvle los agtens que va a usar-> gateway (organiza a quien mandarselo) -> Hilos se activan en sumultaneo los agentes. Cada uno retorna en tiempso distinto la informacion solictada. Pasa por un agente sin contexto especifico sino global del porblema. Este agente no sabe las preguntas que se hiceiron ni sabe tampoco que agetnes interatuaraon, tiene la pregunta original y tiene las respuestas de los agentes activdos. -> ¿Que va ahacer este agente? -> Este agente va a generas mas preguntas (si las hay) y si responde la pregunta original. ¿La pregunta es como detmirnamos si hayq eu preguntar? -> Una si se puede extraer ma sinformacion util sin llegar al sesgo y que siga respodniendo la rpegunta principal. 
+
+Es mas esto lo podemos usbdivir en dons agentes uno que pregunte y otro que veifique si repsodne la pregunta original.
+
+Eontces la idea seria preguntar 

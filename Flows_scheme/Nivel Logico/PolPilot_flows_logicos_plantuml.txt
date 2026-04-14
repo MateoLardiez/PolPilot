@@ -1,0 +1,647 @@
+POLPILOT — FLOWS LÓGICOS EN PLANTUML
+Versión: 1.0
+Objetivo: esquemas lógicos separados por caso de proceso
+
+====================================================================
+1. FLUJO LÓGICO GENERAL DEL PROCESO
+====================================================================
+
+@startuml
+title Flujo lógico general de ejecución
+
+start
+:Recibir consulta del usuario;
+:Normalizar input;
+:Construir problema raíz;
+
+:Evaluar complejidad inicial;
+if (¿Consulta simple?) then (Sí)
+  :Recuperar contexto mínimo;
+  :Resolver sin expansión;
+  :Emitir respuesta final;
+  stop
+else (No)
+  :Crear ejecución;
+  :Definir presupuesto inicial;
+  :Planificar tópicos;
+  :Construir contexto por dominio;
+  :Activar agentes;
+  :Recolectar artefactos;
+  :Sintetizar resultados;
+  :Evaluar stop-loss;
+
+  if (¿Continuar iterando?) then (Sí)
+    :Crear siguiente iteración;
+    :Replanificar solo vacíos críticos;
+    :Reactivar agentes necesarios;
+    :Recolectar nuevos artefactos;
+    :Sintetizar nuevamente;
+    :Reevaluar stop-loss;
+  endif
+
+  :Emitir respuesta final;
+  :Persistir memoria selectiva;
+  stop
+endif
+@enduml
+
+
+====================================================================
+2. FLUJO DE ENTRADA Y NORMALIZACIÓN
+====================================================================
+
+@startuml
+title Flujo lógico de entrada y normalización
+
+start
+:Recibir input;
+if (¿Tipo de input?) then (Texto)
+  :Extraer texto;
+elseif (Audio)
+  :Transcribir;
+elseif (Imagen)
+  :Extraer contenido relevante;
+elseif (Documento)
+  :Parsear documento;
+endif
+
+:Detectar idioma;
+:Identificar entidades;
+:Identificar intención;
+:Resolver referencia conversacional;
+:Construir problema normalizado;
+
+if (¿Confianza mínima alcanzada?) then (Sí)
+  :Enviar a evaluación inicial;
+  stop
+else (No)
+  :Marcar input ambiguo;
+  :Derivar a flujo conservador;
+  stop
+endif
+@enduml
+
+
+====================================================================
+3. FLUJO DE DECISIÓN SIMPLE VS EXPANSIÓN
+====================================================================
+
+@startuml
+title Decisión lógica: respuesta directa o expansión multiagente
+
+start
+:Tomar problema normalizado;
+:Calcular complexity_score;
+:Calcular multidomain_score;
+:Calcular followup_score;
+:Estimar costo potencial;
+
+if (¿Es follow-up resoluble con contexto?) then (Sí)
+  :Usar contexto existente;
+  :Responder;
+  stop
+else (No)
+  if (¿Complejidad baja y un solo dominio?) then (Sí)
+    :Resolver en flujo simple;
+    :Responder;
+    stop
+  else (No)
+    :Marcar como problema expandible;
+    :Crear ejecución multiagente;
+    stop
+  endif
+endif
+@enduml
+
+
+====================================================================
+4. FLUJO DE PLANIFICACIÓN DE TÓPICOS
+====================================================================
+
+@startuml
+title Planificación lógica de tópicos y dependencias
+
+start
+:Tomar problema raíz;
+:Identificar dominios implicados;
+:Crear lista de tópicos;
+:Asignar prioridad a cada tópico;
+:Detectar dependencias iniciales;
+:Detectar tópicos bloqueantes;
+:Estimar profundidad máxima;
+
+if (¿Hay más tópicos que el budget permite?) then (Sí)
+  :Podar tópicos de menor valor;
+endif
+
+:Emitir plan de tópicos;
+stop
+@enduml
+
+
+====================================================================
+5. FLUJO DE CONSTRUCCIÓN DE CONTEXTO POR AGENTE
+====================================================================
+
+@startuml
+title Construcción lógica de contexto filtrado por agente
+
+start
+:Tomar problema raíz;
+:Tomar memoria recuperable;
+:Tomar contexto conversacional activo;
+:Tomar datos estructurados del negocio;
+
+:Aplicar jerarquía de verdad;
+:Eliminar contexto redundante;
+:Separar hechos de inferencias;
+:Construir vista filtrada por dominio;
+:Versionar contexto;
+
+if (¿Contexto excede ventana útil?) then (Sí)
+  :Resumir;
+  :Conservar hechos críticos;
+  :Descartar ruido;
+endif
+
+:Entregar contexto al agente;
+stop
+@enduml
+
+
+====================================================================
+6. FLUJO DE ACTIVACIÓN DE AGENTES
+====================================================================
+
+@startuml
+title Activación lógica de agentes por relevancia y costo
+
+start
+:Tomar plan de tópicos;
+:Evaluar candidatos por dominio;
+
+:Calcular ActivationScore por agente;
+if (¿ActivationScore >= threshold?) then (Sí)
+  :Habilitar agente;
+else (No)
+  :No activar agente;
+endif
+
+:Repetir evaluación por tópico;
+
+if (¿Se supera máximo de agentes?) then (Sí)
+  :Mantener solo agentes con mayor valor esperado;
+endif
+
+:Despachar agentes seleccionados;
+stop
+@enduml
+
+
+====================================================================
+7. FLUJO DE EJECUCIÓN DE UN AGENTE ESPECIALISTA
+====================================================================
+
+@startuml
+title Ejecución lógica individual de un agente
+
+start
+:Recibir tópico;
+:Recibir contexto filtrado;
+:Recibir versión del problema;
+:Recibir presupuesto local;
+
+:Analizar tópico;
+:Generar facts;
+:Generar claims;
+:Generar risks;
+:Generar recommendations;
+
+if (¿Falta información externa de otro dominio?) then (Sí)
+  :Emitir support_request estructurado;
+endif
+
+:Emitir artifact estructurado;
+stop
+@enduml
+
+
+====================================================================
+8. FLUJO DE COLABORACIÓN ENTRE AGENTES
+====================================================================
+
+@startuml
+title Colaboración lógica controlada entre agentes
+
+start
+:Agente A detecta dependencia;
+:Construir support_request;
+:Enviar request al gateway;
+
+:Gateway valida:
+- contrato
+- versión
+- presupuesto
+- dependencia permitida;
+
+if (¿Request válido?) then (Sí)
+  :Gateway reenvía a Agente B;
+  :Agente B analiza request;
+  :Agente B responde artifact de soporte;
+  :Gateway valida respuesta;
+  :Gateway reinyecta soporte a Agente A;
+  :Agente A refina artifact;
+  stop
+else (No)
+  :Gateway rechaza request;
+  :Registrar motivo;
+  stop
+endif
+@enduml
+
+
+====================================================================
+9. FLUJO DE DETECCIÓN DE DEPENDENCIAS CIRCULARES
+====================================================================
+
+@startuml
+title Control lógico de dependencias circulares
+
+start
+:Registrar dependencia A -> B;
+:Actualizar grafo de dependencias;
+
+if (¿Se detecta ciclo?) then (Sí)
+  :Bloquear nueva dependencia;
+  :Escalar conflicto al sintetizador;
+  :Marcar colaboración como cerrada;
+  stop
+else (No)
+  :Permitir colaboración;
+  stop
+endif
+@enduml
+
+
+====================================================================
+10. FLUJO DE RECOLECCIÓN DE ARTEFACTOS
+====================================================================
+
+@startuml
+title Recolección lógica de artefactos de agentes
+
+start
+:Esperar artefactos de agentes activos;
+:Registrar artifact_id;
+:Registrar source_agent;
+:Registrar tipo;
+:Registrar confianza;
+:Registrar costo y latencia;
+
+if (¿Artefacto duplicado o redundante?) then (Sí)
+  :Referenciar cache existente;
+else (No)
+  :Persistir artifact nuevo;
+endif
+
+if (¿Quedan agentes pendientes?) then (Sí)
+  :Seguir esperando hasta timeout;
+endif
+
+:Emitir set de artefactos a síntesis;
+stop
+@enduml
+
+
+====================================================================
+11. FLUJO DE SÍNTESIS GLOBAL
+====================================================================
+
+@startuml
+title Síntesis lógica de resultados multiagente
+
+start
+:Recibir artefactos de la iteración;
+:Agrupar por tópico;
+:Separar hechos, hipótesis y riesgos;
+:Medir cobertura del problema raíz;
+:Detectar contradicciones;
+:Medir vacíos críticos;
+:Medir accionabilidad;
+
+if (¿La decisión ya es suficiente?) then (Sí)
+  :Marcar síntesis como suficiente;
+  stop
+else (No)
+  :Marcar vacíos pendientes;
+  :Enviar a evaluación stop-loss;
+  stop
+endif
+@enduml
+
+
+====================================================================
+12. FLUJO DE EVALUACIÓN DE CONTRADICCIONES
+====================================================================
+
+@startuml
+title Evaluación lógica de contradicciones entre agentes
+
+start
+:Tomar artefactos consolidados;
+:Comparar claims incompatibles;
+:Clasificar severidad;
+
+if (¿Contradicción material?) then (Sí)
+  :Crear contradiction_flag;
+  :Estimar valor de resolverla;
+  if (¿Vale una nueva iteración?) then (Sí)
+    :Solicitar iteración de resolución;
+    stop
+  else (No)
+    :Mantener contradicción como riesgo abierto;
+    stop
+  endif
+else (No)
+  :No abrir nueva iteración por contradicción;
+  stop
+endif
+@enduml
+
+
+====================================================================
+13. FLUJO DE STOP-LOSS GENERAL
+====================================================================
+
+@startuml
+title Stop-loss lógico general de la ejecución
+
+start
+:Tomar síntesis de iteración;
+:Calcular relevance;
+:Calcular novelty;
+:Calcular coverage_gain;
+:Calcular contradiction_gain;
+:Calcular actionability_gain;
+:Calcular drift_risk;
+:Calcular redundancy;
+:Calcular token_cost_normalized;
+:Calcular latency_normalized;
+:Calcular complexity_bloat;
+
+:Computar StopLossScore;
+
+if (¿StopLossScore < threshold?) then (Sí)
+  :STOP;
+  :Cerrar expansión;
+  stop
+else (No)
+  if (¿Budget restante suficiente?) then (No)
+    :STOP por guardrail de costo;
+    :Cerrar expansión;
+    stop
+  else (Sí)
+    :CONTINUE;
+    :Permitir nueva iteración;
+    stop
+  endif
+endif
+@enduml
+
+
+====================================================================
+14. FLUJO DE STOP-LOSS POR TÓPICO
+====================================================================
+
+@startuml
+title Stop-loss lógico local por tópico
+
+start
+:Evaluar tópico individual;
+:Medir ganancia marginal local;
+:Medir redundancia local;
+:Medir drift local;
+:Medir costo local;
+
+if (¿El tópico sigue aportando valor?) then (Sí)
+  :Permitir que el tópico continúe;
+  stop
+else (No)
+  :Cerrar tópico;
+  :Excluirlo de próximas iteraciones;
+  stop
+endif
+@enduml
+
+
+====================================================================
+15. FLUJO DE DECISIÓN DE NUEVA ITERACIÓN
+====================================================================
+
+@startuml
+title Cierre o apertura de nueva iteración
+
+start
+:Recibir decisión del stop-loss;
+if (¿CONTINUE?) then (No)
+  :Ir a respuesta final;
+  stop
+else (Sí)
+  :Identificar vacíos críticos;
+  :Eliminar tópicos cerrados;
+  :Mantener solo dominios necesarios;
+  :Actualizar versión del problema;
+  :Actualizar presupuesto restante;
+  :Construir iteración t+1;
+  stop
+endif
+@enduml
+
+
+====================================================================
+16. FLUJO DE CONTROL DE BUDGET
+====================================================================
+
+@startuml
+title Control lógico de presupuesto y guardrails
+
+start
+:Leer budget inicial;
+:Registrar costo acumulado;
+:Registrar latencia acumulada;
+:Registrar iteraciones;
+:Registrar cross-calls;
+:Registrar agentes activos;
+
+if (¿Tokens superados?) then (Sí)
+  :Forzar STOP;
+  stop
+endif
+
+if (¿Costo monetario superado?) then (Sí)
+  :Forzar STOP;
+  stop
+endif
+
+if (¿Latencia superada?) then (Sí)
+  :Forzar síntesis con estado parcial;
+  stop
+endif
+
+if (¿Iteraciones máximas alcanzadas?) then (Sí)
+  :Forzar cierre;
+  stop
+endif
+
+:Permitir continuación;
+stop
+@enduml
+
+
+====================================================================
+17. FLUJO DE INVALIDACIÓN POR VERSIÓN
+====================================================================
+
+@startuml
+title Invalidación lógica por cambio de versión del problema
+
+start
+:Recibir nuevo problema_version;
+:Comparar con artifacts existentes;
+
+if (¿Artifact fue creado con versión vieja?) then (Sí)
+  if (¿Sigue siendo compatible?) then (Sí)
+    :Mantener como reutilizable;
+    stop
+  else (No)
+    :Marcar artifact como stale;
+    :Excluir de síntesis actual;
+    stop
+  endif
+else (No)
+  :Mantener artifact vigente;
+  stop
+endif
+@enduml
+
+
+====================================================================
+18. FLUJO DE RESPUESTA FINAL
+====================================================================
+
+@startuml
+title Construcción lógica de la respuesta final
+
+start
+:Tomar síntesis final;
+:Construir decisión ejecutiva;
+:Construir acciones recomendadas;
+:Construir supuestos;
+:Construir riesgos no resueltos;
+:Construir dominios consultados;
+:Construir motivo de stop;
+
+if (¿Hay contradicciones abiertas?) then (Sí)
+  :Incluir contradicciones como riesgo;
+endif
+
+:Emitir respuesta final;
+stop
+@enduml
+
+
+====================================================================
+19. FLUJO DE PERSISTENCIA DE MEMORIA
+====================================================================
+
+@startuml
+title Persistencia lógica de memoria al finalizar
+
+start
+:Tomar respuesta final y artefactos;
+:Clasificar unidad de memoria;
+:Aplicar jerarquía de verdad;
+:Calcular PersistScore;
+
+if (¿Fuente factual verificada?) then (Sí)
+  :Persistir como factual_verified;
+  stop
+else (No)
+  if (¿PersistScore supera threshold?) then (Sí)
+    :Persistir con tipo y confianza;
+    stop
+  else (No)
+    :Mantener temporal o descartar;
+    stop
+  endif
+endif
+@enduml
+
+
+====================================================================
+20. FLUJO DE OBSERVABILIDAD Y AUDITORÍA
+====================================================================
+
+@startuml
+title Observabilidad lógica de la ejecución
+
+start
+:Registrar evento de inicio;
+:Registrar agentes activados;
+:Registrar costos por agente;
+:Registrar latencias;
+:Registrar mensajes cruzados;
+:Registrar contradicciones;
+:Registrar decisiones de stop-loss;
+:Registrar artefactos persistidos;
+:Registrar motivo de cierre;
+
+:Emitir traza auditable;
+stop
+@enduml
+
+
+====================================================================
+21. FLUJO MAESTRO DEL STOP-LOSS CON INTERACCIÓN AGENTE-AGENTE
+====================================================================
+
+@startuml
+title Flujo maestro: iteración, colaboración y stop-loss
+
+start
+:Recibir problema expandible;
+:Planificar tópicos;
+:Activar agentes;
+
+:Agentes producen artefactos;
+if (¿Algún agente necesita soporte?) then (Sí)
+  :Abrir colaboración controlada vía gateway;
+  :Resolver dependencia o bloquear ciclo;
+endif
+
+:Consolidar artefactos;
+:Evaluar cobertura y contradicciones;
+:Calcular StopLossScore global;
+:Calcular StopLoss por tópico;
+
+if (¿Hay tópicos que deben cerrarse?) then (Sí)
+  :Cerrar tópicos sin valor marginal;
+endif
+
+if (¿Stop global permite continuar?) then (No)
+  :Cerrar iteración;
+  :Emitir respuesta final;
+  stop
+else (Sí)
+  if (¿Hay budget suficiente?) then (No)
+    :Cerrar por guardrail de presupuesto;
+    :Emitir respuesta final;
+    stop
+  else (Sí)
+    :Abrir nueva iteración solo con vacíos críticos;
+    :Reactivar agentes necesarios;
+    :Volver a consolidación;
+    stop
+  endif
+endif
+@enduml

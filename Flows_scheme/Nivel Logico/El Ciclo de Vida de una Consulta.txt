@@ -1,0 +1,49 @@
+@startuml
+title PolPilot: Flujo de Decisión Macro y Orquestación
+
+start
+:Usuario envía Input (Multimodal);
+partition "Capa de Ingesta" {
+    :Normalizar Texto/Audio/Imagen;
+    :Generar **NormalizedInput**;
+}
+
+partition "Dummy Analyzer (Filtro de Costo)" {
+    if (¿Es simple o follow-up directo?) then (Sí)
+        :Generar Respuesta Simple;
+        detach
+    else (No: Requiere Expansión)
+        :Calcular Complexity_Score;
+    endif
+}
+
+partition "Orquestador: Fase de Planeación" {
+    :Topic Analyzer: Descomponer en Tópicos;
+    :Detectar Dependencias (Grafo de Tópicos);
+    :Establecer Presupuesto (Max Tokens/Latencia);
+}
+
+repeat
+    partition "Ejecución Mesh (Agentes)" {
+        :Construir Contexto Filtrado por Agente;
+        :Activar Agentes Especialistas en Paralelo;
+        :Generar **Artefactos Estructurados**;
+    }
+
+    partition "Evaluación de Cierre (Stop-Loss)" {
+        :Calcular StopLossScore (Utilidad vs Costo);
+        if (¿Score < Threshold?) then (STOP / Finalizar)
+            break
+        else (CONTINUE / Re-expandir)
+            :Actualizar Grafo de Problema;
+        endif
+    }
+repeat while (¿Dentro de Budget?) is (Sí)
+
+partition "Cierre y Entrega" {
+    :Sintetizador: Consolidar Artefactos;
+    :Resolver Contradicciones Finales;
+    :Generar Respuesta Ejecutiva;
+}
+stop
+@enduml
