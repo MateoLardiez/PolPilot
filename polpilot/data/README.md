@@ -182,6 +182,72 @@ resultados = vs.search("external_research", "crédito para importar insumos", n_
 
 ---
 
+## Funciones de fetching externo (`external_fetcher.py`)
+
+Funciones que consultan APIs públicas argentinas en tiempo real y escriben en `external.sqlite`.
+
+### BCRA Estadísticas Monetarias v4.0
+
+| Función | Qué obtiene |
+|---------|-------------|
+| `fetch_principales_variables()` | Lista completa de ~1220 variables monetarias con último valor |
+| `fetch_variable_data(id_variable, desde, hasta)` | Serie temporal de una variable específica |
+| `fetch_key_macro_variables()` | Último valor de las 13 variables clave para PyMEs |
+
+### BCRA Estadísticas Cambiarias v1.0
+
+| Función | Qué obtiene |
+|---------|-------------|
+| `fetch_exchange_rates(fecha)` | Cotizaciones de todas las monedas (EUR, BRL, etc.) |
+| `fetch_usd_rate(fecha)` | Cotización del dólar USD oficial BCRA |
+| `fetch_exchange_rate_history(moneda, desde, hasta)` | Evolución histórica de una moneda |
+
+### DolarAPI.com — Todos los tipos de dólar
+
+| Función | Qué obtiene |
+|---------|-------------|
+| `fetch_all_dollar_rates()` | Los 7 tipos de dólar: oficial, blue, MEP, CCL, cripto, tarjeta, mayorista |
+| `fetch_dollar_rate(tipo)` | Un tipo de dólar específico (ej: `"blue"`, `"contadoconliqui"`) |
+| `fetch_dollar_snapshot()` | Dict con todos los dólares normalizados (compra, venta, fecha) |
+
+### BCRA Central de Deudores v1.0
+
+| Función | Qué obtiene |
+|---------|-------------|
+| `fetch_deudas(cuit)` | Deudas actuales de un CUIT en el sistema financiero |
+| `fetch_deudas_historicas(cuit)` | Historial de deudas de un CUIT (24 meses) |
+| `fetch_cheques_rechazados(cuit)` | Cheques rechazados de un CUIT |
+| `build_credit_profile_from_bcra(cuit)` | Perfil crediticio completo combinando las 3 consultas |
+
+### BCRA Régimen de Transparencia v1.0 (catálogo de préstamos)
+
+| Función | Qué obtiene |
+|---------|-------------|
+| `fetch_prestamos_personales(codigo_entidad)` | Préstamos personales de todos los bancos |
+| `fetch_prestamos_prendarios(codigo_entidad)` | Préstamos con garantía (muchas líneas PyME) |
+| `fetch_prestamos_hipotecarios(codigo_entidad)` | Préstamos hipotecarios |
+| `fetch_plazos_fijos(codigo_entidad)` | Tasas de plazos fijos (para costo de oportunidad) |
+| `fetch_all_loan_products()` | Todos los préstamos combinados en formato available_credits |
+| `fetch_pyme_eligible_loans()` | Solo préstamos que mencionan PyME/MiPyME |
+
+### BCRA Cheques Denunciados v1.0
+
+| Función | Qué obtiene |
+|---------|-------------|
+| `fetch_entidades_bancarias()` | Lista de entidades bancarias con códigos |
+| `fetch_cheque_denunciado(codigo_entidad, numero_cheque)` | Verifica si un cheque está denunciado |
+
+### Funciones de sincronización (fetch → write to DB)
+
+| Función | Qué hace |
+|---------|----------|
+| `sync_macro_indicators(empresa_id)` | Descarga variables macro BCRA + tipos de cambio → macro_indicators |
+| `sync_credit_profile(empresa_id)` | Consulta Central de Deudores por CUIT de la empresa → credit_profile |
+| `sync_available_credits(empresa_id, pyme_only)` | Descarga catálogo de préstamos BCRA → available_credits + embeddings |
+| `sync_all_external_data(empresa_id)` | Ejecuta todas las sincronizaciones de una vez |
+
+---
+
 ## Búsqueda híbrida
 
 Cuando un agente necesita información, se combinan dos métodos:
