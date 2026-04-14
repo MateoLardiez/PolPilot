@@ -1,7 +1,7 @@
 // PolPilot — API Layer
 // USE_MOCK = true  → datos de demostración (sin backend)
 // USE_MOCK = false → backend real en localhost:8000
-const USE_MOCK = false;
+const USE_MOCK = true;
 const API_BASE = 'http://localhost:8000';
 const EMPRESA_ID = 'emp_001';
 

@@ -1,6 +1,6 @@
 // PolPilot — API Layer
 // USE_MOCK = false → llama al backend real (cd backend && uvicorn main:app --reload)
-const USE_MOCK = false;
+const USE_MOCK = true;
 const API_BASE = 'http://localhost:8000';
 const EMPRESA_ID = 'emp_001';
 
