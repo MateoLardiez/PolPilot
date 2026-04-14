@@ -1,0 +1,42 @@
+{
+  "scene": "Momento 1 — Ingesta de datos caóticos",
+  "description": "El dueño manda un audio desordenado por WhatsApp. Angela lo parsea y construye la contabilidad real en segundos.",
+  "timestamp_pitch": "0:35 - 0:55",
+
+  "user_input": {
+    "type": "audio_whatsapp",
+    "transcription": "Angela, mirá, este mes vendimos como 56 palos y medio por mostrador y unos 32 por mayor. De mercadería pagamos ponele 38 millones, y los sueldos con cargas nos comieron 11 y pico. Ah, y el alquiler 1 millon 8. Nos quedan como un palo en la cuenta, estamos re justos. Los de Rosario me deben como 3 palos hace 2 meses y el lubricentro de San Martín me debe 450 lucas hace 3 meses. Después te mando el Excel.",
+    "audio_duration_seconds": 22,
+    "sender": "Gonzalo Calatayud",
+    "sender_phone": "+54 3462 421890"
+  },
+
+  "angela_response": {
+    "type": "structured_financial_summary",
+    "message": "Gonzalo, procesé tu audio. Acá va el resumen de marzo 2026:\n\n📊 **Resultado del mes**\n\n| Concepto | Monto |\n|----------|-------|\n| Ingresos mostrador | $18.500.000 |\n| Ingresos mayorista | $32.000.000 |\n| Otros ingresos | $6.000.000 |\n| **Total ingresos** | **$56.500.000** |\n| Costo mercadería | -$38.000.000 |\n| Sueldos + cargas | -$11.200.000 |\n| Alquiler | -$1.800.000 |\n| Otros gastos operativos | -$4.400.000 |\n| **Resultado operativo** | **$1.100.000** |\n\n💰 **Caja actual:** $1.131.400\n📈 **Margen bruto:** 31.7%\n⚠️ **Health Score:** 58/100 (ajustado)\n\n🔴 **Alertas:**\n- Liquidez corriente 0.91 — estás por debajo de 1.0\n- Morosos: $3.450.000 pendientes (Rosario $3M + Lubricentro SM $450K)\n- Flujo de caja negativo este mes: -$2.068.600\n\nCuando me mandes el Excel te ajusto los números exactos. ¿Querés que te arme un plan de cobranza para los morosos?",
+
+    "dashboard_data": {
+      "month": "Marzo 2026",
+      "total_revenue": 56500000,
+      "total_expenses": 55400000,
+      "net_result": 1100000,
+      "cash_balance": 1131400,
+      "gross_margin_pct": 31.7,
+      "health_score": 58,
+      "current_ratio": 0.91,
+      "alerts": [
+        {"type": "warning", "text": "Liquidez corriente 0.91 < 1.0"},
+        {"type": "danger", "text": "Flujo de caja negativo: -$2.068.600"},
+        {"type": "warning", "text": "Morosos: $3.450.000 (2 clientes)"}
+      ],
+      "revenue_chart": [
+        {"month": "Oct 25", "value": 48000000},
+        {"month": "Nov 25", "value": 51200000},
+        {"month": "Dic 25", "value": 58500000},
+        {"month": "Ene 26", "value": 42000000},
+        {"month": "Feb 26", "value": 49800000},
+        {"month": "Mar 26", "value": 56500000}
+      ]
+    }
+  }
+}

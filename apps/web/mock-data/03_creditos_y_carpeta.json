@@ -1,0 +1,190 @@
+{
+  "scene": "Momento 3 — Análisis de créditos + generación de carpeta bancaria",
+  "description": "El dueño responde 'Me sirve! Tengo caja o saco crédito?' y Angela analiza la caja, busca créditos, elige el mejor y genera la carpeta bancaria en PDF.",
+  "timestamp_pitch": "1:15 - 1:55",
+
+  "user_input": {
+    "type": "audio_whatsapp",
+    "transcription": "¡Me sirve! ¿Pero tengo caja para pagar el contenedor o saco un crédito?",
+    "audio_duration_seconds": 5,
+    "sender": "Gonzalo Calatayud"
+  },
+
+  "angela_processing": {
+    "steps": [
+      {
+        "step": 1,
+        "agent": "finance",
+        "action": "Análisis de caja y capacidad de pago",
+        "result": {
+          "cash_balance": 1131400,
+          "container_cost_usd": 35000,
+          "container_cost_ars": 42000000,
+          "can_pay_cash": false,
+          "reason": "Caja de $1.1M vs costo de $42M. No alcanza. Necesita crédito."
+        }
+      },
+      {
+        "step": 2,
+        "agent": "economy",
+        "action": "Búsqueda de créditos vigentes filtrados por elegibilidad",
+        "animation": "Simulando Comité de Riesgo",
+        "company_strengths": [
+          "42 años de antigüedad comercial",
+          "Sin deuda en BCRA (situación 1)",
+          "Certificado MiPyME vigente",
+          "Patrimonio neto: $59.531.400",
+          "Facturación creciente últimos 3 meses"
+        ],
+        "company_weaknesses": [
+          "Flujo de caja negativo en marzo (-$2M)",
+          "Liquidez corriente 0.91 (bajo 1.0)",
+          "17% operaciones informales reducen perfil crediticio formal"
+        ],
+        "credits_found": 5,
+        "credits_qualified": 3
+      },
+      {
+        "step": 3,
+        "agent": "economy",
+        "action": "Ranking de créditos por conveniencia",
+        "result": "Banco Nación seleccionado como mejor opción"
+      },
+      {
+        "step": 4,
+        "agent": "document_generator",
+        "action": "Generación de carpeta bancaria en PDF",
+        "result": "Perfil_Financiero_Calatayud_SRL_Abril_2026.pdf"
+      }
+    ]
+  },
+
+  "angela_response": {
+    "type": "whatsapp_message_with_pdf",
+    "message": "Gonzalo, analicé tu situación:\n\n💰 **Tu caja hoy:** $1.131.400\n📦 **Costo del contenedor:** USD 35.000 (~$42.000.000)\n❌ **No te alcanza cash.** Pero tu perfil crediticio es sólido.\n\n✅ **Tu perfil:**\n- 42 años de antigüedad\n- Sin deuda BCRA (situación 1 — impecable)\n- Patrimonio neto: $59.5M\n- Facturación creciente\n\nBusqué todos los créditos vigentes en el mercado y filtré a cuáles calificás. Encontré 3:\n\n🏆 **#1 — Crédito PyME Inversión Productiva (Banco Nación)**\n- Tasa: 29% anual → **baja a 24% con bonificación por importación**\n- Monto: hasta $80M\n- Plazo: 48 meses\n- Cuota estimada: **$1.380.000/mes**\n- Requisitos que cumplís: ✅ Certificado PyME, ✅ +2 años antigüedad, ✅ Sin deuda BCRA\n- Te falta: flujo de fondos proyectado (te lo genero yo)\n\n🥈 **#2 — Línea Importaciones PyME (Banco Provincia)**\n- Tasa: 26% → **baja a 21% con bonificación**\n- Hasta USD 50.000 | Plazo: 36 meses\n- Cuota estimada: **$1.620.000/mes**\n- Te falta: documentar la operación de comercio exterior\n\n🥉 **#3 — Préstamo Comex (Banco ICBC)**\n- Tasa: 8% anual en USD (la más baja)\n- Plazo: 6 meses (corto)\n- Cuota estimada: **$6.100.000/mes**\n- Riesgo: plazo corto, tenés que vender rápido el contenedor\n\n📋 **Mi recomendación:** Andá con Banco Nación. La cuota de $1.4M/mes es absorbible con tu facturación de $56.5M. Con 2 rotaciones del stock importado (3 meses cada una), recuperás la inversión en 6 meses.\n\n📎 **Te armé la carpeta bancaria completa.** Adjunto el PDF listo para presentar al banco.",
+
+    "pdf_attachment": {
+      "filename": "Perfil_Financiero_Calatayud_SRL_Abril_2026.pdf",
+      "sections": [
+        {
+          "title": "1. Datos de la Empresa",
+          "content": {
+            "razon_social": "Calatayud Frenos y Embragues SRL",
+            "cuit": "30-71584923-4",
+            "actividad": "Venta y distribución de repuestos automotores",
+            "domicilio": "Av. Santa Fe 1240, Venado Tuerto, Santa Fe",
+            "antiguedad": "42 años (fundada 1984)",
+            "empleados": 8,
+            "regimen": "Responsable Inscripto — PyME Tramo 1",
+            "certificado_mipyme": "Vigente"
+          }
+        },
+        {
+          "title": "2. Situación Patrimonial",
+          "content": {
+            "activos": {
+              "caja_y_bancos": 1131400,
+              "cuentas_por_cobrar": 14200000,
+              "stock": 45000000,
+              "vehiculo": 18000000,
+              "mobiliario": 5500000,
+              "total": 83831400
+            },
+            "pasivos": {
+              "cuentas_por_pagar": 22300000,
+              "cargas_fiscales": 2000000,
+              "deuda_bancaria": 0,
+              "total": 24300000
+            },
+            "patrimonio_neto": 59531400
+          }
+        },
+        {
+          "title": "3. Estado de Resultados (Marzo 2026)",
+          "content": {
+            "ingresos": 56500000,
+            "costo_mercaderia": -38600000,
+            "margen_bruto": 17900000,
+            "gastos_operativos": -16988600,
+            "resultado_operativo": 911400,
+            "margen_bruto_pct": "31.7%",
+            "margen_operativo_pct": "1.6%"
+          }
+        },
+        {
+          "title": "4. Historial de Ventas (6 meses)",
+          "content": [
+            {"mes": "Octubre 2025", "facturacion": 48000000},
+            {"mes": "Noviembre 2025", "facturacion": 51200000},
+            {"mes": "Diciembre 2025", "facturacion": 58500000},
+            {"mes": "Enero 2026", "facturacion": 42000000},
+            {"mes": "Febrero 2026", "facturacion": 49800000},
+            {"mes": "Marzo 2026", "facturacion": 56500000}
+          ],
+          "promedio_mensual": 51000000,
+          "tendencia": "Creciente (+17.7% oct→mar)"
+        },
+        {
+          "title": "5. Indicadores Financieros",
+          "content": {
+            "margen_bruto": "31.7%",
+            "liquidez_corriente": 0.91,
+            "endeudamiento": "0.38 (bajo)",
+            "rotacion_cobro_dias": 28,
+            "rotacion_pago_dias": 42,
+            "ciclo_caja_dias": 21,
+            "health_score": "58/100"
+          }
+        },
+        {
+          "title": "6. Situación BCRA",
+          "content": {
+            "situacion": "1 (Normal — sin atrasos)",
+            "deuda_sistema_financiero": 0,
+            "cheques_rechazados": 0,
+            "historial_24_meses": "Situación 1 ininterrumpida"
+          }
+        },
+        {
+          "title": "7. Destino del Crédito Solicitado",
+          "content": {
+            "destino": "Importación directa de repuestos de frenos y embragues desde Turquía",
+            "monto_solicitado": "USD 35.000 (ARS ~42.000.000)",
+            "proveedor": "Turk Fren Sanayi — Turquía",
+            "justificacion": "Reducción de costo unitario del 20% vs distribuidores nacionales. Margen bruto proyectado sube de 31.7% a 39.8%.",
+            "regulacion_aplicable": "Resolución AFIP 5432/2025 + Decreto 124/2026 (bonificación tasa)",
+            "retorno_estimado": "Recupero de inversión en 6 meses (2 rotaciones de stock)"
+          }
+        },
+        {
+          "title": "8. Flujo de Fondos Proyectado (con crédito)",
+          "content": [
+            {"mes": "Abril 2026", "ingreso": 56000000, "egreso": 55000000, "cuota_credito": 1380000, "saldo": -380000, "nota": "Mes de compra, stock en tránsito"},
+            {"mes": "Mayo 2026", "ingreso": 58000000, "egreso": 52000000, "cuota_credito": 1380000, "saldo": 4620000, "nota": "Llega contenedor, comienza venta"},
+            {"mes": "Junio 2026", "ingreso": 62000000, "egreso": 50000000, "cuota_credito": 1380000, "saldo": 10620000, "nota": "Margen mejorado por importación directa"},
+            {"mes": "Julio 2026", "ingreso": 60000000, "egreso": 49000000, "cuota_credito": 1380000, "saldo": 9620000, "nota": "1ra rotación completa"},
+            {"mes": "Agosto 2026", "ingreso": 63000000, "egreso": 51000000, "cuota_credito": 1380000, "saldo": 10620000, "nota": "2do pedido posible"},
+            {"mes": "Septiembre 2026", "ingreso": 65000000, "egreso": 52000000, "cuota_credito": 1380000, "saldo": 11620000, "nota": "Inversión recuperada"}
+          ]
+        }
+      ],
+      "generated_by": "PolPilot — Angela AI",
+      "generated_at": "2026-04-14T14:30:00-03:00"
+    }
+  },
+
+  "dashboard_data": {
+    "credit_comparison_chart": [
+      {"bank": "Banco Nación", "rate": 24, "monthly_payment": 1380000, "term_months": 48, "recommended": true},
+      {"bank": "Banco Provincia", "rate": 21, "monthly_payment": 1620000, "term_months": 36, "recommended": false},
+      {"bank": "Banco ICBC", "rate": 8, "monthly_payment": 6100000, "term_months": 6, "recommended": false}
+    ],
+    "margin_projection": {
+      "current": 31.7,
+      "projected": 39.8,
+      "increase": 8.1
+    },
+    "investment_recovery_months": 6,
+    "status_animation": "Simulando Comité de Riesgo"
+  }
+}

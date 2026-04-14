@@ -1,0 +1,36 @@
+{
+  "scene": "Momento 2 — Alerta proactiva de Angela",
+  "description": "Angela detecta una oportunidad cruzando macroeconomía con datos del negocio y notifica al dueño sin que él pregunte.",
+  "timestamp_pitch": "0:55 - 1:15",
+
+  "trigger": {
+    "type": "proactive_alert",
+    "source": "regulatory_monitor",
+    "detected_event": "Resolución AFIP 5432/2025 — Régimen simplificado de importación para PyMEs Tramo 1 y 2",
+    "detection_timestamp": "2026-04-14T09:15:00-03:00",
+    "cross_references": [
+      "Proveedor actual: Turk Fren Sanayi (Turquía) — anticipo 100%, costo unitario actual via distribuidor nacional",
+      "Decreto 124/2026: Bonificación de 5 puntos en tasa para importación de insumos PyME",
+      "Perfil empresa: Calatayud Frenos — importador potencial, certificado PyME vigente"
+    ]
+  },
+
+  "angela_notification": {
+    "type": "whatsapp_push",
+    "message": "🚨 **Alerta de oportunidad — Angela**\n\nGonzalo, detecté algo importante:\n\nSe desreguló la importación de repuestos automotores (Resolución AFIP 5432/2025). Encontré que importar directo de Turk Fren Sanayi en Turquía te sale **20% más barato** que comprarlo a Frasle o Fremax como distribuidor.\n\n**Impacto en tu negocio:**\n- Costo unitario pastillas de freno: baja de $18.500 a $14.800\n- Costo unitario discos ventilados: baja de $42.000 a $33.600\n- **Tu margen bruto sube del 31.7% al 39.8% (+8.1 puntos)**\n\nAdemás, el Decreto 124/2026 te bonifica 5 puntos en la tasa de interés si usás crédito para importar.\n\n¿Querés que analice si te conviene traer un contenedor?",
+
+    "dashboard_data": {
+      "alert_type": "opportunity",
+      "alert_priority": "high",
+      "regulation": "Resolución AFIP 5432/2025",
+      "current_supplier_cost": 18500,
+      "direct_import_cost": 14800,
+      "cost_reduction_pct": 20,
+      "current_margin_pct": 31.7,
+      "projected_margin_pct": 39.8,
+      "margin_increase_pp": 8.1,
+      "bonus_decree": "Decreto 124/2026 — Bonificación 5 puntos tasa",
+      "confidence": 0.95
+    }
+  }
+}
