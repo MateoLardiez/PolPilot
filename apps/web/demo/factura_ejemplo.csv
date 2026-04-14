@@ -1,0 +1,9 @@
+Nro Factura,Fecha,Cliente,Producto,Cantidad,Precio Unit,Subtotal,IVA,Total
+A-0001-00234,2026-03-15,Red de Talleres Venado Tuerto,Pastillas de freno Ferodo,50,32000,1600000,336000,1936000
+A-0001-00234,2026-03-15,Red de Talleres Venado Tuerto,Disco de freno ventilado VW Gol,20,68000,1360000,285600,1645600
+A-0001-00235,2026-03-18,Lubricentros zona sur Santa Fe,Kit embrague Sachs Fiat,8,295000,2360000,495600,2855600
+A-0001-00236,2026-03-20,MercadoLibre,Manguera freno universal,100,15000,1500000,315000,1815000
+A-0001-00237,2026-03-22,Concesionarias usados región,Cilindro maestro freno Toyota,10,155000,1550000,325500,1875500
+A-0001-00238,2026-03-25,Mostrador particular,Kit reparación cilindro embrague,15,42000,630000,132300,762300
+A-0001-00239,2026-03-28,Red de Talleres Venado Tuerto,Pastillas de freno Ferodo,30,32000,960000,201600,1161600
+A-0001-00240,2026-03-30,Lubricentro San Martín,Disco de freno ventilado VW Gol,5,68000,340000,71400,411400

@@ -1,12 +1,8 @@
 // PolPilot — API Layer
-// USE_MOCK = true  → datos de demostración (sin backend)
-// USE_MOCK = false → backend real en localhost:8000
+// Flag para switch entre mock data y backend real
 const USE_MOCK = true;
-const API_BASE = 'http://localhost:8000';
-const EMPRESA_ID = 'emp_001';
-
-// Conversación persistente por sesión (se renueva al recargar la página)
-const SESSION_CONV_ID = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
+const API_BASE = 'http://localhost:8000/api';
+const EMPRESA_ID = 'empresa_demo';
 
 // ═══════════════════════════════════════════════════════════════
 // MOCK DATA (construido a partir de polpilot/backend/seed/*.json)
@@ -177,61 +173,40 @@ async function fetchDashboard(empresaId = EMPRESA_ID) {
       alerts: computeAlerts()
     };
   }
-  try {
-    const res = await fetch(`${API_BASE}/dashboard/${empresaId}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.json();
-  } catch {
-    // Fallback a mock si el backend no responde
-    return {
-      profile: MOCK.profile, financials: MOCK.financials,
-      indicators: MOCK.indicators[0], cashPosition: computeCashPosition(),
-      morosos: MOCK.clients.filter(c => c.risk_level === 'high'),
-      benchmark: MOCK.benchmark, alerts: computeAlerts()
-    };
-  }
+  const res = await fetch(`${API_BASE}/dashboard/${empresaId}`);
+  return res.json();
 }
 
 async function fetchFinanzas(empresaId = EMPRESA_ID) {
   if (USE_MOCK) {
     await fakeLag(250);
     return {
-      financials: MOCK.financials, indicators: MOCK.indicators,
-      clients: MOCK.clients, morosos: MOCK.clients.filter(c => c.risk_level === 'high'),
-      products: MOCK.products, suppliers: MOCK.suppliers, employees: MOCK.employees
+      financials: MOCK.financials,
+      indicators: MOCK.indicators,
+      clients: MOCK.clients,
+      morosos: MOCK.clients.filter(c => c.risk_level === 'high'),
+      products: MOCK.products,
+      suppliers: MOCK.suppliers,
+      employees: MOCK.employees
     };
   }
-  try {
-    const res = await fetch(`${API_BASE}/finanzas/${empresaId}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.json();
-  } catch {
-    return {
-      financials: MOCK.financials, indicators: MOCK.indicators,
-      clients: MOCK.clients, morosos: MOCK.clients.filter(c => c.risk_level === 'high'),
-      products: MOCK.products, suppliers: MOCK.suppliers, employees: MOCK.employees
-    };
-  }
+  const res = await fetch(`${API_BASE}/finanzas/${empresaId}`);
+  return res.json();
 }
 
 async function fetchCreditos(empresaId = EMPRESA_ID) {
   if (USE_MOCK) {
     await fakeLag(350);
     return {
-      credits: MOCK.credits, creditProfile: MOCK.creditProfile,
-      macro: MOCK.macro, regulations: MOCK.regulations, sectorSignals: MOCK.sectorSignals
+      credits: MOCK.credits,
+      creditProfile: MOCK.creditProfile,
+      macro: MOCK.macro,
+      regulations: MOCK.regulations,
+      sectorSignals: MOCK.sectorSignals
     };
   }
-  try {
-    const res = await fetch(`${API_BASE}/creditos/${empresaId}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.json();
-  } catch {
-    return {
-      credits: MOCK.credits, creditProfile: MOCK.creditProfile,
-      macro: MOCK.macro, regulations: MOCK.regulations, sectorSignals: MOCK.sectorSignals
-    };
-  }
+  const res = await fetch(`${API_BASE}/creditos/${empresaId}`);
+  return res.json();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -315,109 +290,31 @@ async function sendQuery(message, context = {}) {
       );
     });
   }
+  // Real SSE — will be replaced when backend is ready
   const res = await fetch(`${API_BASE}/query`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      company_id: EMPRESA_ID,
-      user_message: message,
-      conversation_id: SESSION_CONV_ID,
-    })
+    body: JSON.stringify({ empresa_id: EMPRESA_ID, message, context })
   });
   return res.json();
-}
-
-// Pasos visibles mientras el agente procesa (simulados para UX)
-const _REAL_STEPS = [
-  { step: 'ingest',    message: 'Procesando tu consulta...',             delay: 400  },
-  { step: 'client_db', message: 'Consultando datos de la empresa...',    delay: 800  },
-  { step: 'skills',    message: 'Angela está reuniendo información...',  delay: 1400 },
-  { step: 'research',  message: 'Verificando datos en tiempo real...',   delay: 2000 },
-  { step: 'synthesis', message: 'Elaborando respuesta final...',         delay: 2600 },
-];
-
-function _formatRealResponse(data) {
-  // Traduce QueryResponse del backend al formato que espera app.js
-  const payload = data.response || data;
-  const meta    = data.metadata || {};
-
-  let text = payload.message || 'Sin respuesta.';
-
-  // Agregar key_data_points si los hay
-  if (payload.key_data_points && payload.key_data_points.length > 0) {
-    const dpLines = payload.key_data_points
-      .map(dp => `- **${dp.label}:** ${dp.value}`)
-      .join('\n');
-    text += `\n\n**Datos clave:**\n${dpLines}`;
-  }
-
-  // Agregar recomendaciones si las hay
-  if (payload.recommendations && payload.recommendations.length > 0) {
-    const recLines = payload.recommendations
-      .map(r => `- [${r.urgency.toUpperCase()}] ${r.action} → ${r.impact}`)
-      .join('\n');
-    text += `\n\n**Recomendaciones:**\n${recLines}`;
-  }
-
-  // Indicador de confianza
-  const conf = payload.confidence || 0;
-  if (conf < 0.5) {
-    text += '\n\n_⚠️ Usando datos de ejemplo — conectá la DB para resultados reales._';
-  }
-
-  return {
-    step: 'complete',
-    response: text,
-    follow_up_suggestions: payload.follow_up_suggestions || [],
-    tools_used: meta.agents_activated || [],
-    confidence: conf,
-    conversation_id: meta.conversation_id,
-  };
 }
 
 function sendQueryStreaming(message, context, onStep, onComplete) {
   if (USE_MOCK) {
     return sendQueryMock(message, context, onStep, onComplete);
   }
-
-  const timers = [];
-  let cancelled = false;
-
-  // Mostrar pasos UX mientras espera
-  let accumulated = 0;
-  for (const s of _REAL_STEPS) {
-    accumulated += s.delay;
-    timers.push(setTimeout(() => { if (!cancelled) onStep(s); }, accumulated));
-  }
-
-  // Llamada real al agente
-  fetch(`${API_BASE}/query`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      company_id: EMPRESA_ID,
-      user_message: message,
-      conversation_id: SESSION_CONV_ID,
-    }),
-  })
-    .then(r => {
-      if (!r.ok) throw new Error(`Error ${r.status}: ${r.statusText}`);
-      return r.json();
-    })
-    .then(data => {
-      timers.forEach(clearTimeout);
-      if (!cancelled) onComplete(_formatRealResponse(data));
-    })
-    .catch(err => {
-      timers.forEach(clearTimeout);
-      if (!cancelled) onComplete({
-        step: 'complete',
-        response: `⚠️ No pude conectar con el servidor.\n\n**Error:** ${err.message}\n\nVerificá que el backend esté corriendo:\n\`\`\`\ncd backend && uvicorn main:app --reload\n\`\`\``,
-        follow_up_suggestions: [],
-      });
-    });
-
-  return () => { cancelled = true; timers.forEach(clearTimeout); };
+  const evtSource = new EventSource(`${API_BASE}/query/stream?empresa_id=${EMPRESA_ID}&message=${encodeURIComponent(message)}`);
+  evtSource.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+    if (data.step === 'complete') {
+      onComplete(data);
+      evtSource.close();
+    } else {
+      onStep(data);
+    }
+  };
+  evtSource.onerror = () => evtSource.close();
+  return () => evtSource.close();
 }
 
 async function ingestFile(file) {
