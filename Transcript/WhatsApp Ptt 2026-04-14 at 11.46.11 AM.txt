@@ -1,0 +1,243 @@
+(Transcrito por TurboScribe. Actualizar a Ilimitado para eliminar este mensaje.)
+
+Una transfección. Ahora viene algo muy importante porque es grabar un vídeo. Nosotros también podemos construir acá, no sé, SpaceX, pero si no grabamos un buen vídeo, eso nos elimina porque tenemos que lograr que de este vídeo se acuerden de nosotros. 
+
+Entonces, primero que nada está en armar un dashboard y algo más lindo de lo que tenemos acá. Es decir, acá hay posiblemente números y cosas que no todos los miembros de la empresa puedan ver. Adaptarnos bien primero a un tipo de cliente y mostrar eso en el vídeo. 
+
+Quizás hacer una filosofía de Apple se me ocurre, no sé, lo podemos ver, meter alguna skill, armar esto, violar. Como lo que hace Steve Jobs cuando hizo el lanzamiento de iPhone. Que no hace falta un manual, dice él, para usar tu app. 
+
+Eso determina si es buena o no. Del vídeo dependen muchísimas cosas. Después nos habló del motor de riesgo, que más bien no lo usemos como un motor de riesgo como tal, porque al decir motor de riesgo ponía, la IA comete errores. 
+
+Entonces nosotros no somos los que le decimos cuánta tasa de crédito, sino que le tenemos que ahorrar al tipo. La forma en la que las pymes pueden conseguir crédito, no sólo dentro del país, sino que afuera. Porque compara poner una base de datos de un montón de créditos posibles, de distintas startups vintage o de los mismos bancos. 
+
+En base a lo que la empresa te convenga, al tamaño de la empresa. Es decir, si tengo una ferretería, obviamente va a ser mejor mandar créditos del banco. Pero si tengo una empresa mediana, quizás busco de una vintage de México, lo que me convenga. 
+
+Entonces, mostrar más insights, se me ocurre, de lo que es economía, finanzas, que eso ya lo tenemos bastante craneado. Ahí justamente también, Pau. Nosotros estamos pensando que para la presentación, podríamos usar en vez de una parte de legales, porque las legales nos parece más complicada de llevar a cabo, marketing. 
+
+¿Qué opinan de eso? ¿Qué se me pasa por la cabeza? Porque de los tópicos habíamos dicho legales, finanzas y economía. Lo que estábamos hablando era que capaz legales es más complejo, porque es más parte legal y necesitamos más documentación, necesitamos ver si están las APIs oficiales, pero podemos generar de marketing. ¿Por qué? Porque es más fácil analizar en marketing. 
+
+Campaña, costos de campaña, metas, toda esa parte. Entonces podemos crear como el tópico de marketing en lugar de legales. Entonces, ¿qué opinan? ¿Cómo para el Boca? No te digo que sería muy bueno. 
+
+Ahora, ¿qué se me ocurre? Que estaríamos metiendo un montón de cosas en el plato, ¿no es cierto? ¿Qué nos dijo este tipo recién? Los pendejos y todo lo que vi ganando jacatones hacen una cosa, pero muy bien, muy bien. Entonces, creo que podemos incluso discutir si meterlo legal o no, pero se me ocurre que meter marketing sería como que meter muchísimas cosas. Si bien es algo que podemos incorporar a futuro como empresa y de ofrecernos a los clientes, no sé si sería la jacatón. 
+
+No me cabe duda, Diego, que es una excelente incorporación para las startups en general, pero... Hagamos una cosa recién de que hagamos una cosa que el tipo la vea y diga, pa, esto lo hace 10 veces mejor que los demás. ¿Qué creo que es yo? Acá quiero escuchar sus opiniones y que un poco diferimos con Lucas. Yo te diría que es el cruce de información micro y macro para darte la mejor estrategia. 
+
+Y Lucas cree, muy bien argumentado, que es la capacidad que podemos dar de hacer que encuentres créditos. ¿Qué les parece a ustedes que es más valioso? Fácil lo de los créditos. ¿Tantas pymes sacan tantos créditos? Las pymes necesitan sacar créditos para capital. 
+
+Realmente es que hoy en día no sacan mucho porque no pueden. Eso es la realidad. No pueden sacar créditos porque no saben a la perfección lo que es la salud financiera de su negocio, no saben para qué créditos aplican y demás. 
+
+Además de que muchas están en el negro. Y vos Lucas, ¿cómo decís? Para mí lo más importante que tiene Polpilot es la capacidad de cruzar el contexto micro, es decir, los datos internos de tu empresa, con el contexto macro, ya sea macroeconómico, macroregulatorio, para darte siempre la mejor estrategia posible. Bueno, ahí justamente también tenemos, a mí me gusta más ese nicho, pero igual ahí justamente estamos hablando de que en cuanto a la diferenciación entre finanzas y economía, porque finanzas es más a flujo de caja. 
+
+Lo estuvimos planeando, ¿no? Que era más pensado el flujo de caja. Cuánto movimiento de caja hay, cuánto ICO hay, cuánto dinero tengo, cómo van mis finanzas en un mes, dos meses, tres meses. Y en economía, o sea, si bien podemos tener la economía global macro de la información país, pero eso es consultar medios e información oficial. 
+
+Pero también la economía a nivel macro de cuánto stock tengo, cuánto producto necesito comprar, todas esas partes que habías comentado. En realidad cambiaría la definición. Lo que me gustó de lo que vos decís es como plantear la solución como una centralización de contexto. 
+
+No microeconomía y microeconomía, sino lo interno a la empresa y todo lo externo a la empresa. Hoy en día lo que podemos facilitar con un producto es la salida de la investigación y la toma de decisiones intermedia. No en micro y macro, sino en interno y externo y que todo eso se fusione para que las decisiones de cualquier tipo de empresa, que nosotros quedamos de nuevo carpines o lo que sea, porque las grandes corporaciones ya van a tener algunas soluciones de estilo. 
+
+Pero la gente que no está... Sí, centralización de contexto, igual que lo que lo necesita la AI, porque además eso va retroalimentando nuestro sistema. También lo podemos empoderar por ahí. Es decir, en la medida en que nosotros en el propio negocio va usando nuestro producto y va creciendo con el producto, también mejora cómo el producto funciona, porque le va ayudando y eso es importantísimo para poder salir a venderlo ahora. 
+
+Tenemos un producto que se retroalimenta solo. En la medida en la que nuestro cliente final lo usa, va a mejorar. Porque nosotros lo que hacemos es agarrar información interna, se procesa, se guarda, se genera un resumen. 
+
+Eso es todo lo que estamos viendo recién a nivel técnico. Y después, más a nivel producto en general, es bueno, también podemos generar un agente, lo que sea, que investigue solo. Le ahorras el paso de tener que entender, investigar. 
+
+O sea, no toma la decisión final nuestro producto, pero le da todo un paneo de información al dueño de la firma y al fin y al cabo va a ser una herramienta para líderes de empresas. Ahí está el user, digamos. También una de las fuertes, que es justamente lo que yo he mencionado, que no solamente se queda con la pregunta, sino que el orquestador vuelve a preguntar en relación a diferentes tópicos. 
+
+Porque muchas veces pasa que el usuario dice una pregunta muy simple y necesita otra cosa que nada que ver. Entonces, ¿qué es lo que yo decía? Bueno, el orquestador se encarga de hacer más preguntas sobre eso y clasificarlas dependiendo del tópico. Entonces, no sé. 
+
+Pregunta, quiero importar pollo, la pregunta. Quiero importar pollo. Entonces, y su empresa es res, es una empresa de carnicería. 
+
+Sí, de libido. ¿Tenemos un ejemplo concreto de esto? ¿Con datos? ¿Qué se te ocurre? ¿Cómo sería un ejemplo de algo estratégico? Importaciones. Lo que enfrentaron los viejos fue ponerle, obviamente, antes de lo que es la desregulación de importaciones, que se compraban a distribuidores dentro de Argentina de repuestos. 
+
+Es decir, que tenían todos estos repuestos y los mismos vendían. Ahora que hicieron cuando se desreguló, vieron qué repuesto les convenía traer, agarraron, buscaron proveedor de Turquía. Empezaron a traer repuestos de Turquía para allá.
+
+¿Esto es lo que vos estás diciendo? ¿Eso cómo te lo puede detectar la vida? No, justamente con esto. Primero, el contexto se hace de la propia pregunta del usuario y de lo que vaya generando el consultor. Quizás al principio no te va a dar información hiper robusta. 
+
+Quizás al principio te va a hacer más preguntas, vas a ir a buscar y te va a dar material a vos. Y vos le vas a responder esto me sirve, esto no me sirve, cosas por el estilo. Por eso, además, lo que estamos haciendo es una plataforma de información.
+
+¿Las empresas relacionadas en tu sector están empezando a importar tal producto? Claro, porque podemos poner un agente que sabe investigar. Eso es lo que me dijo y lo primero que pasó, te me viniste igualmente, porque dijo que en una parte... Como que poner un agente que salga a captar información, así como vos haces los videos con el ganado, hacerlo de distintas casas de repuesto, casas del sector de la empresa en la que trabajemos, para sacar data de ahí, a pesar de que nosotros no tengamos un montón de clientes para sacar esa información. Es que puede salir. 
+
+Por eso, interior y exterior. Interior se lo tiene que ir dando el propio empleado. Cuando compra el producto, él sabe que va a tener que nutrir a la herramienta con información interna. 
+
+Lo que es exterior, una vez que la información interior está generada, nuestro producto va a tener suficiente contexto para salir a buscar y para ganar más contexto constantemente. Y eso después incluso lo puede dejar si vos quisieras corriendo solo. Todo el tiempo es un cerebro que estás generando para todas las empresas. 
+
+Vamos a crear un cerebro de empresas. Necesitamos hacer un por 10 en la mejora para el tipo. ¿Qué me refiero con esto de por 10? Dijo el residente textual que si mejoras cinco veces más la realidad del dueño, no sirve. 
+
+Quiero un por 10 de mejora. Entonces dijo poner cosas muy sólidas. La comparación de los créditos es brutal porque puede ver todos los créditos a la vez. 
+
+Y como ya conoce la empresa, dice, aplico para esto. Lo mismo con los proveedores. Agarra todos los proveedores y te agarra lo más barato, lo que más te conviene en base a tu situación, etc. 
+
+¿Es verdad lo de los créditos? Porque es gigante el mercado y la capacidad que le puede dar. ¿Qué digo yo? ¿Poner las dos igual? No poner una. Pero esto sería un ejemplo fuerte. 
+
+Pero es un ejemplo porque esto va a funcionar para lo que sea. A mí me parece, quizá más la idea tuya, pero me parece mucho más concreto lo suyo. Como no se me ocurre mostrarlo tan bien en la demo lo que vos me mostrás. 
+
+¿Cómo lo mostrarías literalmente en la demo? ¿Cómo te lo mostraría? Anuncio de las regulaciones y Angela, que es la asistente de IA, le dice, che, se acaban de desregular las importaciones, te conviene hacer tal compra de tal proveedor, te agarrás tanto. Pero aparte de las regulaciones al exterior o qué? Bueno, pero un ejemplo de lo que hubiese pasado si le hubieses tenido a Paul hoy en día. Hoy tiene que ser algo que atrapen. 
+
+Igual yo no sé. Acaba de salir a lo largo de un crédito. Yo digo ahí, tipo, uh, mirá boludo, la nada puedo adquirir 500 millones de dólares, está re bajo, me dice, en tanto tiempo con lo que estás ganando lo recuperás, podés acortar sueldo, te iba a cortar la cuota del crédito en tantos meses y cumpliste los términos, no sé qué.
+
+Entonces lo vemos concreto. ¿Y cómo ven? Quizá que te da más ventaja. ¿Cómo ven? Mostrar ambas cosas de esta manera. 
+
+Que te salte un anuncio diciendo, hay una nueva línea de créditos, debido a tus finanzas, estamos aplicando. ¿Qué es hacer con la plata? Que haya cruzado tus datos internos con el dato macro que te hace salir un nuevo crédito y mostramos el acercamiento a los créditos que te da. Eso sería un ejemplo robusto, un caso uso aplicado a ese nicho que es un nicho rentable.
+
+Muestre una cosa muy bien hecha, que sea una cosa bien hecha. Podemos hacer esto como ejemplo, y después para vender a escalabilidad, esto en realidad se puede aplicar para lo que quieras. Y después tenemos tantos módulos y lo que más, y qué sé yo.
+
+Procuremos que ahora lo que puedan lograr construir ahora, tanto en diseño como en el backing, sea lo que vayamos a mostrar en el video. Y no solamente mostrar en el video, sino que creo que también les va a importar mucho mostrar cómo funciona detrás. ¿Por qué? Porque si mostramos únicamente, bueno, te trae información, vos te buscas información.
+
+Que mostrar cómo la busca, cómo funciona el orquestador, por qué hace preguntas de nuevo, qué es lo que quiere, qué hicieron. Ahí podemos mostrar un flujo, porque realmente eso no se muestra. Yo en realidad lo que haría ahí es a nivel estrategia de presentación, es lo que es el storytelling más por este lado, más por el lado de qué es lo que estamos generando, etc.
+
+Pero pondría unos slides donde quizás hablamos por encima, donde está la arquitectura. Entonces ellos lo van a entender. Esta arquitectura que vos tenés acá, yo lo puedo empezar a mapear, si querés.
+
+Hago un buen mapeo, no sé, en un mermaid o lo que sea, o lo paso a miró, vemos. Me parece perfecto. Y eso después lo podemos trasladar a la persona.
+
+Tenés razón, digo, hay que mostrar qué es esa arquitectura. Que pongan voz a ellos, que ellos se intriguen y se pongan a verlo. Igual lo que me gusta ahí justamente es que a nivel de storytelling dicen, bueno, ahora quiero saber a qué crédito puedo aplicar.
+
+Le pregunto, ¿qué crédito tengo? O ¿qué crédito puedo usar? Porque no tengo idea. Entonces él te dice, hacemos un hincapié, ¿qué hace? Y mostramos cómo, qué hace detrás. No lo explicamos, sino, ¿qué hace detrás? Y ¡pum! Me genera la respuesta con todos los créditos.
+
+Y ahí el delineo de los bloques, después, si les interesa lo que hace, pueden verlo acá en pantalla. Ya está. Exacto.
+
+Y los que no, ponemos así. Para eso tenemos daño y necesitamos también buena data. Necesitamos buena data de costos, tipo de gasto de la empresa.
+
+Eso es lo que vamos a generar. Esto vos lo podés pasar a un transcript. Eso es lo que va a salir.
+
+Pasamos a un transcript y esto mismo se lo pasamos a Opus o cualquiera. Oye, tenemos Opus todo el día. Le explicamos, esto ya lo va a tener todo.
+
+Y que nos salga el plan, ¡tá, tá, tá! Y empezamos ahora. ¿Sirve esa? ¿Sacamos los datos? Si, generamos datos iniciales. Lo generamos en JSON, va a ser lo más efectivo.
+
+Igual, como ustedes quieran. Si quieren más visuales, para... Ahí, bueno, en división de tareas, lo que podemos hacer, porque nuestro desarrollamos, pueden ir haciendo toda esa parte de crear la información. ¿Puedo jugar con esos y armar eso? Claro, claro.
+
+Igual también lo vamos a necesitar para las arquitecturas. Sí, vamos con las dos. Eso es lo que les dije antes.
+
+Yo por mí estoy... Perfecto. Si quieren podemos hacer como de túnel acá. Perfecto, perfecto.
+
+De jungla. Para dividir más o menos... Juego de jungla. Para pensar otra vez qué es lo que vamos a hacer.
+
+Entonces, lo que vamos a hacer es una arquitectura que es un cerebro para empresas, básicamente. ¿No? Sí, es un cerebro para empresas, pero que se va autogenerando y va aprendiendo solo. O sea, vos, el usuario tiene que construirlo desde su conocimiento interno.
+
+Y nuestro cerebro va a buscar solo afuera. Lo exterior lo puede complementar el usuario si quiere. Con, che, mirá, quiero que te bases en esto.
+
+Pero nuestro coso va a ser robusto en salir a buscar la información. Sí, lo quiero decir. Sí, que si bien esto lo decís de razón, cuando vamos al caso termine siendo un cerebro para empresas.
+
+Claro, pero que se vaya generando solo. Hoy en día, ¿cuál es el problema principal? Y esto también lo tenés que anotar ahora. El principal problema de hoy es que no tiene el contexto.
+
+Vos no podés agarrar a GPT, a todo lo que sea, y sin que vos lo estés nutriendo. Porque además esto tiene que, de alguna manera, educar al usuario un poco. Necesitamos que esto te vaya ayudando de esta manera.
+
+De esto te vaya ayudando de esta manera, necesitamos que vos nos des esta información. Entonces, él va llenando su propio base de datos sin saberlo. Va generando la... Una personalización.
+
+Exactamente. La AI no puede, vos no podés agarrar una AI y decirle analizar esta información. Yo quisiera ir a donde yo laburo hoy.
+
+Si no generan el cerebro desde adentro, la AI no se puede comunicar con nada de lo que hay adentro. Si vos empezás a generar un cerebro tuyo, de tu infraestructura, de tu contexto, de la cantidad de empleados que tenés, de todos los datos que vos le quieras dar, tenés la parte interna. Una vez que esa parte interna está generada, ahí ya la podés conectar con todas las herramientas exteriores que vos quieras.
+
+Está muy bien. Pero, ¿cómo querés plantear el paso a paso? La idea base es un cerebro para empresas, que es lo que va a tomar información interna e información externa. Pero la interna se genera primero.
+
+Claro, claro. Y que es los tópicos que vamos a tener, economía y finanzas. Y hagamos 100% una bienesa.
+
+Economía y finanzas. Hagamos una cosa bien. El ejemplo tiene que ser robustísimo.
+
+Que hay un crédito que te investigue qué crédito podés aplicar y qué estrategia podés utilizar con esa plata. Entonces, ¿qué es lo que va a hacer usando los agentes de economía y de finanzas? Mostrarte los créditos disponibles y estrategias para usar dinero. Estrategias económicas.
+
+Y si, por ejemplo, no llegas a un crédito, para aplicar, te das una estrategia posible. Por ejemplo, vos te está faltando un poco de liquidez, un poco de cargo. Nuestra gente tiene que poder distinguir hasta dónde llega, hasta dónde puede decir esto es una recomendación productiva.
+
+Y si ese ejemplo lo logró, tenemos que mostrar un ejemplo que impacte. Házlo dos minutos. Esa es la idea principal.
+
+Y dos casos de uso, o uno. ¿El siguiente ejemplo funciona? No, yo creo que vamos con un solo ejemplo. Un solo ejemplo.
+
+Que sea así, picante, robusto. Es una empresa de tal cosa que quiere tener un crédito y que quiere saber cómo usar la vida. Pero primero tenemos que definir el problema.
+
+Lo que tiene que estar así en la presentación es esto de qué es el problema de la vida de hoy en día. Que no tiene el contexto interno de la gente. Nosotros vamos a facilitar eso.
+
+Cuando hagamos el documento con los costos y todos los números que ustedes necesitan para laburar, Lucas y yo nos ponemos a plantear cómo va a ser el pitch para meter un buen hook. Que se quede. Y después le vamos a mandar hacer la parte de mostrar el producto.
+
+Y una parte que van a hacer ustedes va a ser mostrar cómo funciona por atrás. Ustedes la tienen clara cómo va a funcionar, posiblemente hable vos diciendo, hace esto, esto, esto. Y ahí lo metemos en dos minutos.
+
+Sería un minuto igual para el tiempo. Sería como 30 segundos como para contar el problema. 30 en un minuto para mostrar cómo lo resuelve.
+
+O sea, en cuanto a storytelling. Y 30 segundos para explicar el trasfondo. O sea, el back.
+
+Por así decirlo. Sería a nivel de presentación. Ahora ya vamos a terminar de definir.
+
+Como para dividir las tareas. Cerebro para empresas que se va educando, que tiene tres tópicos. Economía, economía y finanza.
+
+Y en la economía finanza. ¿Qué va haciendo? Va a plantear las estrategias económicas para cómo aplicar un crédito. Y distinguir hasta dónde puede llegar.
+
+Dónde es un buen concepto y dónde es un mal concepto. ¿Cierto? Ok. Entonces vamos a definirlo en tres etapas.
+
+La primera va a ser la toma de datos. O sea, la toma o creación de datos. Que eso se van a encargar ustedes dos.
+
+Oye, tú también te puedes sumar. Creación de datos. Luego, una vez que ya tenemos creados esos datos.
+
+Obviamente nosotros vamos a seguir trabajando. Nosotros en paralelo vamos a estar haciendo el diseño del cerebro. Necesitamos ver cómo vamos a tomar los datos.
+
+Ingresarlos. Y creo que lo primero que hay que hacer es el orquestador. Sí.
+
+Eso tiene ganar, pero perfecto. Que esto es el fuerte. Realmente el orquestador es el fuerte.
+
+Donde va a estar la potencia. Hay que dedicarnos al orquestador. Es la innovación, digamos, dentro del orquestador.
+
+Por así decirlo. Esta es como una idea ya de un orquestador. Es el cerebro innovador.
+
+Es el problema que resolvimos en términos de generar... Es la aplicación innovadora. A ver. Vos con el orquestador podés llamar a distintos agentes dependiendo qué necesites.
+
+Y esa no se hace. Hoy en día no se usa. O sea, hay cosas así, pero... Llevará un café.
+
+Sí, hay cosas así. Pero es una innovación súper grande. Entonces, en el orquestador se va a ir comunicando entre parte y parte.
+
+Por ejemplo, el de economía te dice... Ahí está este crédito. Y el de finanza dice... Y el de finanza dice... No tienes los fondos para ese crédito. Haz este.
+
+Entonces, va a ir y venir entre él y yo. Empezamos a hablar. Pero, ¿cómo hablamos? Igual esto es más como nos encargamos nosotros.
+
+¿Cómo hablamos? Justamente por una memoria compartida. Que eso creo que también nos va a dar valor. Sí.
+
+Y además que eso va a ser difícil de plasmar. No, de plasmar es imposible. Hacemos un grafiquito.
+
+Bien. Entonces, hace la memoria compartida. Y a su vez, internamente, va guardado todo en resúmenes.
+
+Cierto. Eso es perfecto. ¿Y son dos etapas o tres etapas? Esa es.
+
+El orquestador. Y después tenemos que decidir la memoria compartida. Porque la primera es... El orquestador hace preguntas y define tópicos.
+
+Tú te vas a encargar de esto. Tú te vas a encargar de esto. Háganlo al mismo tiempo.
+
+Y después, en la memoria compartida, viene la segunda etapa. Que es... Bueno, ya tenemos la información cruzada. En un embedding, en un vector, en cualquier cosa.
+
+Tenemos la información cruzada. Ahora, comuníquense. Porque falta.
+
+O sea, nos falta. Nos falta porque todavía falta algo. Eso sería como la primera etapa, orquestador.
+
+La segunda etapa, la memoria compartida. Y después viene como la tercera etapa. Que es una de las etapas también importantes.
+
+Que sería el retorno a la información. O sea, porque aquí vamos a ir. En el orquestador vamos a tener un agente.
+
+Que va a ir buscando información nueva. Va a ir generando resúmenes, por así decirlo. Va a ir clasificando la información interna.
+
+Generando preguntas. ¿Cómo se hace para encargar la lista? Bien, perdón. Y aparte de todo esto, perdón.
+
+Cuando ustedes ya estén tocando esos temas. Nosotros vamos a estar armando el pitch. Exacto.
+
+No, el pitch y los datos. Pero los datos ya es lo primero que hacemos. Esto lo pasamos ahora a Transcript.
+
+Lo pasamos a Opus. Y empezamos a generar las variables para esto. Igual los datos se van a encargar mientras nosotros estamos haciendo esto.
+
+En este momento o con este contexto. Es exactamente lo que tenemos que hacer. O sea, acá estamos solos con el texto.
+
+Entonces, esto mismo lo que vamos a hacer es una interdicción. No hay ni que niñe que plantearla. Esto se te pasa a un Transcript.
+
+No le decís nada. Como yo estoy diciendo esto en este momento, ya lo van a entender. Eso es lo que tenemos que tener que hacer las empresas.
+
+Bien, OK. Lo que tenemos que arrancar, nosotros tres, es haciendo la información para que todo funcione. Y una vez que la información la arranca.
+
+Ustedes ya tienen muchos trabajos que seguir. Nosotros. Igual, no es bien.
+
+O sea, nosotros no vamos a esperar por la información. Nosotros vamos a ir haciendo. Para que sea una tarea diferente.
+
+Se superpone. Usa Word. Podemos igual ir hablando.
+
+Una vez que nosotros definamos la información. Una vez que definamos la información, en caso. Ahí ya nosotros vamos a tener avanzado el orquestador y la memoria compartida.
+
+Nosotros pasamos a hacer el speech. Ahí nosotros se nos sumas tú. Dale.
+
+Para poder definir los problemas arquitectónicos. Yo estoy acá. Mi cabeza va y huele.
+
+Bueno, entonces voy a ir transcribiendo esto. Ahí para definir. Estamos buscando algo que funcione.
+
+Bueno, hay que buscar empresas para esto.
+
+(Transcrito por TurboScribe. Actualizar a Ilimitado para eliminar este mensaje.)

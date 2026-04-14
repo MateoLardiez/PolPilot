@@ -1,0 +1,91 @@
+(Transcrito por TurboScribe. Actualizar a Ilimitado para eliminar este mensaje.)
+
+Bueno, hay que empezar con la base. O sea, vamos a ir empezando con la base. Que bueno, tenemos el HTML, podemos partir de esa base.
+
+Eso lo usaría como guía, de hecho lo usaría. Primero, antes de eso, ¿no conviene ver bien primero la estructura de ese HTML? ¿Qué recomienda, bueno, lo hicimos con Cloud, pero qué se recomienda para la estructura de todo esto? ¿Está bien organizado? A eso es lo que voy. Igual, tranquilo.
+
+Igual a eso es lo que voy. Igual a lo que voy. Yo siento que primero tenemos que tener un servidor.
+
+O sea, porque esto es idea por arquitectura de microservicios, ¿cierto? O sea, en el servidor tenemos cada uno de cada endpoint, vamos a llamarlo así, es un agente específico. Entonces, ¿qué es lo que vamos a hacer? En lugar de llamar a un agente, le hacemos una llamada al API del agente. Para que sea más fácil de tenerlo.
+
+¿El agente o el API? Claro. O sea, el agente es como el API, por así decirlo. Nos va a retornar una respuesta.
+
+Le mandamos el input y nos devuelve una respuesta. Cada uno va a ser un agente específico en el servidor. Igual si ven que están muy locos.
+
+He estado hablando desde Bacta, ¿no? Donde me he metido en el front. Después de ahí, nos devuelve una respuesta. Podemos hacer lo que yo digo de modelo.
+
+Y eso nos va a devolver otra respuesta. Eso sería en cuanto al servidor. Después, lo que tenemos que ver es cómo guardamos la información del usuario.
+
+¿Dónde la guardamos? Necesitamos una arquitectura de datos. O sea, una base de datos, algo. Podemos usar SuperBase o algo más simple.
+
+Lo podemos mapear ahí. Claro, claro. O sea, porque todos... No hay más, no hay nada más.
+
+Sí, lo vamos a poner. Lo vamos a poner en SQLite. Más bien es MOP, todo.
+
+¿Y cómo los financieros que cargan el tipo se adaptan a los distintos módulos? Porque todo lo que cargue de información se va a tener que depositar. Eso es lo que vamos a hacer. Lo que vamos a hacer con la data... O sea, porque vamos a tener un montón de data de diferentes rubros.
+
+Hay que clasificarla. Entonces, la clasificamos y la vamos a subdividir en áreas, por así decirlo. Así tenemos áreas específicas.
+
+¿Y eso se tiene que hacer automáticamente? Eso se hace automáticamente. Podemos usar un agente que se encargue de esa clasificación de datos. O sea, porque lo que haría ahí es clasificación de datos.
+
+Entonces, ya tenemos. El servidor va a llamar a los agentes y va a ser el orquestador. Después, en la base de datos vamos a tener un miniagente que se encargue de clasificar y filtrar los datos.
+
+¿Pero qué pasa? Si los datos son imágenes, audio, todo eso, lo tiene que confirmar en MacDON. Que MacDON es el formato que mejor funciona para la IA. Está confirmado.
+
+Entonces, ahí ya tenemos cómo guardar la información a grandes rasgos. O sea, después nos podemos entrar en detalles. Después viene cómo es la comunicación con el usuario.
+
+Que viene la parte de comunicación. En la parte de comunicación con el usuario, tenemos que definir qué canal vamos a usar. Si lo usamos directamente por WhatsApp, por Telegram o lo hacemos algo mock web.
+
+Yo siento que es más fácil hacerlo mock web. ¿Por qué? Porque si no tenemos que crear todo el bot para Telegram. Hagamos mock web, ya estoy seguro.
+
+Y apagamos lo que vamos a hacer más visualmente atractivo. Claro. Total es lo mismo.
+
+Lo que vamos a hacer es que esto se integre a cualquier servicio de comunicación. Entonces, en el mock web hay que pensar cómo va a ser la interacción con el usuario. ¿Por qué? Porque cómo desde el mensaje, desde la web, yo puedo obtener la información del usuario.
+
+¿El usuario la carga? ¿O yo simplemente la busco? Esa es una pregunta muy importante. Porque si introduce todo manual, le puede dar flojera. Es fundamental que sea rápida la carga de datos de la manera que sea.
+
+Claro, ahí lo que voy es, ¿cómo lo va a hacer el usuario? Eso no lo tengo pensado. O sea, el usuario viene, le escribe el mensaje por WhatsApp y le dice, bueno, te voy a cargar toda mi información. Y carga toda la información.
+
+¿Cómo piensan eso? Hay que ver si se pueden conectar servicios externos, cuáles. El tema es que no podemos decir, bueno, tales clientes usarían estos tipos de servicios. Pero lo que sí podemos hacer es, podrían tener una carpeta Andrive directamente que se triggere, un webhook en base a la manera en la que ellos cargan archivos.
+
+Claro, porque primero tenemos que llenarlo. No, obvio, pero hay que pensarlo para mostrar cómo se van a cargar los datos. Para mí, en la demo voy a mostrar el dispositivo que tengo cargado.
+
+¿La interacción? Sí. Ok, eso también. Para mí hay que hacer lo más, se puede decir, trucho posible, como lo más simple posible.
+
+Que parezca que una empresa ya cargó todos sus datos. Siento que nos tomaría mucho trabajo hacer un agente específico que procese todos los datos de una, no sé qué. Yo lo que haría para esta demo sería algo muy simple como mostrar, lo que yo hago es tres clientes con L, de distintas ramas, pero que abarquen bien todos los aspectos de las pymes con L. Y que sea, no sé, uno usa el coche de finanzas, otro detecta algo de abogacía, otro si podemos combina las dos cosas, que es la idea de juntar los agentes.
+
+Que eso también es muy complicado, hay que ver si se puede hacer. Pero estaría buenísimo. Teóricamente sí, todo se hace a priori.
+
+Y después cargar datos en vivo, pero simples. No rebuscarnos nada. Porque nada, se puede complicar demás.
+
+Ah, podés inmediatamente un audio, un documento. Un documento o algo, sí, sí. Algo que ya tengamos prehecho.
+
+Bueno, me parece bien. Partiendo de eso, tenemos que ya de base, a ver, para mí tenemos que hacer tres cosas. Una son las bases de datos, de cada tipo, dividir las bases de datos por cada cliente, por cada empresa.
+
+Después el gateway, digamos, el servidor principal. Y después cada gente en particular. Yo tengo una página para crear las skills.
+
+Ah, ¿sí? Ahorita la busco porque tiene un montón de ya skills predefinidas, podemos usarlas. No me acuerdo, ahorita no me lo tengo ahí en el teléfono guardado. ¿Skills CH? Creo que sí.
+
+Ese está bueno porque ya nos define las skills, las podemos usar de referencia para cada uno. Y acá, esto, el frontend que integre... Claro, aquí creo que viene eso. Y a ver, ¿y las bases de datos, los agentes podrían conectarse a las bases de datos en principio o no? Claro, lo que hace la gente sería consumir.
+
+Hay que ver cómo lo consume. Consumir... Y en base a lo que consume acá, también hay que darse un orquestador de vuelta. Claro.
+
+¿El orquestador va a estar así o sí? Porque si no, ¿cómo controlamos? Porque así como tenés el input, lo tenés que tener de evolución al mismo urgente para atender qué información agarrojo. Claro, ok. Si hay un orquestador, va a reactivar y es lo más importante de todo.
+
+Entonces, yo siento que lo primero que tenemos que hacer es dividirnos las tareas obviamente. Ustedes que no son tanto desarrolladores, se pueden encargar de diseñar los... Claro, se pueden... ¿Diseñamos la información y los usuarios? O sea, de diseñar los usuarios y buscar información de esos usuarios. Por ejemplo, inventar una PyME falsa, por poner un ejemplo, de un rubro específico.
+
+Y hacemos un Excel para cada uno de esos. Exacto, con toda la información que ustedes consideren que necesiten. Si tienen una... por lo menos pueden usar de referencia la de sus padres para tener datos reales, por así decirlo, de finanzas, de todo eso.
+
+Como para tenerlos pensados ya. Hay que ver y eso, hay que elegir bien para mostrar bien las ventajas y las distintas PyMEs. ¿Las cargamos todas via Excel? Sí, sí, ahí como ustedes... ¿Cinco empresas diferentes? Tres, tres, cinco son muchas ya.
+
+Tres empresas diferentes con tres Excel diferentes de varias planillas cada uno con cierta data. Y agarra un perfil de consumidor final también. Exacto, si quieren armen una documentación donde expliquen todo el perfil de cada una de las PyMEs y la información de cada una de las PyMEs.
+
+Que sería luego Excel, bien. Y después, aparte, PDF de economía y PDF de legal que necesitan inventar a Hotpilot o lo van a conectar con las APIs. Eso igual lo podemos ver después.
+
+¿Lo de legal decís? Lo de legal. Necesitamos tipo datos y después API para... Para traer información. Para traer información de lo que dijiste vos que ya estaba, ¿no? Sí.
+
+¿No dice en la check-in? Ah, pará, no sé. ¿De dónde se saca la información que decís ahí? Para esos PDF que decís que eran, los legales. Para obtener bien la información real de... Ven a acudir al boletín oficial, vía API.
+
+Le mandamos el mail de... Ah, ok. Para ahora. Gracias.
+
+(Transcrito por TurboScribe. Actualizar a Ilimitado para eliminar este mensaje.)
