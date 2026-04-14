@@ -117,6 +117,71 @@ resultados = vs.search("external_research", "crédito para importar insumos", n_
 
 ---
 
+## Funciones disponibles (`data_service.py`)
+
+### Datos internos (read-only para agentes)
+
+| Función | Qué retorna |
+|---------|-------------|
+| `get_company_profile(empresa_id)` | Perfil completo de la empresa (nombre, CUIT, rubro, facturación) |
+| `get_financials(empresa_id, last_n_months)` | Últimos N meses de ingresos, egresos, flujo de caja y saldos |
+| `get_latest_indicators(empresa_id)` | Indicadores financieros más recientes (márgenes, ratios, health score) |
+| `get_all_indicators(empresa_id)` | Todos los períodos de indicadores financieros |
+| `get_clients(empresa_id, risk_level)` | Clientes, con filtro opcional por nivel de riesgo |
+| `get_delinquent_clients(empresa_id, min_days)` | Clientes morosos con más de N días de atraso |
+| `get_suppliers(empresa_id, primary_only)` | Proveedores, con filtro opcional de principales |
+| `get_products(empresa_id, category, low_stock_only)` | Productos con filtro por categoría o stock bajo |
+| `get_employees(empresa_id)` | Todos los empleados con rol, sueldo y carga |
+| `get_documents(empresa_id, topic)` | Metadata de documentos cargados, con filtro por tópico |
+| `get_cash_position(empresa_id)` | Resumen rápido: saldo, flujo, ratio, health score, morosos |
+
+### Créditos y contexto externo
+
+| Función | Qué retorna |
+|---------|-------------|
+| `get_available_credits(empresa_id, credit_type, max_rate)` | Créditos disponibles con filtros opcionales |
+| `get_credits_for_company(empresa_id)` | Créditos cruzados con el perfil de la empresa (indica si califica) |
+| `get_macro_indicators(empresa_id, indicator_name, latest_only)` | Indicadores macro (inflación, dólar, tasas) |
+| `get_macro_snapshot(empresa_id)` | Dict plano con todos los indicadores macro actuales |
+| `get_regulations(empresa_id, status, min_relevance)` | Regulaciones filtradas por estado y relevancia |
+| `get_sector_signals(empresa_id, impact_level)` | Señales del sector (tendencias, precios, competencia) |
+| `get_credit_profile(empresa_id)` | Perfil crediticio BCRA de la empresa (situación, deuda, cheques) |
+| `get_collective_intelligence(empresa_id, metric_name)` | Benchmarks anonimizados del sector |
+| `get_sector_benchmark(empresa_id)` | Comparación empresa vs promedio del sector |
+
+### Memoria y conversaciones
+
+| Función | Qué retorna |
+|---------|-------------|
+| `start_conversation(empresa_id)` | Crea nueva conversación, retorna conversation_id |
+| `save_message(empresa_id, conversation_id, role, content, ...)` | Guarda un mensaje, retorna message_id |
+| `get_conversation_messages(empresa_id, conversation_id, limit)` | Mensajes de una conversación |
+| `get_recent_conversations(empresa_id, limit)` | Últimas conversaciones con resumen |
+| `save_summary(empresa_id, conversation_id, summary_text, ...)` | Guarda un merge summary (append-only) |
+| `get_summaries(empresa_id, conversation_id)` | Resúmenes, con filtro opcional por conversación |
+| `log_query(empresa_id, original_query, agents_called, ...)` | Registra traza de ejecución del orquestador |
+| `get_query_log(empresa_id, limit)` | Últimas trazas del orquestador |
+
+### Búsqueda
+
+| Función | Qué retorna |
+|---------|-------------|
+| `hybrid_search(empresa_id, query_text, domain, ...)` | Búsqueda combinada FTS5 (30%) + ChromaDB (70%) |
+| `semantic_search(empresa_id, query_text, collection, ...)` | Búsqueda puramente semántica (solo ChromaDB) |
+
+### Escritura externa (solo agentes Research y Economy)
+
+| Función | Qué hace |
+|---------|----------|
+| `write_credits(empresa_id, credits)` | Agrega créditos + actualiza embeddings |
+| `write_macro_indicators(empresa_id, indicators)` | Agrega indicadores macro |
+| `write_regulations(empresa_id, regulations)` | Agrega regulaciones + actualiza embeddings |
+| `write_sector_signals(empresa_id, signals)` | Agrega señales del sector |
+| `write_credit_profile(empresa_id, profile)` | Actualiza perfil crediticio BCRA |
+| `update_conversation_embeddings(empresa_id, summary_id, text)` | Agrega summary al vector store |
+
+---
+
 ## Búsqueda híbrida
 
 Cuando un agente necesita información, se combinan dos métodos:
