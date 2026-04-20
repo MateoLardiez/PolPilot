@@ -1,4 +1,3 @@
-.claude
 .agents
 
 # Runtime data (SQLite + ChromaDB) — generado en ejecución, no commitear
